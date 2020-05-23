@@ -34,7 +34,7 @@ dist
 *.iml
 
 #VSCode metadata
-.vscode
+# .vscode
 
 # Mac files
 .DS_Store
