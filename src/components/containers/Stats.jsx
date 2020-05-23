@@ -41,7 +41,7 @@ class Stats extends Component {
         <Paper className={classes.paper}>
           <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
             <Grid item xs={5}>
-              <Typography color="secondary" variant="h4">Season 2 Scouting Combine</Typography>
+              <Typography variant="h4">Season 2 Scouting Combine</Typography>
             </Grid>
             <Grid item xs={7}>
               <img alt="stats from season 2 scouting combine" src={combineStats} />
