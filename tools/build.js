@@ -1,9 +1,12 @@
 // More info on Webpack's Node API here: https://webpack.js.org/api/node/
 // Allowing console calls below since this is a build file.
 /* eslint-disable no-console */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import webpack from 'webpack';
 import config from '../webpack.config.prod';
-import {chalkError, chalkSuccess, chalkWarning, chalkProcessing} from './chalkConfig';
+import {
+  chalkError, chalkSuccess, chalkWarning, chalkProcessing,
+} from './chalkConfig';
 
 process.env.NODE_ENV = 'production'; // this assures React is built in prod mode and that the Babel dev config doesn't apply.
 
@@ -18,12 +21,12 @@ webpack(config).run((error, stats) => {
   const jsonStats = stats.toJson();
 
   if (stats.hasErrors && jsonStats.errors.length > 0) {
-    return jsonStats.errors.map(error => console.log(chalkError(error)));
+    return jsonStats.errors.map((err) => console.log(chalkError(err)));
   }
 
   if (stats.hasWarnings && jsonStats.warnings.length > 0) {
     console.log(chalkWarning('Webpack generated the following warnings: '));
-    jsonStats.warnings.map(warning => console.log(chalkWarning(warning)));
+    jsonStats.warnings.map((warning) => console.log(chalkWarning(warning)));
   }
 
   console.log(`Webpack stats: ${stats}`);

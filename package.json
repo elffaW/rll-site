@@ -8,13 +8,13 @@
   },
   "scripts": {
     "preinstall": "node tools/nodeVersionCheck.js",
-    "remove-demo": "babel-node tools/removeDemo.js",
     "start-message": "babel-node tools/startMessage.js",
     "prestart": "npm run start-message",
     "start": "concurrently -k -r -s first \"npm run test:watch\" \"npm run open:src\" \"npm run lint:watch\"",
     "open:src": "babel-node tools/srcServer.js",
     "open:dist": "babel-node tools/distServer.js",
     "lint": "esw webpack.config.* src tools --color",
+    "lint:fix": "npm run lint -- --fix",
     "lint:watch": "npm run lint -- --watch",
     "clean-dist": "npm run remove-dist && mkdir dist",
     "remove-dist": "rimraf ./dist",
@@ -30,16 +30,19 @@
   },
   "author": "elffaW",
   "license": "MIT",
+  "private": true,
   "dependencies": {
     "@hot-loader/react-dom": "16.10.2",
+    "@material-ui/core": "4.9.14",
+    "@material-ui/icons": "4.9.1",
     "connected-react-router": "6.5.2",
     "object-assign": "4.1.1",
+    "prop-types": "15.7.2",
     "react": "16.11.0",
     "react-dom": "16.11.0",
-    "react-redux": "7.1.1",
+    "react-hot-loader": "4.12.15",
     "react-router-dom": "5.1.2",
-    "redux": "4.0.4",
-    "redux-thunk": "2.3.0"
+    "typeface-roboto": "0.0.75"
   },
   "devDependencies": {
     "@babel/cli": "7.6.4",
@@ -51,7 +54,7 @@
     "@babel/polyfill": "7.6.0",
     "@babel/preset-env": "7.6.3",
     "@babel/preset-react": "7.6.3",
-    "acorn": "7.1.0",
+    "acorn": "7.2.0",
     "ajv": "6.10.2",
     "autoprefixer": "9.7.0",
     "babel-core": "7.0.0-bridge.0",
@@ -61,7 +64,7 @@
     "babel-plugin-transform-react-remove-prop-types": "0.4.24",
     "browser-sync": "2.26.7",
     "chalk": "2.4.2",
-    "concurrently": "5.0.0",
+    "concurrently": "5.2.0",
     "connect-history-api-fallback": "1.6.0",
     "coveralls": "3.0.7",
     "css-loader": "3.2.0",
@@ -69,7 +72,9 @@
     "enzyme": "3.10.0",
     "enzyme-adapter-react-16": "1.15.1",
     "eslint": "6.6.0",
+    "eslint-config-airbnb": "18.1.0",
     "eslint-plugin-import": "2.18.2",
+    "eslint-plugin-jsx-a11y": "6.2.3",
     "eslint-plugin-react": "7.16.0",
     "eslint-watch": "6.0.1",
     "file-loader": "4.2.0",
@@ -82,23 +87,21 @@
     "json-loader": "0.5.7",
     "mini-css-extract-plugin": "0.8.0",
     "mockdate": "2.0.5",
-    "node-sass": "4.13.0",
+    "node-sass": "4.14.1",
     "open-cli": "5.0.0",
     "postcss-loader": "3.0.0",
     "prompt": "1.0.0",
-    "prop-types": "15.7.2",
     "raf": "3.4.1",
-    "react-hot-loader": "4.12.15",
     "react-test-renderer": "16.11.0",
     "redux-immutable-state-invariant": "2.1.0",
     "redux-mock-store": "1.5.3",
-    "replace": "1.1.1",
+    "replace": "1.2.0",
     "rimraf": "3.0.0",
     "sass-loader": "8.0.0",
     "style-loader": "1.0.0",
     "url-loader": "2.2.0",
     "webpack": "4.41.2",
-    "webpack-bundle-analyzer": "3.6.0",
+    "webpack-bundle-analyzer": "3.8.0",
     "webpack-dev-middleware": "3.7.2",
     "webpack-hot-middleware": "2.25.0"
   },
@@ -156,12 +159,7 @@
   },
   "eslintConfig": {
     "root": true,
-    "extends": [
-      "eslint:recommended",
-      "plugin:import/errors",
-      "plugin:import/warnings",
-      "plugin:react/recommended"
-    ],
+    "extends": "airbnb",
     "plugins": [
       "react"
     ],
@@ -181,6 +179,31 @@
       "jquery": true,
       "jest": true
     },
-    "globals": {}
+    "globals": {},
+    "rules": {
+      "no-console": "warn",
+      "linebreak-style": "off",
+      "no-underscore-dangle": "off",
+      "global-require": "warn",
+      "array-callback-return": "off",
+      "no-plusplus": [
+        "error",
+        {
+          "allowForLoopAfterthoughts": true
+        }
+      ],
+      "max-len": [
+        "error",
+        120,
+        2,
+        {
+          "ignoreUrls": true,
+          "ignoreComments": true,
+          "ignoreRegExpLiterals": true,
+          "ignoreStrings": true,
+          "ignoreTemplateLiterals": true
+        }
+      ]
+    }
   }
 }

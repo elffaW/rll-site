@@ -1,6 +1,7 @@
 // This file configures the development web server
 // which supports hot reloading and synchronized testing.
 
+/* eslint-disable import/no-extraneous-dependencies */
 // Require Browsersync along with webpack and middleware for it
 import browserSync from 'browser-sync';
 // Required for react-router browserHistory
@@ -9,6 +10,7 @@ import historyApiFallback from 'connect-history-api-fallback';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
+/* eslint-enable import/no-extraneous-dependencies */
 import config from '../webpack.config.dev';
 
 const bundler = webpack(config);
@@ -17,7 +19,7 @@ const bundler = webpack(config);
 browserSync({
   port: 3000,
   ui: {
-    port: 3001
+    port: 3001,
   },
   server: {
     baseDir: 'src',
@@ -26,8 +28,8 @@ browserSync({
       historyApiFallback(
         {
           disableDotRule: true,
-          htmlAcceptHeaders: ['text/html', 'application/xhtml+xml']
-        }
+          htmlAcceptHeaders: ['text/html', 'application/xhtml+xml'],
+        },
       ),
 
       webpackDevMiddleware(bundler, {
@@ -44,7 +46,7 @@ browserSync({
           hash: false,
           timings: false,
           chunks: false,
-          chunkModules: false
+          chunkModules: false,
         },
 
         // for other settings see
@@ -52,13 +54,15 @@ browserSync({
       }),
 
       // bundler should be the same as above
-      webpackHotMiddleware(bundler)
-    ]
+      webpackHotMiddleware(bundler),
+    ],
   },
 
   // no need to watch '*.js' here, webpack will take care of it for us,
   // including full page reloads if HMR won't work
   files: [
-    'src/*.html'
-  ]
+    'src/*.html',
+  ],
+
+  open: false,
 });
