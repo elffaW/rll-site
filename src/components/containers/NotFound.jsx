@@ -14,7 +14,7 @@ export default function NotFound() {
       <h2>
         The page you were looking for was not found. Click
         <NavLink to="/" exact>
-          here
+          &nbsp;here&nbsp;
         </NavLink>
         to go back to the main dashboard.
       </h2>

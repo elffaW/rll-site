@@ -1,82 +1,106 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Avatar, AppBar, Tabs, Tab, Container,
+  AppBar, Avatar, Box, Container, Tab, Tabs, Toolbar,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { NavLink } from 'react-router-dom';
 
 import NotFound from './NotFound';
 
 import logo from '../../images/RLL_logo.png';
-import { version } from '../../../package.json';
+
+// import { version } from '../../../package.json';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    // '& > *': {
+    //   margin: theme.spacing(1),
+    // },
+  },
+  mainLogo: {
+    float: 'left',
+  },
+  mainContent: {
+    // hide scrollbars but still allow scrolling
+    overflow: 'scroll',
+    scrollbarWidth: 'none', /* Firefox */
+    '&::-webkit-scrollbar': { /* WebKit */
+      width: 0,
+      height: 0,
+    },
+    textAlign: 'center',
+  },
+  contentContainer: {
+    position: 'absolute',
+    top: 48,
+    width: '100%',
+    backgroundColor: theme.palette.primary.main,
+  },
+}));
 
 const defaultProps = {
   children: <NotFound />,
-  fullScreen: false,
 };
 
 export default function BaseApp(props) {
-  const { children, fullScreen } = props;
+  const { children } = props;
 
   const [tabValue, setTab] = React.useState(0);
-
-  let mainContent = (
-    <div id="main-content">
-      <Container style={{ height: 'calc(100vh - 82px)' }}>
-        { children }
-      </Container>
-    </div>
-  );
-  if (fullScreen) {
-    mainContent = children;
-  }
+  const classes = useStyles();
 
   const handleTabChange = (event, newTab) => {
+    console.log('handleTabChange', newTab);
+    console.log(event);
     setTab(newTab);
   };
 
   return (
-    <AppBar>
-      <Avatar src={logo} />
-      <p>
-        {`v${version}`}
-      </p>
-      <Tabs id="main-header" variant="fullWidth" value={tabValue} onChange={handleTabChange}>
-        <Tab
-          label="dashboard"
-          component={NavLink}
-          exact
-          to="/"
-        />
-        <Tab
-          label="rules"
-          component={NavLink}
-          to="/rules"
-        />
-        <Tab
-          label="schedule"
-          component={NavLink}
-          to="/schedule"
-        />
-        <Tab
-          label="stats"
-          component={NavLink}
-          to="/stats"
-        />
-        <Tab
-          label="players"
-          component={NavLink}
-          to="/players"
-        />
-      </Tabs>
-
-      {mainContent}
-    </AppBar>
+    <div>
+      <AppBar position="fixed">
+        <Toolbar variant="dense">
+          <Avatar src={logo} className={classes.mainLogo} />
+          <Tabs id="main-header" value={tabValue} onChange={handleTabChange}>
+            <Tab
+              label="dashboard"
+              component={NavLink}
+              exact
+              to="/"
+            />
+            <Tab
+              label="rules"
+              component={NavLink}
+              to="/rules"
+            />
+            <Tab
+              label="schedule"
+              component={NavLink}
+              to="/schedule"
+            />
+            <Tab
+              label="stats"
+              component={NavLink}
+              to="/stats"
+            />
+            <Tab
+              label="players"
+              component={NavLink}
+              to="/players"
+            />
+          </Tabs>
+        </Toolbar>
+      </AppBar>
+      <Box id="main-content" bgcolor="primary.main" className={classes.mainContent}>
+        <Container className={classes.contentContainer}>
+          { children }
+        </Container>
+      </Box>
+    </div>
   );
 }
 
 BaseApp.propTypes = {
   children: PropTypes.element,
-  fullScreen: PropTypes.bool,
 };
 BaseApp.defaultProps = defaultProps;

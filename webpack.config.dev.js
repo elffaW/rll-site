@@ -98,6 +98,17 @@ export default {
         ],
       },
       {
+        test: /\.md$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              /* your options here */
+            },
+          },
+        ],
+      },
+      {
         test: /(\.css|\.scss|\.sass)$/,
         use: [
           'style-loader',
