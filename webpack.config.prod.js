@@ -24,7 +24,7 @@ export default {
   mode: 'production',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/rll-site/dist/',
+    publicPath: '/',
     filename: '[name].[contenthash].js',
   },
   plugins: [
@@ -40,24 +40,6 @@ export default {
     new HtmlWebpackPlugin({
       template: 'src/index.ejs',
       favicon: 'src/favicon.ico',
-      minify: {
-        removeComments: true,
-        collapseWhitespace: true,
-        removeRedundantAttributes: true,
-        useShortDoctype: true,
-        removeEmptyAttributes: true,
-        removeStyleLinkTypeAttributes: true,
-        keepClosingSlash: true,
-        minifyJS: true,
-        minifyCSS: true,
-        minifyURLs: true,
-      },
-      inject: true,
-    }),
-    new HtmlWebpackPlugin({
-      template: 'src/index.ejs',
-      favicon: 'src/favicon.ico',
-      filename: '../index.html',
       minify: {
         removeComments: true,
         collapseWhitespace: true,
