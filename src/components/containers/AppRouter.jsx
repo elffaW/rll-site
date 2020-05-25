@@ -12,7 +12,7 @@ import Rules from './Rules';
 // import Schedule from './Schedule';
 // import PlayerStats from './PlayerStats';
 import Stats from './Stats';
-// import Players from './Players';
+import Players from './Players';
 
 export default function AppRouter() {
   return (
@@ -31,8 +31,8 @@ export default function AppRouter() {
             {/* <Route path="/stats/:playerId" component={PlayerStats} /> */}
             <Route path="/stats" component={Stats} />
             {/* PLAYER ROUTES */}
-            {/* <Route path="/players/:userId" component={Players} /> */}
-            {/* <Route path="/players" component={Players} /> */}
+            <Route path="/players/:playerName" component={Players} />
+            <Route path="/players" component={Players} />
             {/* DASHBOARD AND NOT-FOUND ROUTES */}
             <Route exact path="/" component={Dashboard} />
             <Route component={BaseApp} />
