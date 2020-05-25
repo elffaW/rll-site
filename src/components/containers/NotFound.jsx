@@ -6,8 +6,8 @@ import { NavLink } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    padding: theme.spacing(1),
-    margin: theme.spacing(1),
+    // padding: theme.spacing(1),
+    // margin: theme.spacing(1),
     textAlign: 'center',
     backgroundColor: theme.palette.primary.main,
     width: '100%',
