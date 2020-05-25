@@ -57,7 +57,7 @@ export default {
     }),
     new CopyPlugin({
       patterns: [
-        { from: 'src/_redirects', to: 'dist' },
+        { from: 'src/_redirects', to: '.' },
       ],
     }),
   ],
