@@ -6,7 +6,7 @@ export const styles = withStyles((theme) => createStyles({
     // padding: theme.spacing(1),
     marginTop: theme.spacing(1),
     textAlign: 'center',
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.primary.light,
     width: '100%',
   },
 }));

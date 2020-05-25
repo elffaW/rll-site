@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
     // padding: theme.spacing(1),
     // margin: theme.spacing(1),
     textAlign: 'center',
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.primary.light,
     width: '100%',
   },
 }));

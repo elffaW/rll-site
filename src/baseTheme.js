@@ -8,9 +8,9 @@ const baseTheme = createMuiTheme({
       dark: '#373737',
     },
     secondary: {
-      light: '#f05545',
-      main: '#b71c1c',
-      dark: '#7f0000',
+      light: '#ff5f52',
+      main: '#c62828',
+      dark: '#8e0000',
     },
   },
 });
