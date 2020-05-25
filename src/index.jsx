@@ -1,5 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { AppContainer } from 'react-hot-loader';
 import { ThemeProvider } from '@material-ui/core/styles';
 
@@ -28,7 +29,9 @@ if (module.hot) {
     const NewRoot = require('./components/Root').default; // eslint-disable-line global-require
     render(
       <AppContainer>
-        <NewRoot />
+        <ThemeProvider theme={baseTheme}>
+          <NewRoot />
+        </ThemeProvider>
       </AppContainer>,
       document.getElementById('app'),
     );
