@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
-
+import PropTypes from 'prop-types';
 import {
-  Grid,
+  Grid, Paper,
 } from '@material-ui/core';
-
-import { NavLink } from 'react-router-dom';
+import ReactPlayer from 'react-player';
 
 import BaseApp from './BaseApp';
+import { styles as paperStyles } from '../../styles/themeStyles';
 
-export default class Dashboard extends Component {
+const defaultProps = {
+  classes: '',
+};
+
+class Dashboard extends Component {
   constructor(props) {
     super(props);
 
@@ -21,249 +25,14 @@ export default class Dashboard extends Component {
   }
 
   render() {
+    const { classes } = this.props;
+    const vidUrl = '../../videos/NetworkPromo.mp4';
     return (
       <BaseApp>
-        <Grid container spacing={2}>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
-          <Grid item xs={2}>
-            <p>oh no</p>
-          </Grid>
+        <Grid container spacing={2} justify="center">
+          <Paper className={classes.paper}>
+            <ReactPlayer url={vidUrl} light controls width="" height="" />
+          </Paper>
         </Grid>
       </BaseApp>
     );
@@ -271,5 +40,8 @@ export default class Dashboard extends Component {
 }
 
 Dashboard.propTypes = {
-
+  classes: PropTypes.string,
 };
+Dashboard.defaultProps = defaultProps;
+
+export default paperStyles(Dashboard);

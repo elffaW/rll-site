@@ -1,23 +1,34 @@
 import React from 'react';
-
+import { Paper, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
 import { NavLink } from 'react-router-dom';
 
-import { Icon } from '@material-ui/core';
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    padding: theme.spacing(1),
+    margin: theme.spacing(1),
+    textAlign: 'center',
+    backgroundColor: theme.palette.primary.main,
+    width: '100%',
+  },
+}));
 
 export default function NotFound() {
+  const classes = useStyles();
   return (
-    <div>
-      <h1>
-        <Icon style={{ float: 'left' }} name="frown" size="massive" loading />
-        Error 404: Not Found
-      </h1>
-      <h2>
-        The page you were looking for was not found. Click
+    <Paper className={classes.paper}>
+      <Typography variant="h2">
+        <SentimentVeryDissatisfiedIcon fontSize="large" variant="outlined" color="secondary" loading />
+          &nbsp;&nbsp;Error 404: Page Not Found
+      </Typography>
+      <Typography variant="h4">
+          The page you were looking for was not found. Click&nbsp;
         <NavLink to="/" exact>
-          &nbsp;here&nbsp;
+            here
         </NavLink>
-        to go back to the main dashboard.
-      </h2>
-    </div>
+          &nbsp;to go back to the main dashboard.
+      </Typography>
+    </Paper>
   );
 }

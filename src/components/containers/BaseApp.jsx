@@ -4,7 +4,7 @@ import {
   AppBar, Avatar, Box, Container, Tab, Tabs, Toolbar,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 
 import NotFound from './NotFound';
 
@@ -15,9 +15,9 @@ import logo from '../../images/RLL_logo.png';
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-    // '& > *': {
-    //   margin: theme.spacing(1),
-    // },
+    '& > *': {
+      margin: theme.spacing(1),
+    },
   },
   mainLogo: {
     float: 'left',
@@ -35,10 +35,26 @@ const useStyles = makeStyles((theme) => ({
   contentContainer: {
     position: 'absolute',
     top: 48,
-    width: '100%',
+    width: `calc(100% - ${theme.spacing(2)}px) !important`,
+    margin: theme.spacing(1),
     backgroundColor: theme.palette.primary.main,
   },
 }));
+
+const lookupPathNum = (path) => {
+  switch (path) {
+    case '/rules':
+      return 1;
+    case '/schedule':
+      return 2;
+    case '/stats':
+      return 3;
+    case '/players':
+      return 4;
+    default:
+      return 0;
+  }
+};
 
 const defaultProps = {
   children: <NotFound />,
@@ -47,12 +63,13 @@ const defaultProps = {
 export default function BaseApp(props) {
   const { children } = props;
 
-  const [tabValue, setTab] = React.useState(0);
+  const location = useLocation();
+  const pathNum = lookupPathNum(location.pathname);
+
+  const [tabValue, setTab] = React.useState(pathNum);
   const classes = useStyles();
 
   const handleTabChange = (event, newTab) => {
-    console.log('handleTabChange', newTab);
-    console.log(event);
     setTab(newTab);
   };
 
@@ -92,7 +109,7 @@ export default function BaseApp(props) {
         </Toolbar>
       </AppBar>
       <Box id="main-content" bgcolor="primary.main" className={classes.mainContent}>
-        <Container className={classes.contentContainer}>
+        <Container className={classes.contentContainer} maxWidth={false}>
           { children }
         </Container>
       </Box>

@@ -3,20 +3,10 @@ import PropTypes from 'prop-types';
 import {
   Grid, Paper, Typography,
 } from '@material-ui/core';
-import { createStyles, withStyles } from '@material-ui/core/styles';
 
 import BaseApp from './BaseApp';
-
+import { styles as paperStyles } from '../../styles/themeStyles';
 import combineStats from '../../images/CombineS2.png';
-
-const styles = withStyles((theme) => createStyles({
-  paper: {
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    backgroundColor: theme.palette.primary.main,
-    width: '100%',
-  },
-}));
 
 const defaultProps = {
   classes: '',
@@ -41,7 +31,7 @@ class Stats extends Component {
         <Paper className={classes.paper}>
           <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
             <Grid item xs={5}>
-              <Typography variant="h4">Season 2 Scouting Combine</Typography>
+              <Typography variant="h3">Season 2 Scouting Combine</Typography>
             </Grid>
             <Grid item xs={7}>
               <img alt="stats from season 2 scouting combine" src={combineStats} />
@@ -58,4 +48,4 @@ Stats.propTypes = {
 };
 Stats.defaultProps = defaultProps;
 
-export default styles(Stats);
+export default paperStyles(Stats);
