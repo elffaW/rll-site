@@ -4,7 +4,6 @@ import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import path from 'path';
-import CopyPlugin from 'copy-webpack-plugin';
 
 const GLOBALS = {
   'process.env.NODE_ENV': JSON.stringify('production'),
@@ -54,11 +53,6 @@ export default {
         minifyURLs: true,
       },
       inject: true,
-    }),
-    new CopyPlugin({
-      patterns: [
-        { from: 'src/_redirects', to: '.' },
-      ],
     }),
   ],
   module: {

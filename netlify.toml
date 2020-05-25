@@ -1,0 +1,9 @@
+# set the publish path
+[build]
+  publish="dist"
+
+# handle internal redirects with react-router
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
