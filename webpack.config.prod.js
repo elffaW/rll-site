@@ -24,7 +24,7 @@ export default {
   mode: 'production',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/rll-site/',
+    publicPath: '/rll-site/dist/',
     filename: '[name].[contenthash].js',
   },
   plugins: [
