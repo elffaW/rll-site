@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { NavLink, useLocation } from 'react-router-dom';
 
 import NotFound from './NotFound';
+import { lookupTabNumByPath } from '../utils/tabHelper';
 
 import logo from '../../images/RLL_logo.png';
 
@@ -41,21 +42,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const lookupPathNum = (path) => {
-  switch (path) {
-    case '/rules':
-      return 1;
-    case '/schedule':
-      return 2;
-    case '/stats':
-      return 3;
-    case '/players':
-      return 4;
-    default:
-      return 0;
-  }
-};
-
 const defaultProps = {
   children: <NotFound />,
 };
@@ -64,7 +50,7 @@ export default function BaseApp(props) {
   const { children } = props;
 
   const location = useLocation();
-  const pathNum = lookupPathNum(location.pathname);
+  const pathNum = lookupTabNumByPath(location.pathname);
 
   const [tabValue, setTab] = React.useState(pathNum);
   const classes = useStyles();

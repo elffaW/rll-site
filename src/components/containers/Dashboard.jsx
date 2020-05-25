@@ -8,6 +8,8 @@ import ReactPlayer from 'react-player';
 import BaseApp from './BaseApp';
 import { styles as paperStyles } from '../../styles/themeStyles';
 
+import networkPromo from '../../videos/NetworkPromo.mp4';
+
 const defaultProps = {
   classes: '',
 };
@@ -26,12 +28,12 @@ class Dashboard extends Component {
 
   render() {
     const { classes } = this.props;
-    const vidUrl = '../../videos/NetworkPromo.mp4';
+    // const vidUrl = '../../videos/NetworkPromo.mp4';
     return (
       <BaseApp>
         <Grid container spacing={2} justify="center">
           <Paper className={classes.paper}>
-            <ReactPlayer url={vidUrl} light controls width="" height="" />
+            <ReactPlayer url={networkPromo} light controls width="" height="" />
           </Paper>
         </Grid>
       </BaseApp>
