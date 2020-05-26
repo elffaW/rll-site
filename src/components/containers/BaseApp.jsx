@@ -91,6 +91,11 @@ export default function BaseApp(props) {
               component={NavLink}
               to="/players"
             />
+            <Tab
+              label="teams"
+              component={NavLink}
+              to="/teams"
+            />
           </Tabs>
         </Toolbar>
       </AppBar>

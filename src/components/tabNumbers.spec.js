@@ -18,6 +18,14 @@ describe('Tab Helper', () => {
       expect(lookupTabNumByPath(path)).toEqual(expectedReturn);
     });
 
+    it('returns 5 for teams path', () => {
+      const path = '/teams';
+      const expectedReturn = 5;
+
+      // assert
+      expect(lookupTabNumByPath(path)).toEqual(expectedReturn);
+    });
+
     it('returns 0 for invalid path', () => {
       const path = '/foaijw293j98a9f';
       const expectedReturn = 0;

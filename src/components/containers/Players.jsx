@@ -96,6 +96,7 @@ export default class Players extends Component {
   // }
 
   render() {
+    // const { players, selectedPlayer } = this.state;
     const { match } = this.props;
     const { params } = match;
     const { playerName } = params;
@@ -110,11 +111,6 @@ export default class Players extends Component {
         </Grid>
       </BaseApp>
     );
-
-    // const { players, selectedPlayer } = this.state;
-    // const { match } = this.props;
-    // const { params } = match;
-    // const { playerName } = params;
 
     // const userCards = [];
     // if (Object.entries(selectedPlayer).length > 0 && playerName) {

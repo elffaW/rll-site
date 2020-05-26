@@ -13,6 +13,7 @@ import Rules from './Rules';
 // import PlayerStats from './PlayerStats';
 import Stats from './Stats';
 import Players from './Players';
+import Teams from './Teams';
 
 export default function AppRouter() {
   return (
@@ -33,6 +34,8 @@ export default function AppRouter() {
             {/* PLAYER ROUTES */}
             <Route path="/players/:playerName" component={Players} />
             <Route path="/players" component={Players} />
+            <Route path="/teams/:teamName" component={Teams} />
+            <Route path="/teams" component={Teams} />
             {/* DASHBOARD AND NOT-FOUND ROUTES */}
             <Route exact path="/" component={Dashboard} />
             <Route component={BaseApp} />
