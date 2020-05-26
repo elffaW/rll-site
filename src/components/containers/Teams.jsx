@@ -6,7 +6,6 @@ import {
 
 import BaseApp from './BaseApp';
 import { styles as paperStyles } from '../../styles/themeStyles';
-import combineStats from '../../images/CombineS2.png';
 
 const defaultProps = {
   classes: '',

@@ -36,6 +36,16 @@ class Stats extends Component {
             <Grid item xs={7}>
               <img alt="stats from season 2 scouting combine" src={combineStats} />
             </Grid>
+            <Grid item xs style={{ height: 800 }}>
+              <iframe
+                title="rll-rules-doc"
+                height="100%"
+                width="100%"
+                src="https://public.flourish.studio/visualisation/2278186/embed"
+              >
+                {/* <div className="flourish-embed flourish-hierarchy" data-src="https://public.flourish.studio/visualisation/2278186/embed" data-url="https://flo.uri.sh/visualisation/2278186/embed" /> */}
+              </iframe>
+            </Grid>
           </Grid>
         </Paper>
       </BaseApp>
