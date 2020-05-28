@@ -1,30 +1,72 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Grid,
-  Header,
-  Icon,
-} from '@material-ui/core';
+import { Grid, Paper } from '@material-ui/core';
 
 import BaseApp from './BaseApp';
 import PlayerCard from '../PlayerCard';
-import NotFound from './NotFound';
+import { styles as paperStyles } from '../../styles/themeStyles';
 
 // eslint-disable-next-line import/no-unresolved
 // const Config = require('Config');
 
-export default class Players extends Component {
+const playersData = [{
+  id: 0, name: 'DanBot', rlName: 'DanBot',
+}, {
+  id: 1, name: 'Matt K', rlName: 'Kawa',
+}, {
+  id: 2, name: 'Speder', rlName: '',
+}, {
+  id: 3, name: 'Matt Aux', rlName: '',
+}, {
+  id: 4, name: 'PDT', rlName: 'dethorne',
+}, {
+  id: 5, name: 'Sanchez', rlName: '',
+}, {
+  id: 6, name: 'TC', rlName: 'pink rock',
+}, {
+  id: 7, name: 'Mark P', rlName: '',
+}, {
+  id: 8, name: 'Tom', rlName: '',
+}, {
+  id: 9, name: 'Mike', rlName: 'elffaW',
+}, {
+  id: 10, name: 'Shanley', rlName: '',
+}, {
+  id: 11, name: 'Singley', rlName: '',
+}, {
+  id: 12, name: 'Jay', rlName: 'tuna',
+}, {
+  id: 13, name: 'JR', rlName: 'jr6969',
+}, {
+  id: 14, name: 'ClunElissa', rlName: '',
+}, {
+  id: 15, name: 'Myrvold', rlName: '',
+}, {
+  id: 16, name: 'Andy', rlName: '',
+}, {
+  id: 17, name: 'Billy', rlName: 'Twerp',
+}, {
+  id: 18, name: 'Mitch', rlName: '',
+}, {
+  id: 19, name: 'Cohn', rlName: '',
+}, {
+  id: 20, name: 'Matt H', rlName: '',
+}];
+
+
+class Players extends Component {
   constructor(props) {
     super(props);
 
+    // get all data for this page
+
     this.state = {
-      players: [],
+      players: playersData,
       selectedPlayer: {},
     };
   }
 
-  // componentDidMount() {
-  //   // get all data for this page
+  componentDidMount() {
 
   //   // get the players
   //   fetch(`${Config.apiHost}/resources/players`, {
@@ -55,7 +97,7 @@ export default class Players extends Component {
   //       { className: 'toast-error' },
   //     );
   //   });
-  // }
+  }
 
   // componentDidUpdate(prevProps) {
   //   const { match } = this.props;
@@ -96,19 +138,25 @@ export default class Players extends Component {
   // }
 
   render() {
-    // const { players, selectedPlayer } = this.state;
-    const { match } = this.props;
+    const { players, selectedPlayer } = this.state;
+    const { classes, match } = this.props;
     const { params } = match;
     const { playerName } = params;
+    console.log(match);
+    const inTeam = match.path.split('/')[1] === 'players';
     return (
       <BaseApp>
-        <Grid container spacing={2} justify="center">
-          {playerName ? (
-            <PlayerCard playerName={playerName} />
-          ) : (
-            <NotFound />
-          )}
-        </Grid>
+        <Paper className={classes.paper}>
+          <Grid container spacing={2} justify="center">
+            {playerName ? (
+              <PlayerCard playerName={playerName} />
+            ) : (
+              players.map((player) => (
+                <PlayerCard playerName={player.name} inTeam />
+              ))
+            )}
+          </Grid>
+        </Paper>
       </BaseApp>
     );
 
@@ -178,4 +226,10 @@ export default class Players extends Component {
 Players.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   match: PropTypes.object.isRequired,
+  classes: PropTypes.string,
 };
+Players.defaultProps = {
+  classes: '',
+};
+
+export default paperStyles(Players);

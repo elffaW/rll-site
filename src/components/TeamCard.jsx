@@ -5,77 +5,83 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
+import PlayerCard from './PlayerCard';
+
 import logo from '../images/RLL_logo.svg';
 
 const useStyles = makeStyles((theme) => ({
-  darkPaper: {
+  paper: {
     padding: theme.spacing(1),
     margin: theme.spacing(1),
     textAlign: 'center',
-    color: theme.otherColors.text.light,
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: theme.palette.primary.light,
     maxWidth: 840,
     width: '100%',
   },
-  playerIcon: {
-    width: theme.spacing(7),
-    height: theme.spacing(7),
+  teamIcon: {
+    width: theme.spacing(12),
+    height: theme.spacing(12),
   },
-  playerName: {
+  teamName: {
     fontVariant: 'small-caps',
+    fontWeight: 700,
+    float: 'left',
+    marginLeft: theme.spacing(2),
     color: 'whitesmoke',
   },
-  playerTitle: {
+  teamDesc: {
     fontVariant: 'small-caps',
-    color: theme.palette.primary.light,
-    float: 'left',
+    fontSize: '1.6em',
   },
-  playerInfo: {
-    float: 'left',
+  teamRecord: {
+    fontVariant: 'small-caps',
+    fontSize: '1.6em',
+    color: 'whitesmoke',
+    fontWeight: 700,
   },
 }));
 
-const defaultProps = {
-  playerName: '',
-  inTeam: false,
-};
-
-function PlayerCard(props) {
-  const { playerName, inTeam } = props;
+function TeamCard(props) {
+  const { team } = props;
   const classes = useStyles();
+  const logoSrc = require(`../images/${team.name}.png`);
   return (
-    <Grid item xs={inTeam ? 11 : 6}>
-      <Paper className={classes.darkPaper}>
+    <Grid item xs={3}>
+      <Paper className={classes.paper}>
         <Grid container alignItems="center" justify="flex-start">
           <Grid item xs={2}>
-            <Avatar src={logo} className={classes.playerIcon} />
+            <Avatar src={logoSrc} className={classes.teamIcon} />
+          </Grid>
+          <Grid item xs={9}>
+            <Typography variant="h3" className={classes.teamName}>{team.name}</Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <Typography className={classes.teamRecord}>10 - 2</Typography>
           </Grid>
           <Grid item xs={4}>
-            <span className={classes.playerInfo}>
-              <Typography variant="h4" className={classes.playerName}>{playerName}</Typography>
-              <Typography variant="h5" className={classes.playerTitle}>{playerName}</Typography>
-            </span>
+            <Typography className={classes.teamDesc}>1st place</Typography>
           </Grid>
           <Grid item xs={3}>
-            <Typography variant="h5" className={classes.playerName}>32 pts</Typography>
+            <Typography className={classes.teamDesc}>15 pts</Typography>
           </Grid>
           <Grid item xs={3}>
-            <Typography variant="h5" className={classes.playerName}>$11.1M</Typography>
+            <Typography className={classes.teamDesc}>$18.6M</Typography>
           </Grid>
+          {team.members.map((member) => (
+            <PlayerCard playerName={member} inTeam />
+          ))}
         </Grid>
       </Paper>
     </Grid>
   );
 }
 
-PlayerCard.propTypes = {
+TeamCard.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
-  playerName: PropTypes.string,
-  inTeam: PropTypes.boolean,
+  team: PropTypes.object.isRequired,
 };
-PlayerCard.defaultProps = defaultProps;
 
-export default PlayerCard;
+export default TeamCard;
 
 // import React, { Component } from 'react';
 // import PropTypes from 'prop-types';

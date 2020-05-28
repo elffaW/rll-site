@@ -13,6 +13,12 @@ const baseTheme = createMuiTheme({
       dark: '#8e0000',
     },
   },
+  otherColors: {
+    text: {
+      light: '#d0d0d0',
+      dark: '#202020',
+    },
+  },
 });
 
 export default baseTheme;

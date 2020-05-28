@@ -5,36 +5,51 @@ import {
 } from '@material-ui/core';
 
 import BaseApp from './BaseApp';
+import TeamCard from '../TeamCard';
 import { styles as paperStyles } from '../../styles/themeStyles';
 
 const defaultProps = {
   classes: '',
 };
 
+const teamsData = [
+  { name: 'Real Fake Bots', members: ['DanBot', 'Primiano', 'Andy'] },
+  { name: 'b', members: ['Kawa', 'Myrv', 'ClunElissa'] },
+  { name: 'c', members: ['Speder', 'Mike', 'Tom'] },
+  { name: 'd', members: ['Matt Aux', 'Billy', 'Mitch'] },
+  { name: 'e', members: ['PDT', 'Singley', 'Shanley'] },
+  { name: 'Los Toros Hermanos', members: ['Sanchez', 'Jay', 'Matt H'] },
+  { name: 'g', members: ['TC', 'JR', 'Cohn'] },
+  { name: 'DinoBots', members: ['Marley', 'Dan', 'C-Block'] },
+];
+
 class Stats extends Component {
   constructor(props) {
     super(props);
 
+    // get all data for this page
+    // this.setState({ teams: teamsData });
+
     this.state = {
+      teams: teamsData,
     };
   }
 
-  componentDidMount() {
-    // get all data for this page
+  componentDidUpdate() {
+    // update data?
   }
 
   render() {
     const { classes } = this.props;
+    const { teams } = this.state;
     return (
       <BaseApp>
-        <Paper className={classes.paper}>
-          <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
-            <Grid item xs={12}>
-              <Typography variant="h3">Come back later!</Typography>
-            </Grid>
-\
-          </Grid>
-        </Paper>
+        <Typography variant="h2">RLL Season 2 Teams</Typography>
+        <Grid container spacing={5} alignItems="flex-start" justify="flex-start">
+          {teams.map((team) => (
+            <TeamCard team={team} />
+          ))}
+        </Grid>
       </BaseApp>
     );
   }

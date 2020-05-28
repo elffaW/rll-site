@@ -20,9 +20,6 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(1),
     },
   },
-  mainLogo: {
-    float: 'left',
-  },
   mainContent: {
     // hide scrollbars but still allow scrolling
     overflow: 'scroll',
