@@ -37,18 +37,20 @@ const useStyles = makeStyles((theme) => ({
 
 const defaultProps = {
   playerName: '',
+  playerCar: 'ROADHOG',
   inTeam: false,
 };
 
 function PlayerCard(props) {
-  const { playerName, inTeam } = props;
+  const { playerName, playerCar, inTeam } = props;
   const classes = useStyles();
+  const logoSrc = require(`../images/CAR_${playerCar}.png`);
   return (
     <Grid item xs={inTeam ? 11 : 6}>
       <Paper className={classes.darkPaper}>
         <Grid container alignItems="center" justify="flex-start">
           <Grid item xs={2}>
-            <Avatar src={logo} className={classes.playerIcon} />
+            <Avatar src={logoSrc} className={classes.playerIcon} />
           </Grid>
           <Grid item xs={4}>
             <span className={classes.playerInfo}>
@@ -71,6 +73,7 @@ function PlayerCard(props) {
 PlayerCard.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   playerName: PropTypes.string,
+  playerCar: PropTypes.string,
   inTeam: PropTypes.boolean,
 };
 PlayerCard.defaultProps = defaultProps;

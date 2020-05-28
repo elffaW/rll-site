@@ -7,7 +7,49 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import PlayerCard from './PlayerCard';
 
-import logo from '../images/RLL_logo.svg';
+const playersData = [{
+  id: 0, name: 'DanBot', rlName: 'DanBot', car: 'ENDO',
+}, {
+  id: 1, name: 'Matt K', rlName: 'Kawa', car: 'ROADHOG',
+}, {
+  id: 2, name: 'Speder', rlName: '', car: 'BREAKOUT',
+}, {
+  id: 3, name: 'Matt Aux', rlName: '', car: 'DOMINUS',
+}, {
+  id: 4, name: 'PDT', rlName: 'dethorne', car: 'HOTSHOT',
+}, {
+  id: 5, name: 'Sanchez', rlName: '', car: 'MERC',
+}, {
+  id: 6, name: 'TC', rlName: 'pink rock', car: 'OCTANE',
+}, {
+  id: 7, name: 'Mark P', rlName: '', car: 'PALADIN',
+}, {
+  id: 8, name: 'Tom', rlName: '', car: 'TAKUMI',
+}, {
+  id: 9, name: 'Mike', rlName: 'elffaW', car: 'VENOM',
+}, {
+  id: 10, name: 'Shanley', rlName: '', car: 'XDEVIL',
+}, {
+  id: 11, name: 'Singley', rlName: '', car: 'ZIPPY',
+}, {
+  id: 12, name: 'Jay', rlName: 'tuna', car: 'ROADHOG',
+}, {
+  id: 13, name: 'JR', rlName: 'jr6969', car: 'ROADHOG',
+}, {
+  id: 14, name: 'ClunElissa', rlName: '', car: 'BREAKOUT',
+}, {
+  id: 15, name: 'Myrvold', rlName: '', car: 'ROADHOG',
+}, {
+  id: 16, name: 'Andy', rlName: '', car: 'MERC',
+}, {
+  id: 17, name: 'Billy', rlName: 'Twerp', car: 'PALADIN',
+}, {
+  id: 18, name: 'Mitch', rlName: '', car: 'ROADHOG',
+}, {
+  id: 19, name: 'Cohn', rlName: '', car: 'PALADIN',
+}, {
+  id: 20, name: 'Matt H', rlName: '', car: 'VENOM',
+}];
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -67,9 +109,14 @@ function TeamCard(props) {
           <Grid item xs={3}>
             <Typography className={classes.teamDesc}>$18.6M</Typography>
           </Grid>
-          {team.members.map((member) => (
-            <PlayerCard playerName={member} inTeam />
-          ))}
+          {team.members.map((member) => {
+            const curPlayer = playersData.find((player) => player.name === member);
+            let playerCar = 'ROADHOG';
+            if (curPlayer) {
+              playerCar = curPlayer.car;
+            }
+            return <PlayerCard playerName={member} playerCar={playerCar} inTeam />;
+          })}
         </Grid>
       </Paper>
     </Grid>

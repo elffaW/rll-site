@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Grid, Paper, Typography,
+  Grid, Typography,
 } from '@material-ui/core';
 
 import BaseApp from './BaseApp';
@@ -14,7 +14,7 @@ const defaultProps = {
 
 const teamsData = [
   { name: 'Real Fake Bots', members: ['DanBot', 'Primiano', 'Andy'] },
-  { name: 'b', members: ['Kawa', 'Myrv', 'ClunElissa'] },
+  { name: 'Hot Chickens', members: ['Kawa', 'Myrv', 'ClunElissa'] },
   { name: 'c', members: ['Speder', 'Mike', 'Tom'] },
   { name: 'd', members: ['Matt Aux', 'Billy', 'Mitch'] },
   { name: 'e', members: ['PDT', 'Singley', 'Shanley'] },
