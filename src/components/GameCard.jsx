@@ -32,7 +32,6 @@ const useStyles = makeStyles((theme) => ({
   },
   gameName: {
     fontVariant: 'small-caps',
-    marginLeft: theme.spacing(2),
     color: 'whitesmoke',
   },
   gameDesc: {

@@ -54,18 +54,21 @@ class Dashboard extends Component {
     return (
       <BaseApp>
         <Grid container spacing={2} justify="center">
-          <Typography variant="h3" style={{ fontVariant: 'small-caps' }}>
-            Welcome to the Rocket League League league site!
-          </Typography>
-          <br />
-          <Typography variant="h5" style={{ fontVariant: 'small-caps' }}>
-            Current (or upcoming) Game:&nbsp;
-            <span style={{ color: 'whitesmoke' }}>{homeTeam.name}</span>
-            &nbsp;vs&nbsp;
-            <span style={{ color: 'whitesmoke' }}>{awayTeam.name}</span>
-            &nbsp;at&nbsp;
-            <span style={{ color: 'whitesmoke' }}>{new Date(curGame.gameTime).toLocaleString()}</span>
-          </Typography>
+          <Grid item xs={12}>
+            <Typography variant="h3" style={{ fontVariant: 'small-caps' }}>
+              Welcome to the Rocket League League league site!
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="h5" style={{ fontVariant: 'small-caps' }}>
+              Current (or upcoming) Game:&nbsp;
+              <span style={{ color: 'whitesmoke' }}>{homeTeam.name}</span>
+              &nbsp;vs&nbsp;
+              <span style={{ color: 'whitesmoke' }}>{awayTeam.name}</span>
+              &nbsp;at&nbsp;
+              <span style={{ color: 'whitesmoke' }}>{new Date(curGame.gameTime).toLocaleString()}</span>
+            </Typography>
+          </Grid>
           <Grid item xs={12} style={{ width: '100%' }}>
             <Paper className={classes.paper}>
               <Tooltip title={tooltipText}>
