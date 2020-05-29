@@ -52,8 +52,8 @@ function PlayerCard(props) {
           </Grid>
           <Grid item xs={4}>
             <span className={classes.playerInfo}>
-              <Typography variant="h4" className={classes.playerName}>{player.name}</Typography>
-              <Typography variant="h5" className={classes.playerTitle}>{player.name}</Typography>
+              <Typography variant="h5" className={classes.playerName}>{player.name}</Typography>
+              <Typography variant="h6" className={classes.playerTitle}>{player.name}</Typography>
             </span>
           </Grid>
           <Grid item xs={3}>
