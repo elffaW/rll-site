@@ -5,7 +5,7 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-import logo from '../images/RLL_logo.svg';
+// import { playersData } from './containers/Players';
 
 const useStyles = makeStyles((theme) => ({
   darkPaper: {
@@ -36,15 +36,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const defaultProps = {
-  playerName: '',
-  playerCar: 'ROADHOG',
   inTeam: false,
 };
 
 function PlayerCard(props) {
-  const { playerName, playerCar, inTeam } = props;
+  const { player, inTeam } = props;
   const classes = useStyles();
-  const logoSrc = require(`../images/CAR_${playerCar}.png`);
+  const logoSrc = require(`../images/CAR_${player.car}.png`);
+  const totalPoints = player.goals + player.assists;
   return (
     <Grid item xs={inTeam ? 11 : 6}>
       <Paper className={classes.darkPaper}>
@@ -54,15 +53,15 @@ function PlayerCard(props) {
           </Grid>
           <Grid item xs={4}>
             <span className={classes.playerInfo}>
-              <Typography variant="h4" className={classes.playerName}>{playerName}</Typography>
-              <Typography variant="h5" className={classes.playerTitle}>{playerName}</Typography>
+              <Typography variant="h4" className={classes.playerName}>{player.name}</Typography>
+              <Typography variant="h5" className={classes.playerTitle}>{player.name}</Typography>
             </span>
           </Grid>
           <Grid item xs={3}>
-            <Typography variant="h5" className={classes.playerName}>32 pts</Typography>
+            <Typography variant="h5" className={classes.playerName}>{`${totalPoints} pts`}</Typography>
           </Grid>
           <Grid item xs={3}>
-            <Typography variant="h5" className={classes.playerName}>$11.1M</Typography>
+            <Typography variant="h5" className={classes.playerName}>{`$${player.value}M`}</Typography>
           </Grid>
         </Grid>
       </Paper>
@@ -72,8 +71,7 @@ function PlayerCard(props) {
 
 PlayerCard.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
-  playerName: PropTypes.string,
-  playerCar: PropTypes.string,
+  player: PropTypes.object.isRequired,
   inTeam: PropTypes.boolean,
 };
 PlayerCard.defaultProps = defaultProps;

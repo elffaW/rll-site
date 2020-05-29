@@ -9,50 +9,55 @@ import { styles as paperStyles } from '../../styles/themeStyles';
 // eslint-disable-next-line import/no-unresolved
 // const Config = require('Config');
 
-const playersData = [{
-  id: 0, name: 'DanBot', rlName: 'DanBot', car: 'ENDO',
+export const playersData = [{
+  id: 0, name: 'DanBot', rlName: 'DanBot', car: 'ENDO', value: 8.6, goals: 32, assists: 12,
 }, {
-  id: 1, name: 'Matt K', rlName: 'Kawa', car: 'ROADHOG',
+  id: 1, name: 'Matt K', rlName: 'Kawa', car: 'ROADHOG', value: 8.4, goals: 31, assists: 12,
 }, {
-  id: 2, name: 'Speder', rlName: '', car: 'BREAKOUT',
+  id: 2, name: 'Speder', rlName: '', car: 'BREAKOUT', value: 6.6, goals: 22, assists: 12,
 }, {
-  id: 3, name: 'Matt Aux', rlName: '', car: 'DOMINUS',
+  id: 3, name: 'Matt Aux', rlName: '', car: 'DOMINUS', value: 6.5, goals: 12, assists: 12,
 }, {
-  id: 4, name: 'PDT', rlName: 'dethorne', car: 'HOTSHOT',
+  id: 4, name: 'PDT', rlName: 'dethorne', car: 'HOTSHOT', value: 5.6, goals: 11, assists: 12,
 }, {
-  id: 5, name: 'Sanchez', rlName: '', car: 'MERC',
+  id: 5, name: 'Sanchez', rlName: '', car: 'MERC', value: 5.6, goals: 12, assists: 12,
 }, {
-  id: 6, name: 'TC', rlName: 'pink rock', car: 'OCTANE',
+  id: 6, name: 'TC', rlName: 'pink rock', car: 'OCTANE', value: 5.6, goals: 1, assists: 12,
 }, {
-  id: 7, name: 'Mark P', rlName: '', car: 'PALADIN',
+  id: 7, name: 'Mark P', rlName: 'Primiano', car: 'PALADIN', value: 2.6, goals: 12, assists: 12,
 }, {
-  id: 8, name: 'Tom', rlName: '', car: 'TAKUMI',
+  id: 8, name: 'Tom', rlName: '', car: 'TAKUMI', value: 2.6, goals: 12, assists: 12,
 }, {
-  id: 9, name: 'Mike', rlName: 'elffaW', car: 'VENOM',
+  id: 9, name: 'Mike', rlName: 'elffaW', car: 'VENOM', value: 5.6, goals: 12, assists: 12,
 }, {
-  id: 10, name: 'Shanley', rlName: '', car: 'XDEVIL',
+  id: 10, name: 'Shanley', rlName: '', car: 'XDEVIL', value: 5.6, goals: 12, assists: 12,
 }, {
-  id: 11, name: 'Singley', rlName: '', car: 'ZIPPY',
+  id: 11, name: 'Singley', rlName: '', car: 'ZIPPY', value: 2.6, goals: 12, assists: 12,
 }, {
-  id: 12, name: 'Jay', rlName: 'tuna', car: 'ROADHOG',
+  id: 12, name: 'Jay', rlName: 'tuna', car: 'ROADHOG', value: 5.6, goals: 12, assists: 12,
 }, {
-  id: 13, name: 'JR', rlName: 'jr6969', car: 'ROADHOG',
+  id: 13, name: 'JR', rlName: 'jr6969', car: 'ROADHOG', value: 5.6, goals: 12, assists: 12,
 }, {
-  id: 14, name: 'ClunElissa', rlName: '', car: 'BREAKOUT',
+  id: 14, name: 'ClunElissa', rlName: '', car: 'BREAKOUT', value: 2.6, goals: 12, assists: 12,
 }, {
-  id: 15, name: 'Myrvold', rlName: '', car: 'ROADHOG',
+  id: 15, name: 'Myrvold', rlName: 'Myrv', car: 'ROADHOG', value: 2.6, goals: 12, assists: 12,
 }, {
-  id: 16, name: 'Andy', rlName: '', car: 'MERC',
+  id: 16, name: 'Andy', rlName: '', car: 'MERC', value: 5.6, goals: 12, assists: 12,
 }, {
-  id: 17, name: 'Billy', rlName: 'Twerp', car: 'PALADIN',
+  id: 17, name: 'Billy', rlName: 'Twerp', car: 'PALADIN', value: 5.6, goals: 12, assists: 12,
 }, {
-  id: 18, name: 'Mitch', rlName: '', car: 'ROADHOG',
+  id: 18, name: 'Mitch', rlName: '', car: 'ROADHOG', value: 2.6, goals: 12, assists: 12,
 }, {
-  id: 19, name: 'Cohn', rlName: '', car: 'PALADIN',
+  id: 19, name: 'Cohn', rlName: '', car: 'PALADIN', value: 2.6, goals: 12, assists: 12,
 }, {
-  id: 20, name: 'Matt H', rlName: '', car: 'VENOM',
+  id: 20, name: 'Matt H', rlName: '', car: 'VENOM', value: 2.6, goals: 12, assists: 12,
+}, {
+  id: 21, name: 'Marley', rlName: '', car: 'MERC', value: 12.6, goals: 112, assists: 12,
+}, {
+  id: 22, name: 'C-Block', rlName: '', car: 'MERC', value: 22.6, goals: 132, assists: 12,
+}, {
+  id: 23, name: 'Jester', rlName: '', car: 'MERC', value: 32.6, goals: 126, assists: 12,
 }];
-
 
 class Players extends Component {
   constructor(props) {
@@ -61,7 +66,7 @@ class Players extends Component {
     // get all data for this page
 
     this.state = {
-      players: playersData,
+      players: playersData.sort((a, b) => b.value - a.value), // sort with higher value at top
       selectedPlayer: {},
     };
   }
@@ -152,7 +157,7 @@ class Players extends Component {
               <PlayerCard playerName={playerName} />
             ) : (
               players.map((player) => (
-                <PlayerCard playerName={player.name} playerCar={player.car} inTeam={isInTeam} />
+                <PlayerCard player={player} inTeam={isInTeam} />
               ))
             )}
           </Grid>
