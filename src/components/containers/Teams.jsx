@@ -17,7 +17,7 @@ export const teamsData = [
     id: 1, name: 'Real Fake Bots', members: [0, 7, 16], wins: 0, losses: 0, points: 0, rank: 1,
   },
   {
-    id: 2, name: 'Los Toros Hermanos', members: [5, 12, 20], wins: 0, losses: 0, points: 0, rank: 6,
+    id: 2, name: 'Los Toros Hermanos', members: [5, 12, 20], wins: 0, losses: 0, points: 0, rank: 2,
   },
   {
     id: 3, name: 'Hold My Bear', members: [2, 9, 8], wins: 0, losses: 0, points: 0, rank: 3,
@@ -29,7 +29,7 @@ export const teamsData = [
     id: 5, name: 'Singley Meat Sandwich', members: [4, 11, 10], wins: 0, losses: 0, points: 0, rank: 5,
   },
   {
-    id: 6, name: 'Hot Chickens', members: [1, 15, 14], wins: 0, losses: 0, points: 0, rank: 2,
+    id: 6, name: 'Hot Chickens', members: [1, 15, 14], wins: 0, losses: 0, points: 0, rank: 6,
   },
   {
     id: 7, name: 'Tri-Cs', members: [6, 13, 19], wins: 0, losses: 0, points: 0, rank: 7,

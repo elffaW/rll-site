@@ -10,6 +10,7 @@ import { gamesData } from './Schedule';
 import { teamsData } from './Teams';
 import GameCard from '../GameCard';
 import { styles as paperStyles } from '../../styles/themeStyles';
+import { timezoneLookup } from '../utils/dateUtils';
 
 import networkPromo from '../../videos/NetworkPromo.mp4';
 
@@ -51,6 +52,7 @@ class Dashboard extends Component {
     const curGame = gamesData.find((game) => game.id === (prevGame.id + 1));
     const homeTeam = teamsData.find((team) => team.id === curGame.homeTeam);
     const awayTeam = teamsData.find((team) => team.id === curGame.awayTeam);
+    const gameTime = new Date(curGame.gameTime).toLocaleString() + timezoneLookup(new Date().getTimezoneOffset());
     return (
       <BaseApp>
         <Grid container spacing={2} justify="center">
@@ -66,7 +68,7 @@ class Dashboard extends Component {
               &nbsp;vs&nbsp;
               <span style={{ color: 'whitesmoke' }}>{awayTeam.name}</span>
               &nbsp;at&nbsp;
-              <span style={{ color: 'whitesmoke' }}>{new Date(curGame.gameTime).toLocaleString()}</span>
+              <span style={{ color: 'whitesmoke' }}>{gameTime}</span>
             </Typography>
           </Grid>
           <Grid item xs={12} style={{ width: '100%' }}>

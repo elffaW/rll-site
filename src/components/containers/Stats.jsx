@@ -37,6 +37,7 @@ class Stats extends Component {
               <img alt="stats from season 2 scouting combine" src={combineStats} />
             </Grid>
             <Grid item xs style={{ height: 800 }}>
+              <Typography variant="h3">Season 1 Stats</Typography>
               <iframe
                 title="rll-rules-doc"
                 height="100%"

@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Grid, Paper, Avatar, Typography,
+  Grid, Paper, Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 import TeamCard from './TeamCard';
 
-import { playersData } from './containers/Players';
+import { timezoneLookup } from './utils/dateUtils';
 import { teamsData } from './containers/Teams';
 
 const useStyles = makeStyles((theme) => ({
@@ -53,6 +53,8 @@ function GameCard(props) {
   // const homeLogo = require(`../images/LOGO_${home.name}.png`);
   // const awayLogo = require(`../images/LOGO_${away.name}.png`);
 
+  const gameTime = new Date(game.gameTime).toLocaleString() + timezoneLookup(new Date().getTimezoneOffset());
+
 
   // id: 1, homeTeam: 1, awayTeam: 2, gameTime: '05/29/2020 7:30PM CT', arena: 'Salty Shores',
   return (
@@ -64,7 +66,7 @@ function GameCard(props) {
           </Grid>
           <Grid item xs={2}>
             <Typography variant="h4" className={classes.gameName}>{`Game ${game.id}`}</Typography>
-            <Typography variant="h6" className={classes.gameDesc}>{new Date(game.gameTime).toLocaleString()}</Typography>
+            <Typography variant="h6" className={classes.gameDesc}>{gameTime}</Typography>
             <Typography variant="h6" className={classes.gameDesc}>{game.arena}</Typography>
           </Grid>
           <Grid item xs={5}>
