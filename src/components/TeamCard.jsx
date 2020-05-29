@@ -31,6 +31,12 @@ const useStyles = makeStyles((theme) => ({
   teamDesc: {
     fontVariant: 'small-caps',
     fontSize: '1.6em',
+    '& > span.first': {
+      color: 'gold',
+    },
+    '& > span.last': {
+      color: theme.palette.secondary.dark,
+    },
   },
   teamRecord: {
     fontVariant: 'small-caps',
@@ -45,9 +51,11 @@ function TeamCard(props) {
   const classes = useStyles();
   const logoSrc = require(`../images/${team.name}.png`);
   let rankSuffix = 'th';
+  let rankClass = '';
   switch (team.rank) {
     case 1:
       rankSuffix = 'st';
+      rankClass = 'first';
       break;
     case 2:
       rankSuffix = 'nd';
@@ -55,20 +63,20 @@ function TeamCard(props) {
     case 3:
       rankSuffix = 'rd';
       break;
+    case 8:
+      rankClass = 'last';
+    // eslint-disable-next-line no-fallthrough
     case 4:
     case 5:
     case 6:
     case 7:
-    case 8:
     case 9:
     case 0:
-      rankSuffix = 'th';
-      break;
     default:
       rankSuffix = 'th';
       break;
   }
-  const teamRank = `${team.rank}${rankSuffix} place`;
+  const teamRank = team.rank === 8 ? 'LAST' : `${team.rank}${rankSuffix}`;
   let teamValue = 0;
   for (let i = 0; i < team.members.length; i++) {
     const curMember = team.members[i];
@@ -93,7 +101,11 @@ function TeamCard(props) {
             <Typography className={classes.teamRecord}>{`${team.wins} - ${team.losses}`}</Typography>
           </Grid>
           <Grid item xs={4}>
-            <Typography className={classes.teamDesc}>{`${teamRank}`}</Typography>
+            <Typography className={classes.teamDesc}>
+              <span className={rankClass}>{`${teamRank}`}</span>
+              {' '}
+              place
+            </Typography>
           </Grid>
           <Grid item xs={3}>
             <Typography className={classes.teamDesc}>{`${team.points} pts`}</Typography>

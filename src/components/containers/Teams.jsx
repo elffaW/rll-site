@@ -56,7 +56,6 @@ class Stats extends Component {
   }
 
   render() {
-    const { classes } = this.props;
     const { teams } = this.state;
     return (
       <BaseApp>
