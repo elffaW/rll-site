@@ -14,7 +14,6 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.otherColors.text.light,
     backgroundColor: theme.palette.primary.dark,
-    maxWidth: 840,
     width: '100%',
   },
   playerIcon: {

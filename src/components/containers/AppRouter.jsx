@@ -9,7 +9,7 @@ import BaseApp from './BaseApp';
 import Dashboard from './Dashboard';
 import Rules from './Rules';
 // import ScheduleDetails from './ScheduleDetails';
-// import Schedule from './Schedule';
+import Schedule from './Schedule';
 // import PlayerStats from './PlayerStats';
 import Stats from './Stats';
 import Players from './Players';
@@ -27,7 +27,7 @@ export default function AppRouter() {
             <Route path="/rules" component={Rules} />
             {/* SCHEDULE ROUTES */}
             {/* <Route path="/schedule/:weekNum" component={ScheduleDetails} /> */}
-            {/* <Route path="/schedule" component={Schedule} /> */}
+            <Route path="/schedule" component={Schedule} />
             {/* STATS ROUTES */}
             {/* <Route path="/stats/:playerId" component={PlayerStats} /> */}
             <Route path="/stats" component={Stats} />

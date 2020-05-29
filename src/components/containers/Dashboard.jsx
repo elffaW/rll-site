@@ -6,6 +6,9 @@ import {
 import ReactPlayer from 'react-player';
 
 import BaseApp from './BaseApp';
+import { gamesData } from './Schedule';
+import { teamsData } from './Teams';
+import GameCard from '../GameCard';
 import { styles as paperStyles } from '../../styles/themeStyles';
 
 import networkPromo from '../../videos/NetworkPromo.mp4';
@@ -36,17 +39,45 @@ class Dashboard extends Component {
     const lightPlayer = !showTwitch;
     const tooltipText = showTwitch ? '' : 'Click to get hyped';
     const streamHeight = showTwitch ? 800 : '';
+    const rightNow = new Date();
+    // find first game where gameTime is before now
+    let prevGame = gamesData.find((game) => new Date(game.gameTime) < rightNow);
+    if (!prevGame) {
+      prevGame = {
+        id: 0,
+      };
+    }
+    // get the game after that one (by ID)
+    const curGame = gamesData.find((game) => game.id === (prevGame.id + 1));
+    const homeTeam = teamsData.find((team) => team.id === curGame.homeTeam);
+    const awayTeam = teamsData.find((team) => team.id === curGame.awayTeam);
     return (
       <BaseApp>
         <Grid container spacing={2} justify="center">
           <Typography variant="h3" style={{ fontVariant: 'small-caps' }}>
             Welcome to the Rocket League League league site!
           </Typography>
-          <Paper className={classes.paper}>
-            <Tooltip title={tooltipText}>
-              <ReactPlayer url={vidUrl} light={lightPlayer} controls width="" height={streamHeight} />
-            </Tooltip>
-          </Paper>
+          <br />
+          <Typography variant="h5" style={{ fontVariant: 'small-caps' }}>
+            Current (or upcoming) Game:&nbsp;
+            <span style={{ color: 'whitesmoke' }}>{homeTeam.name}</span>
+            &nbsp;vs&nbsp;
+            <span style={{ color: 'whitesmoke' }}>{awayTeam.name}</span>
+            &nbsp;at&nbsp;
+            <span style={{ color: 'whitesmoke' }}>{new Date(curGame.gameTime).toLocaleString()}</span>
+          </Typography>
+          <Grid item xs={12} style={{ width: '100%' }}>
+            <Paper className={classes.paper}>
+              <Tooltip title={tooltipText}>
+                <ReactPlayer url={vidUrl} light={lightPlayer} controls width="" height={streamHeight} />
+              </Tooltip>
+            </Paper>
+          </Grid>
+          <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
+            {gamesData.map((game) => (
+              <GameCard game={game} />
+            ))}
+          </Grid>
         </Grid>
       </BaseApp>
     );

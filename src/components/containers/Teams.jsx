@@ -12,34 +12,34 @@ const defaultProps = {
   classes: '',
 };
 
-const teamsData = [
+export const teamsData = [
   {
-    name: 'Real Fake Bots', members: [0, 7, 16], wins: 0, losses: 0, points: 0, rank: 1,
+    id: 1, name: 'Real Fake Bots', members: [0, 7, 16], wins: 0, losses: 0, points: 0, rank: 1,
   },
   {
-    name: 'Hot Chickens', members: [1, 15, 14], wins: 0, losses: 0, points: 0, rank: 2,
+    id: 2, name: 'Los Toros Hermanos', members: [5, 12, 20], wins: 0, losses: 0, points: 0, rank: 6,
   },
   {
-    name: 'c', members: [2, 9, 8], wins: 0, losses: 0, points: 0, rank: 3,
+    id: 3, name: 'Hold My Bear', members: [2, 9, 8], wins: 0, losses: 0, points: 0, rank: 3,
   },
   {
-    name: 'd', members: [3, 17, 18], wins: 0, losses: 0, points: 0, rank: 4,
+    id: 4, name: 'Boost Bandits', members: [3, 17, 18], wins: 0, losses: 0, points: 0, rank: 4,
   },
   {
-    name: 'e', members: [4, 11, 10], wins: 0, losses: 0, points: 0, rank: 5,
+    id: 5, name: 'Singley Meat Sandwich', members: [4, 11, 10], wins: 0, losses: 0, points: 0, rank: 5,
   },
   {
-    name: 'Los Toros Hermanos', members: [5, 12, 20], wins: 0, losses: 0, points: 0, rank: 6,
+    id: 6, name: 'Hot Chickens', members: [1, 15, 14], wins: 0, losses: 0, points: 0, rank: 2,
   },
   {
-    name: 'g', members: [6, 13, 19], wins: 0, losses: 0, points: 0, rank: 7,
+    id: 7, name: 'Tri-Cs', members: [6, 13, 19], wins: 0, losses: 0, points: 0, rank: 7,
   },
   {
-    name: 'DinoBots', members: [21, 22, 23], wins: 0, losses: 0, points: 0, rank: 8,
+    id: 8, name: 'DinoBots', members: [21, 22, 23], wins: 0, losses: 0, points: 0, rank: 8,
   },
 ];
 
-class Stats extends Component {
+class Teams extends Component {
   constructor(props) {
     super(props);
 
@@ -70,9 +70,9 @@ class Stats extends Component {
   }
 }
 
-Stats.propTypes = {
+Teams.propTypes = {
   classes: PropTypes.string,
 };
-Stats.defaultProps = defaultProps;
+Teams.defaultProps = defaultProps;
 
-export default paperStyles(Stats);
+export default paperStyles(Teams);

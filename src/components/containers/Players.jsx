@@ -22,7 +22,7 @@ export const playersData = [{
 }, {
   id: 5, name: 'Sanchez', rlName: '', car: 'MERC', value: 5.6, goals: 12, assists: 12,
 }, {
-  id: 6, name: 'TC', rlName: 'pink rock', car: 'OCTANE', value: 5.6, goals: 1, assists: 12,
+  id: 6, name: 'TC', rlName: 'pink rock', car: 'OCTANE', value: -1.6, goals: 1, assists: 12,
 }, {
   id: 7, name: 'Mark P', rlName: 'Primiano', car: 'PALADIN', value: 2.6, goals: 12, assists: 12,
 }, {

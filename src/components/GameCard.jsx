@@ -5,9 +5,10 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-import PlayerCard from './PlayerCard';
+import TeamCard from './TeamCard';
 
 import { playersData } from './containers/Players';
+import { teamsData } from './containers/Teams';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -17,122 +18,71 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.light,
     width: '100%',
   },
-  teamIcon: {
+  darkPaper: {
+    padding: theme.spacing(1),
+    margin: theme.spacing(1),
+    textAlign: 'center',
+    color: theme.otherColors.text.light,
+    backgroundColor: theme.palette.primary.dark,
+    width: '100%',
+  },
+  gameIcon: {
     width: theme.spacing(12),
     height: theme.spacing(12),
   },
-  teamName: {
+  gameName: {
     fontVariant: 'small-caps',
-    float: 'left',
     marginLeft: theme.spacing(2),
     color: 'whitesmoke',
   },
-  teamDesc: {
+  gameDesc: {
     fontVariant: 'small-caps',
     fontSize: '1.6em',
-    '& > span.first': {
-      color: 'gold',
-    },
-    '& > span.last': {
-      color: theme.palette.secondary.dark,
-    },
   },
-  teamRecord: {
-    fontVariant: 'small-caps',
-    fontSize: '1.6em',
-    color: 'whitesmoke',
-    fontWeight: 700,
+  awayCard: {
+    marginLeft: theme.spacing(2),
   },
 }));
 
-function TeamCard(props) {
-  const { team, inGame } = props;
+function GameCard(props) {
+  const { game } = props;
   const classes = useStyles();
-  const logoSrc = require(`../images/LOGO_${team.name}.png`);
-  let rankSuffix = 'th';
-  let rankClass = '';
-  switch (team.rank) {
-    case 1:
-      rankSuffix = 'st';
-      rankClass = 'first';
-      break;
-    case 2:
-      rankSuffix = 'nd';
-      break;
-    case 3:
-      rankSuffix = 'rd';
-      break;
-    case 8:
-      rankClass = 'last';
-    // eslint-disable-next-line no-fallthrough
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 9:
-    case 0:
-    default:
-      rankSuffix = 'th';
-      break;
-  }
-  const teamRank = team.rank === 8 ? 'LAST' : `${team.rank}${rankSuffix}`;
-  let teamValue = 0;
-  for (let i = 0; i < team.members.length; i++) {
-    const curMember = team.members[i];
-    const curPlayer = playersData.find((player) => player.id === curMember);
-    if (curPlayer) {
-      teamValue += curPlayer.value;
-    }
-  }
-  teamValue = teamValue.toFixed(1);
-  const colsXS = inGame ? 11 : 6;
-  const colsXL = inGame ? false : 3;
+
+  const home = teamsData.find((team) => team.id === game.homeTeam);
+  const away = teamsData.find((team) => team.id === game.awayTeam);
+
+  // const homeLogo = require(`../images/LOGO_${home.name}.png`);
+  // const awayLogo = require(`../images/LOGO_${away.name}.png`);
+
+
+  // id: 1, homeTeam: 1, awayTeam: 2, gameTime: '05/29/2020 7:30PM CT', arena: 'Salty Shores',
   return (
-    <Grid item xs={colsXS} xl={colsXL}>
-      <Paper className={classes.paper}>
-        <Grid container alignItems="center" justify="flex-start">
-          <Grid item xs={3} xl={2}>
-            <Avatar src={logoSrc} className={classes.teamIcon} />
-          </Grid>
-          <Grid item xs={9}>
-            <Typography variant="h4" className={classes.teamName}>{team.name}</Typography>
+    <Grid item xs={12}>
+      <Paper className={classes.darkPaper}>
+        <Grid container alignItems="center" justify="space-around">
+          <Grid item xs={5}>
+            <TeamCard team={home} inGame />
           </Grid>
           <Grid item xs={2}>
-            <Typography className={classes.teamRecord}>{`${team.wins} - ${team.losses}`}</Typography>
+            <Typography variant="h4" className={classes.gameName}>{`Game ${game.id}`}</Typography>
+            <Typography variant="h6" className={classes.gameDesc}>{new Date(game.gameTime).toLocaleString()}</Typography>
+            <Typography variant="h6" className={classes.gameDesc}>{game.arena}</Typography>
           </Grid>
-          <Grid item xs={4}>
-            <Typography className={classes.teamDesc}>
-              <span className={rankClass}>{`${teamRank}`}</span>
-              {' '}
-              place
-            </Typography>
+          <Grid item xs={5}>
+            <TeamCard team={away} inGame className={classes.awayCard} />
           </Grid>
-          <Grid item xs={3}>
-            <Typography className={classes.teamDesc}>{`${team.points} pts`}</Typography>
-          </Grid>
-          <Grid item xs={3}>
-            <Typography className={classes.teamDesc}>{`$${teamValue}M`}</Typography>
-          </Grid>
-          {inGame ? '' : team.members.map((member) => {
-            const curPlayer = playersData.find((player) => player.id === member);
-            return <PlayerCard player={curPlayer} inTeam />;
-          })}
         </Grid>
       </Paper>
     </Grid>
   );
 }
 
-TeamCard.propTypes = {
+GameCard.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
-  team: PropTypes.object.isRequired,
-  inGame: PropTypes.bool,
-};
-TeamCard.defaultProps = {
-  inGame: false,
+  game: PropTypes.object.isRequired,
 };
 
-export default TeamCard;
+export default GameCard;
 
 // import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
