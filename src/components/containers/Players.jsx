@@ -147,7 +147,6 @@ class Players extends Component {
     const { classes, match } = this.props;
     const { params } = match;
     const { playerName } = params;
-    console.log(match);
     const isInTeam = match.path.split('/')[1] === 'players';
     return (
       <BaseApp>

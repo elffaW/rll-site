@@ -12,9 +12,7 @@ const timezoneMap = {
  * @param {number} timezoneOffset from JS Date().getTimezoneOffset() -- number representing minutes offset from GMT
  */
 const timezoneLookup = (timezoneOffset) => {
-  console.log('1timezoneLookup', timezoneOffset);
   if (timezoneMap[timezoneOffset]) {
-    console.log('2timezoneLookup', timezoneMap[timezoneOffset]);
     return timezoneMap[timezoneOffset];
   }
   return '';
