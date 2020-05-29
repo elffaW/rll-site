@@ -26,6 +26,14 @@ describe('Tab Helper', () => {
       expect(lookupTabNumByPath(path)).toEqual(expectedReturn);
     });
 
+    it('returns 6 for videos path', () => {
+      const path = '/videos';
+      const expectedReturn = 6;
+
+      // assert
+      expect(lookupTabNumByPath(path)).toEqual(expectedReturn);
+    });
+
     it('returns 0 for invalid path', () => {
       const path = '/foaijw293j98a9f';
       const expectedReturn = 0;

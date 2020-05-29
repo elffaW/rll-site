@@ -11,8 +11,6 @@ import { lookupTabNumByPath } from '../utils/tabHelper';
 
 import logo from '../../images/RLL_logo.png';
 
-// import { version } from '../../../package.json';
-
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -92,6 +90,11 @@ export default function BaseApp(props) {
               label="teams"
               component={NavLink}
               to="/teams"
+            />
+            <Tab
+              label="videos"
+              component={NavLink}
+              to="/videos"
             />
           </Tabs>
         </Toolbar>

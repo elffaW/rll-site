@@ -12,7 +12,7 @@ import GameCard from '../GameCard';
 import { styles as paperStyles } from '../../styles/themeStyles';
 import { timezoneLookup } from '../utils/dateUtils';
 
-import networkPromo from '../../videos/NetworkPromo.mp4';
+import networkPromo from '../../videos/NetworkPromo_S1.mp4';
 
 const defaultProps = {
   classes: '',

@@ -18,6 +18,8 @@ const lookupTabNumByPath = (path) => {
       return 4;
     case '/teams':
       return 5;
+    case '/videos':
+      return 6;
     default:
       return 0;
   }

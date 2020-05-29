@@ -14,6 +14,7 @@ import Schedule from './Schedule';
 import Stats from './Stats';
 import Players from './Players';
 import Teams from './Teams';
+import Videos from './Videos';
 
 export default function AppRouter() {
   return (
@@ -36,6 +37,8 @@ export default function AppRouter() {
             <Route path="/players" component={Players} />
             <Route path="/teams/:teamName" component={Teams} />
             <Route path="/teams" component={Teams} />
+            {/* VIDEOS */}
+            <Route path="/videos" component={Videos} />
             {/* DASHBOARD AND NOT-FOUND ROUTES */}
             <Route exact path="/" component={Dashboard} />
             <Route component={BaseApp} />
