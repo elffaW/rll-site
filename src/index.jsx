@@ -1,6 +1,5 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
 import { AppContainer } from 'react-hot-loader';
 import { ThemeProvider } from '@material-ui/core/styles';
 
