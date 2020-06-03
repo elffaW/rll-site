@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Grid, Typography,
+  Grid,
 } from '@material-ui/core';
 
 import BaseApp from './BaseApp';
 import TeamCard from '../TeamCard';
+import PageHeader from '../PageHeader';
 import { styles as paperStyles } from '../../styles/themeStyles';
 
 const defaultProps = {
@@ -59,7 +60,7 @@ class Teams extends Component {
     const { teams } = this.state;
     return (
       <BaseApp>
-        <Typography variant="h2">RLL Season 2 Teams</Typography>
+        <PageHeader headerText="RLL Season 2 Teams" />
         <Grid container spacing={5} alignItems="flex-start" justify="flex-start">
           {teams.map((team) => (
             <TeamCard team={team} />

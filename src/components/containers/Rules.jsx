@@ -5,6 +5,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 
 import BaseApp from './BaseApp';
+import PageHeader from '../PageHeader';
 // import rules from '../../LEAGUE_RULES.md';
 
 // const rules = '# this is a header\n\nand this is a paragraph';
@@ -28,6 +29,7 @@ export default function Rules() {
   const classes = useStyles();
   return (
     <BaseApp>
+      <PageHeader headerText="Rocket League League league rules" />
       <Grid container spacing={2} className={classes.rulesGrid} justify="center">
         <Paper className={classes.paper}>
           <iframe

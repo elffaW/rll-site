@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Grid, Paper } from '@material-ui/core';
 
 import BaseApp from './BaseApp';
+import PageHeader from '../PageHeader';
 import PlayerCard from '../PlayerCard';
 import { styles as paperStyles } from '../../styles/themeStyles';
 
@@ -150,6 +151,7 @@ class Players extends Component {
     const isInTeam = match.path.split('/')[1] === 'players';
     return (
       <BaseApp>
+        <PageHeader headerText="RLL Season 2 Players" />
         <Paper className={classes.paper}>
           <Grid container spacing={2} justify="center">
             {playerName ? (

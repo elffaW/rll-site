@@ -5,8 +5,9 @@ import {
 } from '@material-ui/core';
 
 import BaseApp from './BaseApp';
+import PageHeader from '../PageHeader';
 import { styles as paperStyles } from '../../styles/themeStyles';
-import combineStats from '../../images/CombineS2.png';
+// import combineStats from '../../images/CombineS2.png';
 
 const defaultProps = {
   classes: '',
@@ -28,6 +29,7 @@ class Stats extends Component {
     const { classes } = this.props;
     return (
       <BaseApp>
+        <PageHeader headerText="RLL Stats" />
         <Paper className={classes.paper}>
           <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
             <Grid item xs={12} style={{ height: 800 }}>

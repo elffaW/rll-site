@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 // import ReactPlayer from 'react-player';
 
 import BaseApp from './BaseApp';
+import PageHeader from '../PageHeader';
 
 const allVideos = [
   { name: 'Season 1 - Promo', googleUrl: 'https://drive.google.com/file/d/1xvSitSxdw-GHjqJtuGXQ82Lu72XGtDDy' },
@@ -34,12 +35,10 @@ function Videos() {
     <BaseApp>
       <Grid container spacing={6} justify="center">
         <Grid item xs={12}>
-          <Typography variant="h3" style={{ fontVariant: 'small-caps' }}>
-            RLL Video Archive
-          </Typography>
+          <PageHeader headerText="RLL Video Archive" />
         </Grid>
         {allVideos.map((video) => (
-          <Grid item xs={12} xl={6}>
+          <Grid item>
             <Paper className={classes.paper} style={{ padding: 8 }}>
               <Typography variant="h5" style={{ fontVariant: 'small-caps' }}>{video.name}</Typography>
               {/* <ReactPlayer url={`${video.googleUrl}`} light controls width="" height="" /> */}

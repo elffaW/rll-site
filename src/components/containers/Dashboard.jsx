@@ -9,6 +9,7 @@ import BaseApp from './BaseApp';
 import { gamesData } from './Schedule';
 import { teamsData } from './Teams';
 import GameCard from '../GameCard';
+import PageHeader from '../PageHeader';
 import { styles as paperStyles } from '../../styles/themeStyles';
 import { timezoneLookup } from '../utils/dateUtils';
 
@@ -57,9 +58,7 @@ class Dashboard extends Component {
       <BaseApp>
         <Grid container spacing={2} justify="center">
           <Grid item xs={12}>
-            <Typography variant="h3" style={{ fontVariant: 'small-caps' }}>
-              Welcome to the Rocket League League league site!
-            </Typography>
+            <PageHeader headerText="Welcome to the Rocket League League league site!" />
           </Grid>
           <Grid item xs={12}>
             <Typography variant="h5" style={{ fontVariant: 'small-caps' }}>

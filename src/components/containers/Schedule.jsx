@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Grid, Typography,
+  Grid,
 } from '@material-ui/core';
 
 import BaseApp from './BaseApp';
 import GameCard from '../GameCard';
+import PageHeader from '../PageHeader';
 import { styles as paperStyles } from '../../styles/themeStyles';
 
 const defaultProps = {
@@ -56,7 +57,7 @@ class Schedule extends Component {
     const { games } = this.state;
     return (
       <BaseApp>
-        <Typography variant="h2">RLL Season 2 Schedule</Typography>
+        <PageHeader headerText="RLL Season 2 Schedule" />
         <Grid container spacing={5} alignItems="flex-start" justify="flex-start">
           {games.map((game) => (
             <GameCard game={game} />
