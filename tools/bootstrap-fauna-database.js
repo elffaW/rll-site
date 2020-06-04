@@ -220,18 +220,18 @@ function getDataFromSheets() {
 function getStatsFromSheets(statsSheet) {
   return new Promise((resolve, reject) => {
     statsSheet.getRows().then((allStats) => {
-      // const statsRet = [];
+      const statsRet = {};
       // const statsByGame = {};
       const statsByPlayer = {};
       // const statsByTeam = {};
       allStats.forEach((stats) => {
         const {
-          GN: gameId,
+          // GN: gameId,
           PLAYER: playerName,
-          TM: teamName,
-          OPP: opposingTeam,
-          'TM SC': teamGoals,
-          'OPP SC': opponentGoals,
+          // TM: teamName,
+          // OPP: opposingTeam,
+          // 'TM SC': teamGoals,
+          // 'OPP SC': opponentGoals,
           SCORE: playerScore,
           G: playerGoals,
           A: playerAssists,
@@ -265,7 +265,8 @@ function getStatsFromSheets(statsSheet) {
           }
         }
       });
-      resolve(statsByPlayer);
+      statsRet.statsByPlayer = statsByPlayer;
+      resolve(statsRet);
     }).catch((err) => {
       reject(err);
     });
@@ -294,7 +295,7 @@ function getPlayersFromSheets(playersSheet, rolesSheet, allStats) {
         const { primaryRole, secondaryRole } = playerRoles.find((role) => role.playerName === name.toUpperCase());
         const {
           score, goals, assists, saves, shots, numMVP, points, gamesPlayed,
-        } = allStats[name.toUpperCase()];
+        } = allStats.statsByPlayer[name.toUpperCase()];
         const playerObj = {
           id,
           name,
@@ -369,7 +370,7 @@ function getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers) {
         const {
           Rank: teamRank, TEAM: rankedName, PTS: teamPts, GF: goalsFor, GA: goalsAgainst, '+/-': plusMinus, W: wins, L: losses, VALUE: teamValue,
         } = rankedTeam;
-        const { id, members } = teamRosters.find((team) => team.name === rankedName) || { id: '', members: [] };
+        const { id, members } = teamRosters.find((team) => team.name === rankedName);
 
         const teamObj = {
           id,
