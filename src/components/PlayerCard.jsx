@@ -41,7 +41,7 @@ const defaultProps = {
 function PlayerCard(props) {
   const { player, inTeam } = props;
   const classes = useStyles();
-  const logoSrc = require(`../images/CAR_${player.car}.png`);
+  const logoSrc = require(`../images/CAR_${player.car}.png`); // eslint-disable-line
   const totalPoints = player.goals + player.assists;
   return (
     <Grid item xs={inTeam ? 11 : 6}>
