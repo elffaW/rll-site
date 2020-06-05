@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme) => ({
 
 const defaultProps = {
   inTeam: false,
+  showDetails: false,
 };
 
 /**
@@ -74,7 +75,7 @@ const defaultProps = {
  * }
  */
 function PlayerCard(props) {
-  const { player, inTeam } = props;
+  const { player, inTeam, showDetails } = props;
   const classes = useStyles();
   const playerCar = player.car ? player.car : 'MERC'; // hopefully everyone has a car, but want to avoid undefined require errors on next line...
   const logoSrc = require(`../images/CAR_${playerCar}.png`); // eslint-disable-line
@@ -100,7 +101,7 @@ function PlayerCard(props) {
           </Grid>
           <Grid item xs={inTeam ? 4 : 3}>
             <span className={classes.playerInfo}>
-              <Link to={`/players/${player.name}`} exact>
+              <Link to={showDetails ? '/players' : `/players/${player.name}`} exact>
                 <Typography variant="h5" className={classes.playerName}>{player.name}</Typography>
               </Link>
               <br />
@@ -164,6 +165,7 @@ PlayerCard.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   player: PropTypes.object.isRequired,
   inTeam: PropTypes.bool,
+  showDetails: PropTypes.bool,
 };
 PlayerCard.defaultProps = defaultProps;
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import {
   Grid, Paper, Avatar, Typography,
 } from '@material-ui/core';
@@ -28,6 +29,10 @@ const useStyles = makeStyles((theme) => ({
     color: 'whitesmoke',
     fontSize: '2rem',
   },
+  bigName: {
+    letterSpacing: 4,
+    fontSize: '3rem',
+  },
   teamDesc: {
     fontVariant: 'small-caps',
     fontSize: '1.6em',
@@ -44,10 +49,21 @@ const useStyles = makeStyles((theme) => ({
     color: 'whitesmoke',
     fontWeight: 700,
   },
+  bigRecord: {
+    fontSize: '2.5em',
+    float: 'left',
+    paddingLeft: theme.spacing(2),
+    paddingTop: theme.spacing(1),
+  },
+  teamDetails: {
+    fontVariant: 'small-caps',
+    fontSize: '1.4em',
+    color: '#444444',
+  },
 }));
 
 function TeamCard(props) {
-  const { team, inGame } = props;
+  const { team, inGame, showDetails } = props;
   const classes = useStyles();
   const defaultLogo = 'DinoBots';
   const logoSrc = require(`../images/LOGO_${team.name || defaultLogo}.png`); // eslint-disable-line
@@ -81,36 +97,76 @@ function TeamCard(props) {
   const teamRank = parseInt(team.rank, 10) === 8 ? 'Last' : `${team.rank}${rankSuffix}`;
 
   const playersInfo = inGame ? '' : players.map((member) => (
-    <PlayerCard player={member} inTeam />
+    <PlayerCard player={member} inTeam={!showDetails} />
   ));
 
-  const colsXS = inGame ? 11 : 6;
-  const colsXL = inGame ? false : 3;
+  let colsXS = inGame ? 11 : 6;
+  let colsXL = inGame ? false : 3;
+  if (showDetails) {
+    colsXS = 12;
+    colsXL = false;
+  }
+  /**
+   * show:
+   * - name
+   * - members
+   * - rank
+   * - win/loss
+   * - points
+   * - value
+   * if showDetails then also show:
+   * - plusMinus
+   * - goals for
+   * - goals against
+   */
   return (
     <Grid item xs={colsXS} xl={colsXL}>
       <Paper className={classes.paper}>
         <Grid container alignItems="center" justify="flex-start">
-          <Grid item xs={3} xl={2}>
+          <Grid item xs={showDetails ? 1 : 3} xl={showDetails ? false : 2}>
             <Avatar src={logoSrc} className={classes.teamIcon} />
           </Grid>
-          <Grid item xs={9}>
-            <Typography variant="h5" className={classes.teamName}>{team.name}</Typography>
+          <Grid item xs={showDetails ? 6 : 9}>
+            <Link to={showDetails ? '/teams' : `/teams/${team.name}`} exact>
+              <Typography variant={showDetails ? 'h4' : 'h5'} className={`${classes.teamName} ${showDetails ? classes.bigName : ''}`}>
+                {team.name}
+              </Typography>
+            </Link>
           </Grid>
+          {showDetails ? (
+            <>
+              <Grid item xs={2}>
+                <Typography className={classes.teamDetails}>{`Goals For: ${team.goalsFor}`}</Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <Typography className={classes.teamDetails}>{`Goals Against: ${team.goalsAgainst}`}</Typography>
+              </Grid>
+              <Grid item xs={1}>
+                <Typography className={classes.teamDetails}>{`+/-: ${team.plusMinus}`}</Typography>
+              </Grid>
+            </>
+          ) : ''}
           <Grid item xs={2}>
-            <Typography className={classes.teamRecord}>{`${team.wins} - ${team.losses}`}</Typography>
+            <Typography variant={showDetails ? 'h5' : 'body1'} className={`${classes.teamRecord} ${showDetails ? classes.bigRecord : ''}`}>
+              {`${team.wins} - ${team.losses}`}
+            </Typography>
           </Grid>
           <Grid item xs={4}>
-            <Typography className={classes.teamDesc}>
+            <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
               <span className={rankClass}>{`${teamRank}`}</span>
               {' '}
               place
             </Typography>
           </Grid>
           <Grid item xs={3}>
-            <Typography className={classes.teamDesc}>{`${team.points} pts`}</Typography>
+            <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
+              {`${team.points} pts`}
+            </Typography>
           </Grid>
           <Grid item xs={3}>
-            <Typography className={classes.teamDesc}>{team.value}</Typography>
+            <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
+              {team.value}
+            </Typography>
           </Grid>
           {playersInfo}
         </Grid>
@@ -123,9 +179,11 @@ TeamCard.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   team: PropTypes.object.isRequired,
   inGame: PropTypes.bool,
+  showDetails: PropTypes.bool,
 };
 TeamCard.defaultProps = {
   inGame: false,
+  showDetails: false,
 };
 
 export default TeamCard;

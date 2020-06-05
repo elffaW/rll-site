@@ -42,6 +42,9 @@ class Teams extends Component {
         const playerA = players.find((player) => parseInt(player.id, 10) === parseInt(tempTeam.members[0], 10));
         const playerB = players.find((player) => parseInt(player.id, 10) === parseInt(tempTeam.members[1], 10));
         const playerC = players.find((player) => parseInt(player.id, 10) === parseInt(tempTeam.members[2], 10));
+        playerA.team = team;
+        playerB.team = team;
+        playerC.team = team;
         tempTeam.members = [playerA, playerB, playerC];
         return tempTeam;
       });

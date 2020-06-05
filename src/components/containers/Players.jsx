@@ -75,7 +75,7 @@ class Players extends Component {
           <Paper className={classes.paper}>
             <Grid container spacing={2} justify="center">
               {curPlayer ? (
-                <PlayerCard player={curPlayer} inTeam={false} />
+                <PlayerCard player={curPlayer} inTeam={false} showDetails />
               ) : (
                 players.map((player) => (
                   <PlayerCard player={player} inTeam={false} />
