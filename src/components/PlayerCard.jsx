@@ -17,8 +17,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.dark,
   },
   playerIcon: {
-    width: theme.spacing(7),
-    height: theme.spacing(7),
+    width: '100%',
+    height: '100%',
     float: 'left',
   },
   playerName: {
@@ -80,10 +80,21 @@ function PlayerCard(props) {
   const logoSrc = require(`../images/CAR_${playerCar}.png`); // eslint-disable-line
   const playerValue = player.value ? parseFloat(player.value).toFixed(1) : '??';
   const scorePerGame = parseInt(player.score, 10) / parseInt(player.gamesPlayed, 10);
+  const { team } = player;
+  let teamLogo = 'DinoBots';
+  if (team && team.name) {
+    teamLogo = team.name;
+  }
+  const teamLogoSrc = require(`../images/LOGO_${teamLogo}.png`); // eslint-disable-line
   return (
     <Grid item xs={12}>
       <Paper className={classes.darkPaper}>
         <Grid container alignItems="flex-start" justify="flex-start">
+          {inTeam ? '' : (
+            <Grid item xs={1}>
+              <Avatar src={teamLogoSrc} className={classes.playerIcon} />
+            </Grid>
+          )}
           <Grid item xs={inTeam ? 2 : 1}>
             <Avatar src={logoSrc} className={classes.playerIcon} />
           </Grid>
@@ -119,7 +130,7 @@ function PlayerCard(props) {
               )}
             </span>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={inTeam ? 3 : 2}>
             <span className={classes.playerDetails}>
               <Typography variant="h5" className={classes.playerName}>{`$${playerValue}M`}</Typography>
               <br />

@@ -78,7 +78,7 @@ function TeamCard(props) {
       rankSuffix = 'th';
       break;
   }
-  const teamRank = parseInt(team.rank, 10) === 8 ? 'LAST' : `${team.rank}${rankSuffix}`;
+  const teamRank = parseInt(team.rank, 10) === 8 ? 'Last' : `${team.rank}${rankSuffix}`;
 
   const playersInfo = inGame ? '' : players.map((member) => (
     <PlayerCard player={member} inTeam />
