@@ -9,77 +9,6 @@ const { GoogleSpreadsheet } = require('google-spreadsheet');
 const insideNetlify = insideNetlifyBuildContext();
 const q = faunadb.query;
 
-/**
- * teams: {
- *  name:
- *  members: [ array of player IDs ]
- * }
- * players: {
- *  name: 'friendly name'
- *  rlName: 'rocket league name'
- * }
- * games: {
- *  seasonNum: 1-indexed season number
- *  weekNum: 1-indexed week number
- *  homeTeam: home team name
- *  awayTeam: away team name
- * }
- */
-const dbSchema = {
-  teams: [
-    { name: 'a', members: [0, 1, 2] },
-    { name: 'b', members: [3, 4, 5] },
-    { name: 'c', members: [6, 7, 8] },
-    { name: 'd', members: [9, 10, 11] },
-    { name: 'e', members: [12, 13, 14] },
-    { name: 'f', members: [15, 16, 17] },
-    { name: 'g', members: [18, 19, 20] },
-  ],
-  players: [{
-    id: 0, name: 'DanBot', rlName: 'DanBot',
-  }, {
-    id: 1, name: 'Matt K', rlName: 'Kawa',
-  }, {
-    id: 2, name: 'Speder', rlName: '',
-  }, {
-    id: 3, name: 'Matt Aux', rlName: '',
-  }, {
-    id: 4, name: 'PDT', rlName: 'dethorne',
-  }, {
-    id: 5, name: 'Sanchez', rlName: '',
-  }, {
-    id: 6, name: 'TC', rlName: 'pink rock',
-  }, {
-    id: 7, name: 'Mark P', rlName: '',
-  }, {
-    id: 8, name: 'Tom', rlName: '',
-  }, {
-    id: 9, name: 'Mike', rlName: 'elffaW',
-  }, {
-    id: 10, name: 'Shanley', rlName: '',
-  }, {
-    id: 11, name: 'Singley', rlName: '',
-  }, {
-    id: 12, name: 'Jay', rlName: 'tuna',
-  }, {
-    id: 13, name: 'JR', rlName: 'jr6969',
-  }, {
-    id: 14, name: 'Elissa', rlName: '',
-  }, {
-    id: 15, name: 'Myrvold', rlName: '',
-  }, {
-    id: 16, name: 'Andy', rlName: '',
-  }, {
-    id: 17, name: 'Billy', rlName: 'Twerp',
-  }, {
-    id: 18, name: 'Mitch', rlName: '',
-  }, {
-    id: 19, name: 'Cohn', rlName: '',
-  }, {
-    id: 20, name: 'Marvin?', rlName: 'Marvin?',
-  }],
-  games: [],
-};
 
 console.log(chalk.cyan('Creating your FaunaDB Database...\n'));
 
@@ -101,9 +30,20 @@ if (!process.env.FAUNADB_SECRET) {
         console.log('Please supply a faunaDB server key');
         process.exit(1);
       }
-      createFaunaDB(process.env.FAUNADB_SECRET).then(() => {
-        console.log('Database created');
-      });
+      getDataFromSheets()
+        .then((data) => {
+          console.log(chalk.cyan('load db'));
+          // console.log(JSON.stringify(data, null, 2));
+          createFaunaDB(process.env.FAUNADB_SECRET, data)
+            .then(() => {
+              console.log('Database created');
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        }).catch((e) => {
+          console.log(chalk.yellow('error setting up the sheets?', e));
+        });
     });
   }
 }
@@ -125,26 +65,17 @@ if (process.env.FAUNADB_SECRET) {
   getDataFromSheets()
     .then((data) => {
       console.log(chalk.cyan('load db'));
-      console.log(JSON.stringify(data, null, 2));
-      // createFaunaDB(process.env.FAUNADB_SECRET, data)
-      //   .then(() => {
-      //     console.log('Database created');
-      //   })
-      //   .catch((error) => {
-      //     console.error(error);
-      //   });
+      // console.log(JSON.stringify(data, null, 2));
+      createFaunaDB(process.env.FAUNADB_SECRET, data)
+        .then(() => {
+          console.log('Database created');
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }).catch((err) => {
       console.log(chalk.yellow('error setting up the sheets?', err));
     });
-
-
-  // createFaunaDB(process.env.FAUNADB_SECRET)
-  //   .then(() => {
-  //     console.log('Database created');
-  //   })
-  //   .catch((error) => {
-  //     console.error(error);
-  //   });
 }
 
 /**
@@ -290,7 +221,7 @@ function getPlayersFromSheets(playersSheet, rolesSheet, allStats) {
       const playersRet = [];
       allPlayers.forEach((player) => {
         const {
-          ID: id, Name: name, 'Rocket League Name': rlName, 'Team Assignment': team, Car: car, 'Signing Value': signingValue,
+          ID: id, Name: name, 'Rocket League Name': rlName, 'Team Assignment': team, Car: car, 'Signing Value': signingValue, 'Current Value': value,
         } = player;
         const { primaryRole, secondaryRole } = playerRoles.find((role) => role.playerName === name.toUpperCase());
         const {
@@ -313,6 +244,7 @@ function getPlayersFromSheets(playersSheet, rolesSheet, allStats) {
           numMVP,
           points,
           gamesPlayed,
+          value,
         };
         playersRet.push(playerObj);
       });
@@ -350,9 +282,9 @@ function getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers) {
           'TEAM ID': teamId, TEAM: teamName, 'PLAYER A': playerAName, 'PLAYER B': playerBName, 'PLAYER C': playerCName,
         } = team;
         if (playerAName && playerBName && playerCName) {
-          const playerA = allPlayers.find((player) => player.name === playerAName);
-          const playerB = allPlayers.find((player) => player.name === playerBName);
-          const playerC = allPlayers.find((player) => player.name === playerCName);
+          const playerA = parseInt(allPlayers.find((player) => player.name === playerAName).id, 10);
+          const playerB = parseInt(allPlayers.find((player) => player.name === playerBName).id, 10);
+          const playerC = parseInt(allPlayers.find((player) => player.name === playerCName).id, 10);
           const teamMembers = [playerA, playerB, playerC];
           const roster = {
             id: teamId,
@@ -428,38 +360,28 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
           }
 
           const {
-            Date: dateA, 'Time (CT)': timeA, 'Match #': matchNumA, Team: teamIdA, G1: game1ScoreA, G2: game2ScoreA,
+            Date: dateA, 'Time (CT)': timeA, 'Match #': matchNum, Team: teamIdA, G1: game1ScoreA, G2: game2ScoreA,
           } = gameRowA;
           const {
             Team: teamIdB, G1: game1ScoreB, G2: game2ScoreB,
           } = gameRowB;
           const dateTime = `${dateA} ${timeA} -0500`;
-          const homeTeam = allTeams.find((team) => team.id === teamIdA);
-          const awayTeam = allTeams.find((team) => team.id === teamIdB);
+          const homeTeamId = parseInt(allTeams.find((team) => team.id === teamIdA).id, 10);
+          const awayTeamId = parseInt(allTeams.find((team) => team.id === teamIdB).id, 10);
           const game1Obj = {
-            id: matchNumA,
+            id: matchNum,
             gameTime: dateTime,
             gameWeek: curGameweek,
             arena: curArena,
-            homeTeam,
-            homeTeamScore: game1ScoreA,
-            awayTeam,
-            awayTeamScore: game1ScoreB,
-          };
-          const game2Obj = {
-            id: matchNumA,
-            gameTime: dateTime,
-            gameWeek: curGameweek,
-            arena: curArena,
-            homeTeam,
-            homeTeamScore: game2ScoreA,
-            awayTeam,
-            awayTeamScore: game2ScoreB,
+            homeTeamId,
+            homeTeamScoreA: game1ScoreA,
+            homeTeamScoreB: game2ScoreA,
+            awayTeamId,
+            awayTeamScoreA: game1ScoreB,
+            awayTeamScoreB: game2ScoreB,
           };
           // console.log(JSON.stringify(game1Obj));
           gamesRet.push(game1Obj);
-          // console.log(JSON.stringify(game2Obj));
-          gamesRet.push(game2Obj);
         }
         resolve(gamesRet);
       }).catch((err) => {
@@ -475,40 +397,90 @@ function createFaunaDB(key, data) {
     secret: key,
   });
 
-  // TODO first clear the DB (or figure out how to diff and do updates)
-
-  /* Based on your requirements, change the schema here */
+  const deleteCollectionQueries = [];
   const collectionQueries = [];
-  let recordQueries = [];
+  const collectionIndexQueries = [];
+  const recordQueries = [];
   Object.keys(data).forEach((collectionKey) => {
-  // Object.keys(dbSchema).forEach((collectionKey) => {
-    console.log('collection info');
+    console.log(chalk.cyan('Create collection', collectionKey));
+    deleteCollectionQueries.push(q.Delete(q.Collection(collectionKey)));
     const collection = data[collectionKey];
-    // const collection = dbSchema[collectionKey];
-    console.log(collection);
-    collectionQueries.push(client.query(q.Create(q.Ref('classes'), { name: collectionKey })));
-    recordQueries = collection.map((record) => (
-      client.query(q.Create(q.Collection(collectionKey), { data: record }))
-    ));
+    collectionQueries.push(q.CreateCollection({ name: collectionKey }));
+    collectionIndexQueries.push(q.Create(q.Ref('indexes'), {
+      name: `all_${collectionKey}`,
+      source: q.Ref(`classes/${collectionKey}`),
+    }));
+    collection.forEach((record) => recordQueries.push(q.Create(q.Collection(collectionKey), { data: record })));
   });
 
-  return Promise.all(collectionQueries)
-    .then(() => Promise.all(recordQueries)
-      .catch((err) => {
-        console.error('ERROR from recordQueries');
-        console.log(err);
-      }))
-    .catch((e) => {
-      // database already exists? or something?
-      if (e.requestResult.statusCode === 400 && e.message === 'instance not unique') {
+  // return Promise.all(deleteCollectionQueries)
+  //   .then(() => Promise.all(collectionQueries)
+  //     .then(() => Promise.all(recordQueries)
+  //       .catch((err) => {
+  //         console.error('ERROR from recordQueries');
+  //         console.log(err);
+  //       }))
+  //     .catch((e) => {
+  //       // database already exists? or something?
+  //       if (e.requestResult.statusCode === 400 && e.message === 'instance not unique') {
+  //         console.log('DB already exists');
+  //         throw e;
+  //       } else {
+  //         console.error('ERROR from collectionQueries');
+  //         console.log(e);
+  //         throw e;
+  //       }
+  //     }))
+  //   .catch((error) => {
+  //     console.error('ERROR from delete queries');
+  //     console.log(error);
+  //     throw error;
+  //   });
+  return client.query(deleteCollectionQueries).then(() => {
+    console.log('deleted collections, gonna wait 10sec for fauna to catch up');
+    setTimeout(() => {
+      console.log('done waiting -- create the collections');
+      return client.query(collectionQueries).then(() => {
+        console.log('created collections, gonna wait 10sec for fauna to catch up');
+        setTimeout(() => {
+          console.log('done waiting -- insert the records');
+          return Promise.all([client.query(recordQueries), collectionIndexQueries]);
+        }, 10000);
+      });
+    }, 10000);
+  }).catch((e) => {
+    // database already exists? or something?
+    if (e.requestResult.statusCode === 400) {
+      if (e.message === 'instance not unique') {
         console.log('DB already exists');
         throw e;
-      } else {
-        console.error('ERROR from collectionQueries');
-        console.log(e);
-        throw e;
+      } else if (e.message === 'invalid ref') { // tried to delete collection that doesn't exist
+        return client.query(collectionQueries).then(() => {
+          console.log('created collections, gonna wait 10sec for fauna to catch up');
+          setTimeout(() => {
+            console.log('done waiting -- insert the records');
+            return Promise.all([client.query(recordQueries), collectionIndexQueries])
+              .catch((err) => {
+                console.error('ERROR from recordQueries');
+                console.log(err);
+              });
+          }, 10000);
+        }).catch((err) => {
+          console.error('ERROR from collectionQueries inside invalid ref');
+          throw err;
+        });
+      } else if (e.message === 'instance already exists') { // tried to create collection that already exists
+        console.log('collections already exist, continue with record insertion');
+        return Promise.all([client.query(recordQueries), collectionIndexQueries])
+          .catch((err) => {
+            console.error('ERROR from recordQueries');
+            console.log(err);
+          });
       }
-    });
+    }
+    console.error('ERROR from collectionQueries');
+    throw e;
+  });
 
   // return client.query(q.Create(q.Ref('classes'), { name: 'players' }))
   //   .then(() => client.query(
