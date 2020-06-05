@@ -126,7 +126,7 @@ function TeamCard(props) {
           <Grid item xs={showDetails ? 1 : 3} xl={showDetails ? false : 2}>
             <Avatar src={logoSrc} className={classes.teamIcon} />
           </Grid>
-          <Grid item xs={showDetails ? 6 : 9}>
+          <Grid item xs={showDetails ? 8 : 9}>
             <Link to={showDetails ? '/teams' : `/teams/${team.name}`} exact>
               <Typography variant={showDetails ? 'h4' : 'h5'} className={`${classes.teamName} ${showDetails ? classes.bigName : ''}`}>
                 {team.name}
@@ -135,11 +135,11 @@ function TeamCard(props) {
           </Grid>
           {showDetails ? (
             <>
-              <Grid item xs={2}>
-                <Typography className={classes.teamDetails}>{`Goals For: ${team.goalsFor}`}</Typography>
+              <Grid item xs={1}>
+                <Typography className={classes.teamDetails}>{`GF: ${team.goalsFor}`}</Typography>
               </Grid>
-              <Grid item xs={2}>
-                <Typography className={classes.teamDetails}>{`Goals Against: ${team.goalsAgainst}`}</Typography>
+              <Grid item xs={1}>
+                <Typography className={classes.teamDetails}>{`GA: ${team.goalsAgainst}`}</Typography>
               </Grid>
               <Grid item xs={1}>
                 <Typography className={classes.teamDetails}>{`+/-: ${team.plusMinus}`}</Typography>
