@@ -51,6 +51,14 @@ class Teams extends Component {
 
   render() {
     const { teams, loading } = this.state;
+    const { match } = this.props;
+    const { params } = match;
+    const { teamName } = params;
+
+    let curTeam;
+    if (teamName) {
+      curTeam = teams.find((team) => team.name.toLowerCase() === teamName.toLowerCase());
+    }
     return (
       <BaseApp>
         <PageHeader headerText="RLL Season 2 Teams" />
@@ -62,9 +70,11 @@ class Teams extends Component {
           </>
         ) : (
           <Grid container spacing={5} alignItems="flex-start" justify="flex-start">
-            {teams.map((team) => (
+            {curTeam ? (
+              <TeamCard team={curTeam} showDetails />
+            ) : (teams.map((team) => (
               <TeamCard team={team} />
-            ))}
+            )))}
           </Grid>
         )}
       </BaseApp>
@@ -74,6 +84,8 @@ class Teams extends Component {
 
 Teams.propTypes = {
   classes: PropTypes.string,
+  // eslint-disable-next-line react/forbid-prop-types
+  match: PropTypes.object.isRequired,
 };
 Teams.defaultProps = defaultProps;
 
