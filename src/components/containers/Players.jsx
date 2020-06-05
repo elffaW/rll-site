@@ -33,11 +33,22 @@ class Players extends Component {
   }
 
   getData = () => {
-    api.getAllPlayers().then((allPlayers) => {
+    Promise.all([api.getAllPlayers(), api.getAllTeams()]).then((results) => {
+      const allPlayers = results[0];
+      const allTeams = results[1];
       const players = allPlayers.map((player) => player.data);
       players.sort((a, b) => b.value - a.value); // sort with higher value at top
 
-      this.setState({ players, loading: false });
+      const teams = allTeams.map((player) => player.data);
+      const playersWithTeams = players.map((player) => {
+        const { ...tempPlayer } = player;
+        const playerTeam = teams.find((team) => parseInt(team.id, 10) === parseInt(tempPlayer.team, 10));
+        if (playerTeam) {
+          tempPlayer.team = playerTeam;
+        }
+        return tempPlayer;
+      });
+      this.setState({ players: playersWithTeams, loading: false });
     });
   }
 
