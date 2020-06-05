@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import {
   Grid, Paper, Avatar, Typography,
 } from '@material-ui/core';
@@ -14,22 +15,35 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.otherColors.text.light,
     backgroundColor: theme.palette.primary.dark,
-    width: '100%',
   },
   playerIcon: {
     width: theme.spacing(7),
     height: theme.spacing(7),
+    float: 'left',
   },
   playerName: {
     fontVariant: 'small-caps',
     color: 'whitesmoke',
+    float: 'left',
   },
   playerTitle: {
     fontVariant: 'small-caps',
     color: theme.palette.primary.light,
     float: 'left',
   },
+  playerSecondaryTitle: {
+    fontSize: '0.8em',
+  },
   playerInfo: {
+    float: 'left',
+    marginLeft: theme.spacing(2),
+  },
+  playerDetails: {
+    float: 'right',
+  },
+  playerExtras: {
+    fontVariant: 'small-caps',
+    color: theme.palette.primary.light,
     float: 'left',
   },
 }));
@@ -38,30 +52,97 @@ const defaultProps = {
   inTeam: false,
 };
 
+/**
+ * Player Object in DB:
+ * {
+ *  id,
+ *  name,
+ *  rlName,
+ *  team,
+ *  car,
+ *  signingValue,
+ *  primaryRole,
+ *  secondaryRole,
+ *  score,
+ *  goals,
+ *  assists,
+ *  saves,
+ *  shots,
+ *  numMVP,
+ *  points,
+ *  gamesPlayed,
+ * }
+ */
 function PlayerCard(props) {
   const { player, inTeam } = props;
   const classes = useStyles();
-  const logoSrc = require(`../images/CAR_${player.car}.png`); // eslint-disable-line
-  const totalPoints = player.goals + player.assists;
+  const playerCar = player.car ? player.car : 'MERC'; // hopefully everyone has a car, but want to avoid undefined require errors on next line...
+  const logoSrc = require(`../images/CAR_${playerCar}.png`); // eslint-disable-line
+  const playerValue = player.value ? parseFloat(player.value).toFixed(1) : '??';
+  const scorePerGame = parseInt(player.score, 10) / parseInt(player.gamesPlayed, 10);
   return (
-    <Grid item xs={inTeam ? 11 : 6}>
+    <Grid item xs={12}>
       <Paper className={classes.darkPaper}>
-        <Grid container alignItems="center" justify="flex-start">
-          <Grid item xs={2}>
+        <Grid container alignItems="flex-start" justify="flex-start">
+          <Grid item xs={inTeam ? 2 : 1}>
             <Avatar src={logoSrc} className={classes.playerIcon} />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={inTeam ? 4 : 3}>
             <span className={classes.playerInfo}>
-              <Typography variant="h5" className={classes.playerName}>{player.name}</Typography>
-              <Typography variant="h6" className={classes.playerTitle}>{player.name}</Typography>
+              <Link to={`/players/${player.name}`} exact>
+                <Typography variant="h5" className={classes.playerName}>{player.name}</Typography>
+              </Link>
+              <br />
+              <Typography variant="h6" className={classes.playerTitle}>
+                {player.primaryRole}
+                &nbsp;&nbsp;
+                <span className={classes.playerSecondaryTitle}>{player.secondaryRole}</span>
+              </Typography>
+              {inTeam || !player.rlName ? '' : (
+                <>
+                  <br />
+                  <Typography variant="h6" className={classes.playerTitle}>{player.rlName}</Typography>
+                </>
+              )}
+            </span>
+          </Grid>
+          <Grid item xs={inTeam ? 3 : 2}>
+            <span className={classes.playerDetails}>
+              <Typography variant="h5" className={classes.playerName}>{`${player.points}pts`}</Typography>
+              <br />
+              <Typography variant="h6" className={classes.playerTitle}>{`${player.goals}G  ${player.assists}A`}</Typography>
+              {inTeam ? '' : (
+                <>
+                  <br />
+                  <Typography variant="h6" className={classes.playerTitle}>{`MVPs: ${player.numMVP}`}</Typography>
+                </>
+              )}
             </span>
           </Grid>
           <Grid item xs={3}>
-            <Typography variant="h5" className={classes.playerName}>{`${totalPoints} pts`}</Typography>
+            <span className={classes.playerDetails}>
+              <Typography variant="h5" className={classes.playerName}>{`$${playerValue}M`}</Typography>
+              <br />
+              <Typography variant="h6" className={classes.playerTitle}>{`Score: ${player.score}`}</Typography>
+              {inTeam ? '' : (
+                <>
+                  <br />
+                  <Typography variant="h6" className={classes.playerTitle}>{`Avg: ${scorePerGame}`}</Typography>
+                </>
+              )}
+            </span>
           </Grid>
-          <Grid item xs={3}>
-            <Typography variant="h5" className={classes.playerName}>{`$${player.value}M`}</Typography>
-          </Grid>
+          {inTeam ? '' : (
+            <Grid item xs={3}>
+              <span className={classes.playerDetails}>
+                <Typography variant="h6" className={classes.playerExtras}>{`Signed for: $${player.signingValue}M`}</Typography>
+                <br />
+                <Typography variant="h6" className={classes.playerExtras}>{`SV: ${player.saves} SH: ${player.shots}`}</Typography>
+                <br />
+                <Typography variant="h6" className={classes.playerExtras}>{`Games played: ${player.gamesPlayed}`}</Typography>
+              </span>
+            </Grid>
+          )}
         </Grid>
       </Paper>
     </Grid>
@@ -71,279 +152,8 @@ function PlayerCard(props) {
 PlayerCard.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   player: PropTypes.object.isRequired,
-  inTeam: PropTypes.boolean,
+  inTeam: PropTypes.bool,
 };
 PlayerCard.defaultProps = defaultProps;
 
 export default PlayerCard;
-
-// import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
-// import { toast } from 'react-toastify';
-// import fetch from 'cross-fetch';
-
-// import {
-//   Card,
-//   Icon,
-//   Button,
-//   Item
-// } from 'semantic-ui-react';
-
-// import { NavLink } from 'react-router-dom';
-
-// import Toaster from './Toaster';
-
-// import * as ModelUtils from '../utils/ModelUtils';
-
-// // eslint-disable-next-line import/no-unresolved
-// const Config = require('Config');
-
-// export default class UserCard extends Component {
-//   static defaultProps = {
-//     likedModels: [],
-//     subscribedModels: [],
-//     followedUsers: [],
-//     followedByUsers: []
-//   };
-
-//   constructor(props) {
-//     super(props);
-
-//     this.state = {
-//       showFollowError: false
-//     };
-//   }
-
-//   followUser = () => {
-//     const { userId } = this.props;
-//     // request URL: https://localhost/ace/api/v1/users/C%3DUS%2C%20ST%3DMD%2C%20L%3DColumbia%2C%20O%3D%22SME%2C%20Inc.%22%2C%20OU%3DTesting%2C%20CN%3DCharlie%20Brown%2C%20EMAILADDRESS%3Ddevops%40strategicmissionelements.com
-//     // request method: PATCH
-//     // Accept: application/vnd.api+json
-//     // Accept-Encoding: gzip, deflate, br
-//     // Accept-Language: en-US,en;q=0.9
-//     // Connection: keep-alive
-//     // Content-Length: 790
-//     // Content-Type: application/vnd.api+json
-//     // payload:
-//     // {
-//     //   "data":{
-//     //     "id":"C=US, ST=MD, L=Columbia, O=\"SME, Inc.\", OU=Testing, CN=Charlie Brown, EMAILADDRESS=devops@strategicmissionelements.com",
-//     //     "attributes":{
-//     //       "schema-version":"v1",
-//     //       "email":"devops@strategicmissionelements.com",
-//     //       "first-name":"Charlie","last-name":"Brown",
-//     //       "username":null,
-//     //       "resource-uri":null,
-//     //       "model-type":"User"
-//     //     },
-//     //     "relationships":{
-//     //       "following":{
-//     //         "data":[{"type":"users","id":"C=US, ST=MD, L=Columbia, O=\"SME, Inc.\", OU=Testing, CN=Charlie Brown, EMAILADDRESS=devops@strategicmissionelements.com"}]
-//     //       },
-//     //       "followed-by":{
-//     //         "data":[{"type":"users","id":"C=US, ST=MD, L=Columbia, O=\"SME, Inc.\", OU=Testing, CN=Charlie Brown, EMAILADDRESS=devops@strategicmissionelements.com"}]
-//     //       },
-//     //       "likes":{"data":[{"type":"published-process-models","id":"f0a8b4a7-9834-4e9b-a01e-2ccc3de76603"}]}
-//     //     },
-//     //     "type":"users"
-//     //   }
-//     // }
-
-//     ModelUtils.getUserId().then((curUserId) => {
-//       if (userId !== curUserId) {
-//         toast.warn(
-//           <Toaster level="warn">
-//             {`Sorry, this operation is not yet supported!`}
-//           </Toaster>
-//         , { className: 'toast-warn' });
-//         /* TODO: make that call in the example comment above to persist user following */
-//         // fetch(`${Config.apiHost}/api/v1/users/${userId}`, {
-//         //   method: 'PATCH',
-//         //   headers: {
-//         //     Accept: 'application/vnd.api+json',
-//         //     'Accept-Encoding': 'gzip, deflate, br'
-//         //   },
-//         //   body: /* the payload? */
-//         // }).then((response) => {
-//         //   if (response.ok) {
-//         //     console.log('we did it! saved the updated follower');
-//         //   } else {
-//         //     console.error(`Bad response persisting follow-user, response: ${response.status}`);
-//         //   }
-//         // }).catch((err) => {
-//         //   console.error(`Error persisting follow-user: ${JSON.stringify(err, null, 2)}`);
-//         // });
-//       } else {
-//         this.setState({ showFollowError: true });
-
-//         setTimeout(() => {
-//           this.setState({ showFollowError: false });
-//         }, 2000);
-//       }
-//     }).catch((err) => {
-//       toast.error(
-//         <Toaster level="error">
-//           {`${err} (you may have lost connection to the server)`}
-//         </Toaster>
-//       , { className: 'toast-error' });
-//     });
-//   }
-
-//   render() {
-//     const {
-//       userId,
-//       name,
-//       likedModels,
-//       subscribedModels,
-//       followedUsers,
-//       followedByUsers,
-//       showDetails
-//     } = this.props;
-
-//     const { showFollowError } = this.state;
-
-//     let detailedDescription = '';
-//     if (showDetails) {
-//       detailedDescription = (
-//         <Card.Content style={{ paddingTop: 10, paddingBottom: 20 }}>
-//           <Item.Group>
-//             <Item>
-//               <Item.Image size="tiny">
-//                 <Icon name="sitemap" size="huge" />
-//               </Item.Image>
-//               <Item.Content>
-//                 <Item.Header style={{ color: 'white', fontWeight: 100 }}>
-//                   {`Likes ${likedModels.length} models`}
-//                 </Item.Header>
-//                 {likedModels.length > 0 ? (
-//                   likedModels.map(model => (
-//                     <Item.Description style={{ color: 'gray' }}>
-//                       {'likes '}
-//                       <span style={{ color: 'darkgray', fontWeight: 700 }}>
-//                         {`${model.name}`}
-//                       </span>
-//                     </Item.Description>
-//                   ))
-//                 ) : ''}
-//               </Item.Content>
-//             </Item>
-//             <Item>
-//               <Item.Image size="tiny">
-//                 <Icon name="rss" size="huge" />
-//               </Item.Image>
-//               <Item.Content>
-//                 <Item.Header style={{ color: 'white', fontWeight: 100 }}>
-//                   {`Subscribed to ${subscribedModels.length} models`}
-//                 </Item.Header>
-//                 {subscribedModels.length > 0 ? (
-//                   subscribedModels.map(model => (
-//                     <Item.Description style={{ color: 'gray' }}>
-//                       {'subscribed to '}
-//                       <span style={{ color: 'darkgray', fontWeight: 700 }}>
-//                         {`${model['process-model'].name}`}
-//                       </span>
-//                     </Item.Description>
-//                   ))
-//                 ) : ''}
-//               </Item.Content>
-//             </Item>
-//             <Item>
-//               <Item.Image size="tiny">
-//                 <Icon name="smile" size="huge" />
-//               </Item.Image>
-//               <Item.Content>
-//                 <Item.Header style={{ color: 'white', fontWeight: 100 }}>
-//                   {`Follows ${followedUsers.length} users`}
-//                 </Item.Header>
-//                 {followedUsers.length > 0 ? (
-//                   followedUsers.map(user => (
-//                     <Item.Description style={{ color: 'gray' }}>
-//                       {'follows '}
-//                       <span style={{ color: 'darkgray', fontWeight: 700 }}>
-//                         {`${user['first-name']} ${user['last-name']}`}
-//                       </span>
-//                     </Item.Description>
-//                   ))
-//                 ) : ''}
-//               </Item.Content>
-//             </Item>
-//             <Item>
-//               <Item.Image size="tiny">
-//                 <Icon name="user secret" size="huge" />
-//               </Item.Image>
-//               <Item.Content>
-//                 <Item.Header style={{ color: 'white', fontWeight: 100 }}>
-//                   {`Followed by ${followedByUsers.length} users`}
-//                 </Item.Header>
-//                 {followedByUsers.length > 0 ? (
-//                   followedByUsers.map(user => (
-//                     <Item.Description style={{ color: 'gray' }}>
-//                       {'followed by '}
-//                       <span style={{ color: 'darkgray', fontWeight: 700 }}>
-//                         {`${user['first-name']} ${user['last-name']}`}
-//                       </span>
-//                     </Item.Description>
-//                   ))
-//                 ) : ''}
-//               </Item.Content>
-//             </Item>
-//           </Item.Group>
-//         </Card.Content>
-//       );
-//     }
-
-//     let bottomButton = (
-//       <Button style={{ float: 'right' }} as={NavLink} to={`/users/${userId}`} primary>
-//         <Icon name="eye" />
-//         {'  View Details'}
-//       </Button>
-//     );
-//     if (showDetails) {
-//       bottomButton = (
-//         <Button fluid onClick={this.followUser} color="grey">
-//           <Icon name="users" />
-//           {'  Follow User'}
-//         </Button>
-//       );
-//     }
-//     if (showFollowError) {
-//       bottomButton = (
-//         <Button fluid color="red" basic>
-//           <Icon name="users" />
-//           {'  Sorry, you can\'t follow yourself!'}
-//         </Button>
-//       );
-//     }
-
-//     return (
-//       <Card raised fluid className="dark tight">
-//         <Card.Content>
-//           <Card.Header>
-//             <Icon name="user" />
-//             {`  ${name}`}
-//             {showDetails ? (
-//               <Button style={{ float: 'right' }} as={NavLink} to="/users" primary>
-//                 <Icon name="reply" />
-//                 {'Back to User List'}
-//               </Button>
-//             ) : ''}
-//           </Card.Header>
-//         </Card.Content>
-//         {detailedDescription}
-//         <Card.Content>
-//           {bottomButton}
-//         </Card.Content>
-//       </Card>
-//     );
-//   }
-// }
-
-// UserCard.propTypes = {
-//   userId: PropTypes.string.isRequired,
-//   name: PropTypes.string.isRequired,
-//   likedModels: PropTypes.array,
-//   subscribedModels: PropTypes.array,
-//   followedUsers: PropTypes.array,
-//   followedByUsers: PropTypes.array,
-//   showDetails: PropTypes.bool.isRequired
-// };
