@@ -11,8 +11,12 @@
     "start-message": "babel-node tools/startMessage.js",
     "prestart": "npm run start-message",
     "start": "concurrently -k -r -s first \"npm run test:watch\" \"npm run open:src\" \"npm run lint:watch\"",
+    "start:all": "npm-run-all --parallel checkForFaunaKey open:src start:server",
+    "start:server": "netlify-lambda serve api -c webpack.config.netlify-lambda.js",
+    "build:server": "netlify-lambda build api -c webpack.config.netlify-lambda.js",
+    "checkForFaunaKey": "node ./tools/checkForFaunaKey.js",
     "predeploy": "npm run build-only",
-    "deploy": "netlify deploy",
+    "deploy": "netlify deploy && date",
     "deploy:prod": "npm run build-only && netlify deploy --prod",
     "reset-db": "node ./tools/bootstrap-fauna-database.js",
     "open:src": "babel-node tools/srcServer.js",
@@ -24,7 +28,7 @@
     "remove-dist": "rimraf ./dist",
     "prebuild": "npm run lint && npm run test && npm run clean-dist",
     "build": "babel-node tools/build.js && npm run open:dist",
-    "build-only": "npm run prebuild && babel-node tools/build.js",
+    "build-only": "npm run prebuild && babel-node tools/build.js && npm run build:server",
     "test": "jest",
     "test:CI": "jest",
     "test:cover": "npm run test -- --coverage ",
@@ -47,6 +51,7 @@
     "google-spreadsheet": "3.0.11",
     "object-assign": "4.1.1",
     "prop-types": "15.7.2",
+    "proxy-middleware": "0.15.0",
     "react": "16.11.0",
     "react-dom": "16.11.0",
     "react-hot-loader": "4.12.15",
@@ -101,7 +106,9 @@
     "mini-css-extract-plugin": "0.8.0",
     "mockdate": "2.0.5",
     "netlify-cli": "2.51.0",
+    "netlify-lambda": "1.6.3",
     "node-sass": "4.14.1",
+    "npm-run-all": "4.1.5",
     "open-cli": "5.0.0",
     "postcss-loader": "3.0.0",
     "prompt": "1.0.0",
@@ -117,12 +124,21 @@
     "webpack": "4.41.2",
     "webpack-bundle-analyzer": "3.8.0",
     "webpack-dev-middleware": "3.7.2",
-    "webpack-hot-middleware": "2.25.0"
+    "webpack-hot-middleware": "2.25.0",
+    "webpack-node-externals": "1.7.2"
   },
   "keywords": [],
   "repository": {
     "type": "git",
     "url": ""
+  },
+  "proxy": {
+    "/.netlify/api": {
+      "target": "http://localhost:9000",
+      "pathRewrite": {
+        "^/\\.netlify/api": ""
+      }
+    }
   },
   "jest": {
     "moduleNameMapper": {

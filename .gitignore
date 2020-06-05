@@ -28,6 +28,7 @@ node_modules
 
 #dist folder
 dist
+dist-api
 
 # IDEA/Webstorm project files
 .idea

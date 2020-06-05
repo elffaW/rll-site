@@ -10,11 +10,16 @@ import historyApiFallback from 'connect-history-api-fallback';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
+// import url from 'url';
+// import proxy from 'proxy-middleware';
+
 /* eslint-enable import/no-extraneous-dependencies */
 import config from '../webpack.config.dev';
 
 const bundler = webpack(config);
 
+// const proxyOptions = url.parse('http://localhost:9000');
+// proxyOptions.route = '/.netlify/api';
 // Run Browsersync and use middleware for Hot Module Replacement
 browserSync({
   port: 3000,
@@ -55,6 +60,7 @@ browserSync({
 
       // bundler should be the same as above
       webpackHotMiddleware(bundler),
+      // proxy(proxyOptions),
     ],
   },
 
