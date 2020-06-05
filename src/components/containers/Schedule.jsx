@@ -8,6 +8,7 @@ import BaseApp from './BaseApp';
 import GameCard from '../GameCard';
 import PageHeader from '../PageHeader';
 import api from '../utils/api';
+import { CURRENT_GAME_WEEK } from './Dashboard';
 import { styles as paperStyles } from '../../styles/themeStyles';
 
 const defaultProps = {
@@ -59,12 +60,20 @@ class Schedule extends Component {
     const numWeeks = 4;
     for (let i = 1; i <= numWeeks; i++) {
       const curWeekGames = games.filter((game) => parseInt(game.gameWeek, 10) === i);
+      const weekComplete = parseInt(CURRENT_GAME_WEEK, 10) > i ? 'COMPLETE' : '';
       gameCards.push(
         <Grid item xs={12}>
           <Paper className={classes.paper}>
             <Grid container alignItems="center" justify="space-around">
-              <Grid item xs={2}>
-                <Typography variant="h4" style={{ fontVariant: 'small-caps', fontWeight: 700 }}>{`GameWeek ${i}`}</Typography>
+              <Grid item xs={12}>
+                <Typography
+                  variant="h4"
+                  style={{
+                    fontVariant: 'small-caps', fontWeight: 700, paddingTop: 16, paddingBottom: 16,
+                  }}
+                >
+                  {`GameWeek ${i} ${weekComplete}`}
+                </Typography>
               </Grid>
               {curWeekGames.map((game) => (
                 <GameCard game={game} />

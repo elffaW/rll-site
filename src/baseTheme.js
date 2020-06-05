@@ -32,6 +32,9 @@ const baseTheme = createMuiTheme({
       light: '#d0d0d0',
       dark: '#202020',
     },
+    background: {
+      dark: '#6D4C41',
+    },
   },
 });
 
