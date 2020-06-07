@@ -80,7 +80,7 @@ function PlayerCard(props) {
   const playerCar = player.car ? player.car : 'MERC'; // hopefully everyone has a car, but want to avoid undefined require errors on next line...
   const logoSrc = require(`../images/CAR_${playerCar}.png`); // eslint-disable-line
   const playerValue = player.value ? parseFloat(player.value).toFixed(1) : '??';
-  const scorePerGame = parseInt(player.score, 10) / parseInt(player.gamesPlayed, 10);
+  const scorePerGame = (parseInt(player.score, 10) / parseInt(player.gamesPlayed, 10)).toFixed(2);
   const { team } = player;
   let teamLogo = 'DinoBots';
   if (team && team.name) {
