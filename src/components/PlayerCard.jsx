@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import {
-  Grid, Paper, Avatar, Typography,
+  Grid, Paper, Avatar, Typography, Badge, Tooltip,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
   playerIcon: {
     width: '100%',
     height: '100%',
+    maxWidth: 110,
     float: 'left',
   },
   playerName: {
@@ -91,14 +92,30 @@ function PlayerCard(props) {
     <Grid item xs={12}>
       <Paper className={classes.darkPaper}>
         <Grid container alignItems="flex-start" justify="flex-start">
-          {inTeam ? '' : (
-            <Grid item xs={1}>
-              <Avatar src={teamLogoSrc} className={classes.playerIcon} />
+          {inTeam ? (
+            <Grid item xs={2}>
+              <Avatar src={logoSrc} alt={playerCar} className={classes.playerIcon} />
+            </Grid>
+          ) : (
+            <Grid item xs={2}>
+              <Badge
+                overlap="circle"
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                badgeContent={(
+                  <Tooltip title={teamLogo}>
+                    <Avatar src={teamLogoSrc} alt={teamLogo} />
+                  </Tooltip>
+                )}
+              >
+                <Tooltip title={playerCar}>
+                  <Avatar src={logoSrc} alt={playerCar} className={classes.playerIcon} />
+                </Tooltip>
+              </Badge>
             </Grid>
           )}
-          <Grid item xs={inTeam ? 2 : 1}>
-            <Avatar src={logoSrc} className={classes.playerIcon} />
-          </Grid>
           <Grid item xs={inTeam ? 4 : 3}>
             <span className={classes.playerInfo}>
               <Link to={showDetails ? '/players' : `/players/${player.name}`} exact>
@@ -126,7 +143,7 @@ function PlayerCard(props) {
               {inTeam ? '' : (
                 <>
                   <br />
-                  <Typography variant="h6" className={classes.playerTitle}>{`MVPs: ${player.numMVP}`}</Typography>
+                  <Typography variant="h6" className={classes.playerTitle}>{`$/pt: ${(playerValue / parseInt(player.points, 10)).toFixed(2)}`}</Typography>
                 </>
               )}
             </span>
@@ -151,7 +168,7 @@ function PlayerCard(props) {
                 <br />
                 <Typography variant="h6" className={classes.playerExtras}>{`SV: ${player.saves} SH: ${player.shots}`}</Typography>
                 <br />
-                <Typography variant="h6" className={classes.playerExtras}>{`Games played: ${player.gamesPlayed}`}</Typography>
+                <Typography variant="h6" className={classes.playerExtras}>{`Games: ${player.gamesPlayed} MVP: ${player.numMVP}`}</Typography>
               </span>
             </Grid>
           )}
