@@ -118,7 +118,7 @@ function PlayerCard(props) {
               </Badge>
             </Grid>
           )}
-          <Grid item xs={inTeam ? 4 : 3}>
+          <Grid item xs={4}>
             <span className={classes.playerInfo}>
               <Link to={showDetails ? '/players' : `/players/${player.name}`} exact>
                 <Typography variant="h5" className={classes.playerName}>{player.name}</Typography>
