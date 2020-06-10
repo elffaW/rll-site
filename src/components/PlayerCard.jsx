@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
   playerInfo: {
     float: 'left',
-    marginLeft: theme.spacing(2),
+    paddingLeft: theme.spacing(4),
   },
   playerDetails: {
     float: 'right',
@@ -97,7 +97,7 @@ function PlayerCard(props) {
               <Avatar src={logoSrc} alt={playerCar} className={classes.playerIcon} />
             </Grid>
           ) : (
-            <Grid item xs={2}>
+            <Grid item xs={1}>
               <Badge
                 overlap="circle"
                 anchorOrigin={{
@@ -106,7 +106,9 @@ function PlayerCard(props) {
                 }}
                 badgeContent={(
                   <Tooltip title={teamLogo}>
-                    <Avatar src={teamLogoSrc} alt={teamLogo} />
+                    <Link to={`/teams/${teamLogo}`} exact>
+                      <Avatar src={teamLogoSrc} alt={teamLogo} />
+                    </Link>
                   </Tooltip>
                 )}
               >
