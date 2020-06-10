@@ -12,7 +12,7 @@ import PageHeader from '../PageHeader';
 
 const useStyles = makeStyles((theme) => ({
   rulesGrid: {
-    height: 'calc(100vh - 56px)',
+    height: 'calc(100vh - 172px)',
     padding: theme.spacing(1),
   },
   paper: {

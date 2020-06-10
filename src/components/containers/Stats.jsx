@@ -32,7 +32,7 @@ class Stats extends Component {
         <PageHeader headerText="RLL Stats" />
         <Paper className={classes.paper}>
           <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
-            <Grid item xs={12} style={{ height: 800 }}>
+            <Grid item xs={12} style={{ height: 'calc(100vh - 200px)' }}>
               <Typography variant="h3">Season 2 Stats</Typography>
               <iframe
                 title="rll-stats-season-2"
