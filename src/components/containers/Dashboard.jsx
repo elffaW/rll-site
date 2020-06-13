@@ -6,6 +6,7 @@ import {
 import ReactPlayer from 'react-player';
 
 import BaseApp from './BaseApp';
+import Standings from './Standings';
 // import { gamesData } from './Schedule';
 // import { teamsData } from './Teams';
 import GameCard from '../GameCard';
@@ -100,6 +101,9 @@ class Dashboard extends Component {
               <span style={{ color: 'whitesmoke' }}>{gameTime}</span>
             </Typography>
           </Grid> */}
+          <Grid item xs={12}>
+            <Standings />
+          </Grid>
           <Grid item xs={12} style={{ width: '100%' }}>
             <Paper className={classes.paper}>
               <Tooltip title={tooltipText}>
@@ -108,11 +112,11 @@ class Dashboard extends Component {
             </Paper>
           </Grid>
           { loading ? (
-            <>
+            <span style={{ textAlign: 'center' }}>
               <CircularProgress color="secondary" />
               <Typography>Loading Schedule...</Typography>
               <Button onClick={this.getData}>Taking forever?</Button>
-            </>
+            </span>
           ) : (
             <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
               {games.map((game) => (

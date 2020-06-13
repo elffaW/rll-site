@@ -15,6 +15,7 @@ import Stats from './Stats';
 import Players from './Players';
 import Teams from './Teams';
 import Videos from './Videos';
+import Standings from './Standings';
 
 export default function AppRouter() {
   return (
@@ -39,6 +40,7 @@ export default function AppRouter() {
             <Route path="/teams" component={Teams} />
             {/* VIDEOS */}
             <Route path="/videos" component={Videos} />
+            <Route path="/standings" component={Standings} />
             {/* DASHBOARD AND NOT-FOUND ROUTES */}
             <Route exact path="/" component={Dashboard} />
             <Route component={BaseApp} />
