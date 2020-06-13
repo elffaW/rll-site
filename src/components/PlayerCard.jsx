@@ -16,6 +16,10 @@ const useStyles = makeStyles((theme) => ({
     color: theme.otherColors.text.light,
     backgroundColor: theme.palette.primary.dark,
   },
+  playerCard: {
+    paddingTop: '0px !important',
+    paddingBottom: '0px !important',
+  },
   playerIcon: {
     width: '100%',
     height: '100%',
@@ -31,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
     fontVariant: 'small-caps',
     color: theme.palette.primary.light,
     float: 'left',
+    textAlign: 'end',
   },
   playerSecondaryTitle: {
     fontSize: '0.8em',
@@ -89,8 +94,8 @@ function PlayerCard(props) {
   }
   const teamLogoSrc = require(`../images/LOGO_${teamLogo}.png`); // eslint-disable-line
   return (
-    <Grid item xs={12}>
-      <Paper className={classes.darkPaper}>
+    <Grid item xs={12} className={classes.playerCard}>
+      <Paper className={classes.darkPaper} style={inTeam ? { maxHeight: 83.25 } : {}}>
         <Grid container alignItems="flex-start" justify="flex-start">
           {inTeam ? (
             <Grid item xs={2}>
@@ -107,7 +112,7 @@ function PlayerCard(props) {
                 badgeContent={(
                   <Tooltip title={teamLogo}>
                     <Link to={`/teams/${teamLogo}`} exact>
-                      <Avatar src={teamLogoSrc} alt={teamLogo} />
+                      <Avatar src={teamLogoSrc} variant="square" alt={teamLogo} />
                     </Link>
                   </Tooltip>
                 )}
