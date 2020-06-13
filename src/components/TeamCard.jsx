@@ -100,10 +100,12 @@ function TeamCard(props) {
     <PlayerCard player={member} inTeam={!showDetails} />
   ));
 
-  let colsXS = inGame ? 11 : 6;
+  let colsXS = inGame ? 11 : 12;
+  let colsMD = inGame ? false : 6;
   let colsXL = inGame ? false : 3;
   if (showDetails) {
     colsXS = 12;
+    colsMD = false;
     colsXL = false;
   }
   /**
@@ -120,11 +122,11 @@ function TeamCard(props) {
    * - goals against
    */
   return (
-    <Grid item xs={colsXS} xl={colsXL}>
+    <Grid item xs={colsXS} md={colsMD} xl={colsXL}>
       <Paper className={classes.paper}>
         <Grid container alignItems="center" justify="flex-start">
           <Grid item xs={showDetails ? 1 : 3} xl={showDetails ? false : 2}>
-            <Avatar src={logoSrc} className={classes.teamIcon} />
+            <Avatar src={logoSrc} variant="square" className={classes.teamIcon} />
           </Grid>
           <Grid item xs={showDetails ? 8 : 9}>
             <Link to={showDetails ? '/teams' : `/teams/${team.name}`} exact>
