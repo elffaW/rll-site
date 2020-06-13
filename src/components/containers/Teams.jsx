@@ -86,6 +86,7 @@ class Teams extends Component {
 }
 
 Teams.propTypes = {
+  // eslint-disable-next-line react/no-unused-prop-types
   classes: PropTypes.string,
   // eslint-disable-next-line react/forbid-prop-types
   match: PropTypes.object.isRequired,

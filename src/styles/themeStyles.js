@@ -9,4 +9,9 @@ export const styles = withStyles((theme) => createStyles({
     backgroundColor: theme.palette.primary.light,
     width: '100%',
   },
+  teamName: {
+    fontVariant: 'small-caps',
+    float: 'left',
+    color: 'rgba(0, 0, 0, 0.87)',
+  },
 }));
