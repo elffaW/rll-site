@@ -186,50 +186,54 @@ class Players extends Component {
             <Button onClick={this.getData}>Taking forever?</Button>
           </>
         ) : (
-          <Paper className={classes.paper}>
-            {curPlayer ? '' : (
-              <>
-                <ToggleButtonGroup
-                  id="sort-direction-toggle"
-                  onChange={(event, newValue) => this.handleSort(sortField, newValue)}
-                  value={sortDirection}
-                  exclusive
-                  size="large"
-                  style={{ float: 'right', margin: 8 }}
-                >
-                  <ToggleButton key="option-desc" value>
-                    <SortIcon />
-                  </ToggleButton>
-                  <ToggleButton key="option-asc" value={false}>
-                    <SortIcon style={{ transform: 'scaleY(-1)' }} />
-                  </ToggleButton>
-                </ToggleButtonGroup>
-                <FormControl variant="outlined" style={{ float: 'right', margin: 8 }}>
-                  <InputLabel id="sort-select-outlined-label">Sort By</InputLabel>
-                  <Select
-                    labelId="sort-select-outlined-label"
-                    id="sort-select-outlined"
-                    value={sortField}
-                    onChange={this.handleSortFieldChange}
-                    label="Sort By"
-                  >
-                    {Object.keys(playerFields).map((key) => (
-                      <MenuItem value={key}>{playerFields[key].friendly}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </>
-            )}
-            <Grid container spacing={2} justify="center">
-              {curPlayer ? (
-                <PlayerCard player={curPlayer} inTeam={false} showDetails />
-              ) : (
-                players.map((player) => (
-                  <PlayerCard player={player} inTeam={false} />
-                ))
-              )}
+          <Grid container justify="center">
+            <Grid item xs={12} lg={10} xl={8}>
+              <Paper className={classes.paper}>
+                {curPlayer ? '' : (
+                  <>
+                    <ToggleButtonGroup
+                      id="sort-direction-toggle"
+                      onChange={(event, newValue) => this.handleSort(sortField, newValue)}
+                      value={sortDirection}
+                      exclusive
+                      size="large"
+                      style={{ float: 'right', margin: 8 }}
+                    >
+                      <ToggleButton key="option-desc" value>
+                        <SortIcon />
+                      </ToggleButton>
+                      <ToggleButton key="option-asc" value={false}>
+                        <SortIcon style={{ transform: 'scaleY(-1)' }} />
+                      </ToggleButton>
+                    </ToggleButtonGroup>
+                    <FormControl variant="outlined" style={{ float: 'right', margin: 8 }}>
+                      <InputLabel id="sort-select-outlined-label">Sort By</InputLabel>
+                      <Select
+                        labelId="sort-select-outlined-label"
+                        id="sort-select-outlined"
+                        value={sortField}
+                        onChange={this.handleSortFieldChange}
+                        label="Sort By"
+                      >
+                        {Object.keys(playerFields).map((key) => (
+                          <MenuItem value={key}>{playerFields[key].friendly}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </>
+                )}
+                <Grid container spacing={2} justify="center">
+                  {curPlayer ? (
+                    <PlayerCard player={curPlayer} inTeam={false} showDetails />
+                  ) : (
+                    players.map((player) => (
+                      <PlayerCard player={player} inTeam={false} />
+                    ))
+                  )}
+                </Grid>
+              </Paper>
             </Grid>
-          </Paper>
+          </Grid>
         )}
       </BaseApp>
     );
