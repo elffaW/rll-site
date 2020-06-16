@@ -44,7 +44,8 @@ class Dashboard extends Component {
       const allGames = results[0];
       const teamsData = results[1];
       const games = allGames.map((game) => game.data);
-      const curWeekGames = games.filter((game) => game.gameWeek === CURRENT_GAME_WEEK);
+      // const curWeekGames = games.filter((game) => game.gameWeek === CURRENT_GAME_WEEK);
+      const curWeekGames = games.filter((game) => game.homeTeamScoreA === '');
       curWeekGames.sort((a, b) => new Date(a.gameTime) - new Date(b.gameTime)); // earlier game times first
 
       const allTeams = teamsData.map((team) => team.data);
