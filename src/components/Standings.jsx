@@ -4,9 +4,22 @@ import { Link } from 'react-router-dom';
 import {
   Grid, CircularProgress, Typography, Button, Paper, Avatar,
 } from '@material-ui/core';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 import api from './utils/api';
 import { styles as paperStyles } from '../styles/themeStyles';
+
+const teamFields = {
+  rank: { friendly: 'Rank', type: 'number' },
+  name: { friendly: 'Name', type: 'string' },
+  wins: { friendly: 'W', type: 'number' },
+  losses: { friendly: 'L', type: 'number' },
+  points: { friendly: 'PTS', type: 'number' },
+  value: { friendly: 'Value', type: 'value' }, // special case ($12.3 M)
+  goalsFor: { friendly: 'GF', type: 'number' },
+  goalsAgainst: { friendly: 'GA', type: 'number' },
+  plusMinus: { friendly: '+/-', type: 'number' },
+};
 
 const defaultProps = {
   classes: '',
@@ -19,6 +32,8 @@ class Standings extends Component {
     this.state = {
       teams: [], // teamsData.sort((a, b) => b.points - a.points), // sort with higher points at top
       loading: true,
+      sortField: 'points',
+      sortDirection: true, // just a toggle
     };
   }
 
@@ -40,13 +55,104 @@ class Standings extends Component {
     });
   }
 
+  sortNumberData = (data, sortField, direction) => data.sort((a, b) => (
+    direction
+      ? parseFloat(b[sortField]) - parseFloat(a[sortField])
+      : parseFloat(a[sortField]) - parseFloat(b[sortField])));
+
+  sortTextData = (data, sortField, direction) => data.sort((a, b) => (
+    direction
+      ? a[sortField].localeCompare(b[sortField])
+      : b[sortField].localeCompare(a[sortField])));
+
+  handleSortFieldChange = (sortBy) => {
+    const { sortField, sortDirection } = this.state;
+    if (sortField === sortBy) {
+      this.handleSort(sortBy, !sortDirection);
+    } else {
+      this.handleSort(sortBy, sortDirection);
+    }
+  }
+
+  handleSort = (sortBy, direction) => {
+    const { teams } = this.state;
+    let sortedTeams;
+    if (teamFields[sortBy].type === 'string') {
+      sortedTeams = this.sortTextData(teams, sortBy, direction);
+    } else if (teamFields[sortBy].type === 'value') { // '$13.4 M' -- trim '$' and ' M' then sort numeric
+      sortedTeams = teams.sort((a, b) => (
+        direction
+          ? parseFloat(b[sortBy].slice(1, -2)) - parseFloat(a[sortBy].slice(1, -2))
+          : parseFloat(a[sortBy].slice(1, -2)) - parseFloat(b[sortBy].slice(1, -2))));
+    } else {
+      sortedTeams = this.sortNumberData(teams, sortBy, direction);
+    }
+    this.setState({ teams: sortedTeams, sortField: sortBy, sortDirection: direction });
+  };
+
   render() {
     const { classes } = this.props;
-    const { teams, loading } = this.state;
+    const {
+      teams, loading, sortField, sortDirection,
+    } = this.state;
+
+    const teamRows = [];
+    for (let i = 0; i < teams.length; i++) {
+      const team = teams[i];
+      teamRows.push(
+        <Grid item xs={12} style={!(i % 2) ? { backgroundColor: 'rgba(130, 0, 0, 0.3)' } : {}}>
+          <Grid container alignItems="center" justify="flex-start">
+            <Grid item xs={1}>
+              <Typography variant="h4">
+                {team.rank}
+              </Typography>
+            </Grid>
+            <Grid item xs={1}>
+              <Avatar src={team.logo} variant="square" style={{ float: 'right', paddingRight: 8 }} />
+            </Grid>
+            <Grid item xs={3}>
+              <Link to={`/teams/${team.name}`} exact>
+                <Typography variant="h5" className={classes.teamName} style={{ float: 'left' }}>
+                  {team.name}
+                </Typography>
+              </Link>
+            </Grid>
+            <Grid item xs={1}>
+              <Typography variant="body1" className={classes.teamRecord}>
+                {team.wins}
+              </Typography>
+            </Grid>
+            <Grid item xs={1}>
+              <Typography variant="body1" className={classes.teamRecord}>
+                {team.losses}
+              </Typography>
+            </Grid>
+            <Grid item xs={1}>
+              <Typography className={classes.teamDesc} style={{ fontWeight: 700 }}>
+                {team.points}
+              </Typography>
+            </Grid>
+            <Grid item xs={1}>
+              <Typography className={classes.teamDesc}>
+                {team.value}
+              </Typography>
+            </Grid>
+            <Grid item xs={1}>
+              <Typography className={classes.teamDetails}>{team.goalsFor}</Typography>
+            </Grid>
+            <Grid item xs={1}>
+              <Typography className={classes.teamDetails}>{team.goalsAgainst}</Typography>
+            </Grid>
+            <Grid item xs={1}>
+              <Typography className={classes.teamDetails}>{team.plusMinus}</Typography>
+            </Grid>
+          </Grid>
+        </Grid>,
+      );
+    }
 
     return (
       <>
-        {/* <PageHeader headerText="RLL Season 2 Standings" /> */}
         { loading ? (
           <>
             <CircularProgress color="secondary" />
@@ -59,87 +165,65 @@ class Standings extends Component {
               <Grid item xs={12}>
                 <Grid container alignItems="center" justify="flex-start">
                   <Grid item xs={1}>
-                    <Typography variant="h6">Rank</Typography>
+                    <Typography variant="h6" onClick={() => this.handleSortFieldChange('rank')}>
+                      Rank
+                      {sortField === 'rank' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
+                    </Typography>
                   </Grid>
                   <Grid item xs={1}>
                     {' '}
                   </Grid>
                   <Grid item xs={3}>
-                    <Typography variant="h6" style={{ float: 'left' }}>Team</Typography>
+                    <Typography variant="h6" style={{ float: 'left' }} onClick={() => this.handleSortFieldChange('name')}>
+                      Team
+                      {sortField === 'team' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
+                    </Typography>
                   </Grid>
                   <Grid item xs={1}>
-                    <Typography variant="h6">W</Typography>
+                    <Typography variant="h6" onClick={() => this.handleSortFieldChange('wins')}>
+                      W
+                      {sortField === 'wins' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
+                    </Typography>
                   </Grid>
                   <Grid item xs={1}>
-                    <Typography variant="h6">L</Typography>
+                    <Typography variant="h6" onClick={() => this.handleSortFieldChange('losses')}>
+                      L
+                      {sortField === 'losses' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
+                    </Typography>
                   </Grid>
                   <Grid item xs={1}>
-                    <Typography variant="h6">PTS</Typography>
+                    <Typography variant="h6" onClick={() => this.handleSortFieldChange('points')}>
+                      PTS
+                      {sortField === 'points' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
+                    </Typography>
                   </Grid>
                   <Grid item xs={1}>
-                    <Typography variant="h6">Value</Typography>
+                    <Typography variant="h6" onClick={() => this.handleSortFieldChange('value')}>
+                      Value
+                      {sortField === 'value' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
+                    </Typography>
                   </Grid>
                   <Grid item xs={1}>
-                    <Typography variant="h6">GF</Typography>
+                    <Typography variant="h6" onClick={() => this.handleSortFieldChange('goalsFor')}>
+                      GF
+                      {sortField === 'goalsFor' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
+                    </Typography>
                   </Grid>
                   <Grid item xs={1}>
-                    <Typography variant="h6">GA</Typography>
+                    <Typography variant="h6" onClick={() => this.handleSortFieldChange('goalsAgainst')}>
+                      GA
+                      {sortField === 'goalsAgainst' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
+                    </Typography>
                   </Grid>
                   <Grid item xs={1}>
-                    <Typography variant="h6">+/-</Typography>
+                    <Typography variant="h6" onClick={() => this.handleSortFieldChange('plusMinus')}>
+                      +/-
+                      {sortField === 'plusMinus' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
+                    </Typography>
                   </Grid>
                 </Grid>
               </Grid>
-              {teams.map((team) => (
-                <Grid item xs={12} style={team.rank % 2 === 1 ? { backgroundColor: 'rgba(130, 0, 0, 0.3)' } : {}}>
-                  <Grid container alignItems="center" justify="flex-start">
-                    <Grid item xs={1}>
-                      <Typography variant="h4">
-                        {team.rank}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={1}>
-                      <Avatar src={team.logo} variant="square" style={{ float: 'right', paddingRight: 8 }} />
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Link to={`/teams/${team.name}`} exact>
-                        <Typography variant="h5" className={classes.teamName} style={{ float: 'left' }}>
-                          {team.name}
-                        </Typography>
-                      </Link>
-                    </Grid>
-                    <Grid item xs={1}>
-                      <Typography variant="body1" className={classes.teamRecord}>
-                        {team.wins}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={1}>
-                      <Typography variant="body1" className={classes.teamRecord}>
-                        {team.losses}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={1}>
-                      <Typography className={classes.teamDesc}>
-                        {team.points}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={1}>
-                      <Typography className={classes.teamDesc}>
-                        {team.value}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={1}>
-                      <Typography className={classes.teamDetails}>{team.goalsFor}</Typography>
-                    </Grid>
-                    <Grid item xs={1}>
-                      <Typography className={classes.teamDetails}>{team.goalsAgainst}</Typography>
-                    </Grid>
-                    <Grid item xs={1}>
-                      <Typography className={classes.teamDetails}>{team.plusMinus}</Typography>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              ))}
+              {teamRows}
             </Paper>
           </Grid>
         )}
