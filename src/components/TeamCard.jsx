@@ -130,7 +130,11 @@ function TeamCard(props) {
           </Grid>
           <Grid item xs={showDetails ? 8 : 9}>
             <Link to={showDetails ? '/teams' : `/teams/${team.name}`} exact>
-              <Typography variant={showDetails ? 'h4' : 'h5'} className={`${classes.teamName} ${showDetails ? classes.bigName : ''}`}>
+              <Typography
+                variant={showDetails ? 'h4' : 'h5'}
+                className={`${classes.teamName} ${showDetails ? classes.bigName : ''}`}
+                style={team.name.length > 14 ? { letterSpacing: `calc(0.01vw - ${team.name.length / 5}px)` } : null}
+              >
                 {team.name}
               </Typography>
             </Link>
@@ -150,12 +154,12 @@ function TeamCard(props) {
           ) : ''}
           <Grid item xs={2}>
             <Typography variant={showDetails ? 'h5' : 'body1'} className={`${classes.teamRecord} ${showDetails ? classes.bigRecord : ''}`}>
-              {`${team.wins} - ${team.losses}`}
+              {`${team.wins}-${team.losses}`}
             </Typography>
           </Grid>
           <Grid item xs={4}>
             <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
-              <span className={rankClass}>{`${teamRank}`}</span>
+              <span className={rankClass} style={rankClass === 'last' ? { letterSpacing: 'calc(0.01vw - 1px)' } : null}>{`${teamRank}`}</span>
               {' '}
               place
             </Typography>
