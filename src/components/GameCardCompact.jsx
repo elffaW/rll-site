@@ -54,6 +54,23 @@ function GameCardCompact(props) {
                     || parseInt(awayScoreB, 10)
                     || parseInt(homeScoreC, 10)
                     || parseInt(awayScoreC, 10));
+  let homeWinnerA = false;
+  let homeWinnerB = false;
+  let homeWinnerC = false;
+  let homeWinnerOverall = false;
+  let awayWinnerOverall = false;
+  if (hasScores) {
+    homeWinnerA = parseInt(homeScoreA, 10) > parseInt(awayScoreA, 10);
+    homeWinnerB = parseInt(homeScoreB, 10) > parseInt(awayScoreB, 10);
+    homeWinnerC = parseInt(homeScoreC, 10) > parseInt(awayScoreC, 10);
+
+    homeWinnerOverall = isPlayoffs
+      ? ((homeWinnerA && homeWinnerB) || (homeWinnerA && homeWinnerC) || (homeWinnerA && homeWinnerC))
+      : homeWinnerA && homeWinnerB;
+    awayWinnerOverall = isPlayoffs
+      ? ((!homeWinnerA && !homeWinnerB) || (!homeWinnerA && !homeWinnerC) || (!homeWinnerA && !homeWinnerC))
+      : !homeWinnerA && !homeWinnerB;
+  }
 
   return (
     <Grid container alignItems="center" justify="flex-start">
@@ -82,7 +99,7 @@ function GameCardCompact(props) {
           <Grid item xs>
             <Grid container spacing={0} direction="row" alignItems="flex-start" justify="space-around">
               <Link to={`/teams/${team1.name}`} exact>
-                <Typography variant="h5" className={classes.teamName}>
+                <Typography variant="h5" className={classes.teamName} style={homeWinnerOverall ? { color: '#8e8e8e' } : null}>
                   {team1.name}
                 </Typography>
               </Link>
@@ -94,7 +111,7 @@ function GameCardCompact(props) {
           <Grid item xs>
             <Grid container spacing={0} direction="row" alignItems="flex-start" justify="space-around">
               <Link to={`/teams/${team2.name}`} exact>
-                <Typography variant="h5" className={classes.teamName}>
+                <Typography variant="h5" className={classes.teamName} style={awayWinnerOverall ? { color: '#8e8e8e' } : null}>
                   {team2.name}
                 </Typography>
               </Link>
@@ -111,18 +128,18 @@ function GameCardCompact(props) {
           <Grid container spacing={0} direction="column" alignItems="flex-start" justify="flex-start">
             <Grid container justify="space-between">
               <Grid item xs={4}>
-                <Typography variant="h5" className={classes.teamName}>
+                <Typography variant="h5" className={classes.teamName} style={homeWinnerA ? { color: '#8e8e8e' } : null}>
                   {homeScoreA}
                 </Typography>
               </Grid>
               <Grid item xs={4}>
-                <Typography variant="h5" className={classes.teamName}>
+                <Typography variant="h5" className={classes.teamName} style={homeWinnerB ? { color: '#8e8e8e' } : null}>
                   {homeScoreB}
                 </Typography>
               </Grid>
               {isPlayoffs && (
                 <Grid item xs={4}>
-                  <Typography variant="h5" className={classes.teamName}>
+                  <Typography variant="h5" className={classes.teamName} style={homeWinnerC ? { color: '#8e8e8e' } : null}>
                     {homeScoreC}
                   </Typography>
                 </Grid>
@@ -130,18 +147,18 @@ function GameCardCompact(props) {
             </Grid>
             <Grid container justify="space-between">
               <Grid item xs={4}>
-                <Typography variant="h5" className={classes.teamName}>
+                <Typography variant="h5" className={classes.teamName} style={!homeWinnerA ? { color: '#8e8e8e' } : null}>
                   {awayScoreA}
                 </Typography>
               </Grid>
               <Grid item xs={4}>
-                <Typography variant="h5" className={classes.teamName}>
+                <Typography variant="h5" className={classes.teamName} style={!homeWinnerB ? { color: '#8e8e8e' } : null}>
                   {awayScoreB}
                 </Typography>
               </Grid>
               {isPlayoffs && (
                 <Grid item xs={4}>
-                  <Typography variant="h5" className={classes.teamName}>
+                  <Typography variant="h5" className={classes.teamName} style={!homeWinnerC ? { color: '#8e8e8e' } : null}>
                     {awayScoreC}
                   </Typography>
                 </Grid>
