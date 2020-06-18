@@ -9,9 +9,21 @@ export const styles = withStyles((theme) => createStyles({
     backgroundColor: theme.palette.primary.light,
     width: '100%',
   },
+  darkPaper: {
+    textAlign: 'center',
+    color: theme.otherColors.text.light,
+    backgroundColor: theme.palette.primary.dark,
+    margin: theme.spacing(1),
+    marginTop: 0,
+    paddingLeft: theme.spacing(1),
+  },
   teamName: {
     fontVariant: 'small-caps',
     float: 'left',
     color: 'rgba(0, 0, 0, 0.87)',
+  },
+  subtitle: {
+    fontVariant: 'small-caps',
+    color: theme.palette.primary.light,
   },
 }));
