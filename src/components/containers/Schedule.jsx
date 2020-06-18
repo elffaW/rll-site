@@ -7,6 +7,7 @@ import {
 import BaseApp from './BaseApp';
 import GameCard from '../GameCard';
 import PageHeader from '../PageHeader';
+import PlayoffSchedule from '../PlayoffSchedule';
 import api from '../utils/api';
 import { CURRENT_GAME_WEEK } from './Dashboard';
 import { styles as paperStyles } from '../../styles/themeStyles';
@@ -56,6 +57,8 @@ class Schedule extends Component {
     const { classes } = this.props;
     const { games, loading } = this.state;
 
+    const showPlayoffs = false;
+
     const gameCards = [];
     const numWeeks = 4;
     for (let i = 1; i <= numWeeks; i++) {
@@ -98,9 +101,12 @@ class Schedule extends Component {
             <Button onClick={this.getData}>Taking forever?</Button>
           </>
         ) : (
-          <Grid container spacing={5} alignItems="flex-start" justify="flex-start">
-            {gameCards}
-          </Grid>
+          <>
+            {showPlayoffs && <PlayoffSchedule />}
+            <Grid container spacing={5} alignItems="flex-start" justify="flex-start">
+              {gameCards}
+            </Grid>
+          </>
         )}
       </BaseApp>
     );

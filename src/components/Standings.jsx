@@ -5,10 +5,8 @@ import {
   Grid, CircularProgress, Typography, Button, Paper, Avatar,
 } from '@material-ui/core';
 
-import BaseApp from './BaseApp';
-import PageHeader from '../PageHeader';
-import api from '../utils/api';
-import { styles as paperStyles } from '../../styles/themeStyles';
+import api from './utils/api';
+import { styles as paperStyles } from '../styles/themeStyles';
 
 const defaultProps = {
   classes: '',
@@ -36,7 +34,7 @@ class Standings extends Component {
 
       // disable these lint issues: import/no-dynamic-require global-require
       // eslint-disable-next-line
-      teams.forEach((team) => team.logo = require(`../../images/LOGO_${team.name}.png`));
+      teams.forEach((team) => team.logo = require(`../images/LOGO_${team.name}.png`));
 
       this.setState({ teams, loading: false });
     });

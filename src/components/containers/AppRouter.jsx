@@ -15,7 +15,7 @@ import Stats from './Stats';
 import Players from './Players';
 import Teams from './Teams';
 import Videos from './Videos';
-import Standings from './Standings';
+import Standings from '../Standings';
 
 export default function AppRouter() {
   return (

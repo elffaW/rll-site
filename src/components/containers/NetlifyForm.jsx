@@ -8,6 +8,12 @@ export default function NetlifyForm(props) {
     e.preventDefault();
     handleSubmit('db-form');
   };
+
+  return (
+    <p>You found me!</p>
+  );
+
+  /*
   return (
     <form name="db-form" method="post" onSubmit={submitHandler}>
       <input type="hidden" name="form-name" value="db-form" />
@@ -22,6 +28,7 @@ export default function NetlifyForm(props) {
       </p>
     </form>
   );
+  */
 }
 
 NetlifyForm.propTypes = {

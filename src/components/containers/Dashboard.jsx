@@ -6,7 +6,7 @@ import {
 import ReactPlayer from 'react-player';
 
 import BaseApp from './BaseApp';
-import Standings from './Standings';
+import Standings from '../Standings';
 // import { gamesData } from './Schedule';
 // import { teamsData } from './Teams';
 import GameCard from '../GameCard';
