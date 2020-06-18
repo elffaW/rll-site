@@ -21,6 +21,11 @@ const useStyles = makeStyles((theme) => ({
   subtitle: {
     fontVariant: 'small-caps',
     color: theme.palette.primary.light,
+    fontStyle: 'italic',
+  },
+  teamRecord: {
+    marginTop: 6,
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -72,6 +77,22 @@ function GameCardCompact(props) {
       : !homeWinnerA && !homeWinnerB;
   }
 
+  const homeStyle = {};
+  if (homeWinnerOverall) {
+    homeStyle.color = '#8e8e8e';
+  }
+  if (team1.name.length > 14) {
+    homeStyle.letterSpacing = `calc(0.05vw - ${team1.name.length / 8}px)`;
+  }
+
+  const awayStyle = {};
+  if (awayWinnerOverall) {
+    awayStyle.color = '#8e8e8e';
+  }
+  if (team2.name.length > 14) {
+    awayStyle.letterSpacing = `calc(0.05vw - ${team2.name.length / 8}px)`;
+  }
+
   return (
     <Grid container alignItems="center" justify="flex-start">
       <Grid item xs={2}>
@@ -99,7 +120,7 @@ function GameCardCompact(props) {
           <Grid item xs>
             <Grid container spacing={0} direction="row" alignItems="flex-start" justify="space-around">
               <Link to={`/teams/${team1.name}`} exact>
-                <Typography variant="h5" className={classes.teamName} style={homeWinnerOverall ? { color: '#8e8e8e' } : null}>
+                <Typography variant="h5" className={classes.teamName} style={homeStyle}>
                   {team1.name}
                 </Typography>
               </Link>
@@ -111,7 +132,7 @@ function GameCardCompact(props) {
           <Grid item xs>
             <Grid container spacing={0} direction="row" alignItems="flex-start" justify="space-around">
               <Link to={`/teams/${team2.name}`} exact>
-                <Typography variant="h5" className={classes.teamName} style={awayWinnerOverall ? { color: '#8e8e8e' } : null}>
+                <Typography variant="h5" className={classes.teamName} style={awayStyle}>
                   {team2.name}
                 </Typography>
               </Link>

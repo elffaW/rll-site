@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(1),
     color: 'whitesmoke',
     fontSize: '2rem',
+    textShadow: '0px 0px 2px black',
   },
   bigName: {
     letterSpacing: 4,
