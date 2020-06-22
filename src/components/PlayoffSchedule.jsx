@@ -58,6 +58,14 @@ class PlayoffSchedule extends Component {
     const team7 = teamsByRank[7];
     const team8 = teamsByRank[8];
 
+    const teamUnknown = {
+      name: 'TBD',
+      rank: '?',
+      wins: '',
+      losses: '',
+      logo: require(`../images/RLL_logo.png`), // eslint-disable-line
+    };
+
     return (
       <>
         {/* <PageHeader headerText="RLL Season 2 Playoff Schedule" /> */}
@@ -105,8 +113,8 @@ class PlayoffSchedule extends Component {
                   <Grid item xs={5}>
                     <Paper className={classes.darkPaper}>
                       <GameCardCompact
-                        team1={team1}
-                        team2={team4}
+                        team1={teamUnknown}
+                        team2={teamUnknown}
                         time="6/26/2020 8:50 PM -0500"
                         arena="Champions Field"
                         isPlayoffs
@@ -137,8 +145,8 @@ class PlayoffSchedule extends Component {
                   <Grid item xs={5}>
                     <Paper className={classes.darkPaper}>
                       <GameCardCompact
-                        team1={team1}
-                        team2={team7}
+                        team1={teamUnknown}
+                        team2={teamUnknown}
                         time="6/26/2020 9:30 PM -0500"
                         arena="Champions Field"
                         isPlayoffs
@@ -169,8 +177,8 @@ class PlayoffSchedule extends Component {
                   <Grid item xs={5}>
                     <Paper className={classes.darkPaper}>
                       <GameCardCompact
-                        team1={team7}
-                        team2={team3}
+                        team1={teamUnknown}
+                        team2={teamUnknown}
                         time="6/26/2020 9:10 PM -0500"
                         arena="Champions Field"
                         isPlayoffs

@@ -7,6 +7,7 @@ import ReactPlayer from 'react-player';
 
 import BaseApp from './BaseApp';
 import Standings from '../Standings';
+import PlayoffSchedule from '../PlayoffSchedule';
 // import { gamesData } from './Schedule';
 // import { teamsData } from './Teams';
 import GameCard from '../GameCard';
@@ -112,6 +113,7 @@ class Dashboard extends Component {
               </Tooltip>
             </Paper>
           </Grid>
+          {/* eslint-disable no-nested-ternary */}
           { loading ? (
             <span style={{ textAlign: 'center' }}>
               <CircularProgress color="secondary" />
@@ -119,11 +121,14 @@ class Dashboard extends Component {
               <Button onClick={this.getData}>Taking forever?</Button>
             </span>
           ) : (
-            <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
-              {games.map((game) => (
-                <GameCard game={game} />
-              ))}
-            </Grid>
+            games.length < 1 ? <PlayoffSchedule style={{ marginTop: 16 }} />
+              : (
+                <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
+                  {games.map((game) => (
+                    <GameCard game={game} />
+                  ))}
+                </Grid>
+              )
           )}
         </Grid>
       </BaseApp>

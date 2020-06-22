@@ -57,7 +57,7 @@ class Schedule extends Component {
     const { classes } = this.props;
     const { games, loading } = this.state;
 
-    const showPlayoffs = false;
+    const showPlayoffs = true;
 
     const gameCards = [];
     const numWeeks = 4;
