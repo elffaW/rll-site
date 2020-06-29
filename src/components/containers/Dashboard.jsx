@@ -18,7 +18,7 @@ import api from '../utils/api';
 
 import networkPromo from '../../videos/NetworkPromo_S1.mp4';
 
-export const CURRENT_GAME_WEEK = '3';
+export const CURRENT_GAME_WEEK = '5';
 const defaultProps = {
   classes: '',
 };

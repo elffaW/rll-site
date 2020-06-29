@@ -64,7 +64,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function TeamCard(props) {
-  const { team, inGame, showDetails } = props;
+  const {
+    team, inGame, showDetails, winner,
+  } = props;
   const classes = useStyles();
   const defaultLogo = 'DinoBots';
   const logoSrc = require(`../images/LOGO_${team.name || defaultLogo}.png`); // eslint-disable-line
@@ -124,7 +126,7 @@ function TeamCard(props) {
    */
   return (
     <Grid item xs={colsXS} md={colsMD} xl={colsXL}>
-      <Paper className={classes.paper}>
+      <Paper className={classes.paper} style={winner ? { boxShadow: 'inset 0 0 0.75rem gold' } : null}>
         <Grid container alignItems="center" justify="flex-start">
           <Grid item xs={showDetails ? 1 : 3} xl={showDetails ? false : 2}>
             <Avatar src={logoSrc} variant="square" className={classes.teamIcon} />
@@ -187,10 +189,12 @@ TeamCard.propTypes = {
   team: PropTypes.object.isRequired,
   inGame: PropTypes.bool,
   showDetails: PropTypes.bool,
+  winner: PropTypes.bool,
 };
 TeamCard.defaultProps = {
   inGame: false,
   showDetails: false,
+  winner: false,
 };
 
 export default TeamCard;

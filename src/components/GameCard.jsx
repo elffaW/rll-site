@@ -57,10 +57,12 @@ const useStyles = makeStyles((theme) => ({
   gameScoreAway: {
     fontVariant: 'small-caps',
     float: 'right',
+    color: theme.otherColors.text.light,
   },
   gameScoreHome: {
     fontVariant: 'small-caps',
     float: 'left',
+    color: theme.otherColors.text.light,
   },
   matchScoreAway: {
     color: 'black',
@@ -90,44 +92,64 @@ function GameCard(props) {
 
   const gameComplete = !!game.homeTeamScoreA && !!game.homeTeamScoreB && !!game.awayTeamScoreA && !!game.awayTeamScoreB;
 
+  let homeWinnerA = false;
+  let homeWinnerB = false;
+  let homeWinnerOverall = false;
+  let awayWinnerOverall = false;
+  if (gameComplete) {
+    homeWinnerA = parseInt(game.homeTeamScoreA, 10) > parseInt(game.awayTeamScoreA, 10);
+    homeWinnerB = parseInt(game.homeTeamScoreB, 10) > parseInt(game.awayTeamScoreB, 10);
+
+    homeWinnerOverall = homeWinnerA && homeWinnerB;
+    awayWinnerOverall = !homeWinnerA && !homeWinnerB;
+  }
+
   // id: 1, homeTeam: 1, awayTeam: 2, gameTime: '05/29/2020 7:30PM CT', arena: 'Salty Shores',
   return (
     <Grid item xs={12}>
       <Paper className={gameComplete ? classes.darkerPaper : classes.darkPaper}>
         <Grid container alignItems="center" justify="space-around">
           <Grid item xs={gameComplete ? 4 : 5}>
-            <TeamCard team={home} inGame />
+            <TeamCard team={home} inGame winner={homeWinnerOverall} />
           </Grid>
           {gameComplete ? (
             <Grid item xs={1}>
               <span className={classes.matchScoreHome}>
                 <Typography variant="h6" className={classes.gameScoreHome}>Scores</Typography>
                 <br />
-                <Typography variant="h5" className={classes.gameScoreHome}>{`Gm A: ${game.homeTeamScoreA}`}</Typography>
+                <Typography variant="h5" className={classes.gameScoreHome} style={!homeWinnerA ? { color: '#8e8e8e' } : null}>
+                  {`Gm A: ${game.homeTeamScoreA}`}
+                </Typography>
                 <br />
-                <Typography variant="h5" className={classes.gameScoreHome}>{`Gm B: ${game.homeTeamScoreB}`}</Typography>
+                <Typography variant="h5" className={classes.gameScoreHome} style={!homeWinnerB ? { color: '#8e8e8e' } : null}>
+                  {`Gm B: ${game.homeTeamScoreB}`}
+                </Typography>
               </span>
             </Grid>
           ) : ''}
           <Grid item xs={2}>
             {gameComplete ? <Typography variant="h5" className={classes.completeStamp}>COMPLETE</Typography> : ''}
-            <Typography variant="h4" className={classes.gameName}>{`Game ${game.id}`}</Typography>
-            <Typography variant="h6" className={classes.gameDesc}>{gameTime}</Typography>
-            <Typography variant="subtitle1" className={classes.gameArena}>{game.arena}</Typography>
+            <Typography variant="h4" className={classes.gameName} style={gameComplete ? { color: '#d0d0d0' } : null}>{`Match ${game.id}`}</Typography>
+            <Typography variant="h6" className={classes.gameDesc} style={gameComplete ? { color: '#a0a0a0' } : null}>{gameTime}</Typography>
+            <Typography variant="subtitle1" className={classes.gameArena} style={gameComplete ? { color: '#a0a0a0' } : null}>{game.arena}</Typography>
           </Grid>
           {gameComplete ? (
             <Grid item xs={1}>
               <span className={classes.matchScoreAway}>
                 <Typography variant="h6" className={classes.gameScoreAway}>Scores</Typography>
                 <br />
-                <Typography variant="h5" className={classes.gameScoreAway}>{`Gm A: ${game.awayTeamScoreA}`}</Typography>
+                <Typography variant="h5" className={classes.gameScoreAway} style={homeWinnerA ? { color: '#8e8e8e' } : null}>
+                  {`Gm A: ${game.awayTeamScoreA}`}
+                </Typography>
                 <br />
-                <Typography variant="h5" className={classes.gameScoreAway}>{`Gm B: ${game.awayTeamScoreB}`}</Typography>
+                <Typography variant="h5" className={classes.gameScoreAway} style={homeWinnerB ? { color: '#8e8e8e' } : null}>
+                  {`Gm B: ${game.awayTeamScoreB}`}
+                </Typography>
               </span>
             </Grid>
           ) : ''}
           <Grid item xs={gameComplete ? 4 : 5}>
-            <TeamCard team={away} inGame className={classes.awayCard} />
+            <TeamCard team={away} inGame className={classes.awayCard} winner={awayWinnerOverall} />
           </Grid>
         </Grid>
       </Paper>
