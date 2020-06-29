@@ -49,7 +49,11 @@ function GameCardCompact(props) {
   } = props;
   const classes = useStyles();
 
-  const gameTime = time ? new Date(time).toLocaleString() + timezoneLookup(new Date().getTimezoneOffset()) : '';
+  const timeAsDate = new Date(time);
+  let gameTime = time;
+  if (!(timeAsDate instanceof Date && !Number.isNaN(timeAsDate))) { // time is a valid date, we can format it as such
+    gameTime = new Date(time).toLocaleString() + timezoneLookup(new Date().getTimezoneOffset());
+  }
   const gameLocation = arena;
 
   // truthiness of 0 is false, so hasScores is true if any score is non-zero

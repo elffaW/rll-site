@@ -66,6 +66,16 @@ class PlayoffSchedule extends Component {
       logo: require(`../images/RLL_logo.png`), // eslint-disable-line
     };
 
+    const q1Date = 'Time & Date TBD'; // '6/26/2020 7:30 PM -0500';
+    const s1Date = 'Time & Date TBD'; // '6/26/2020 8:50 PM -0500';
+    const q2Date = 'Time & Date TBD'; // '6/26/2020 7:50 PM -0500';
+    const finalDate = 'Time & Date TBD'; // '6/26/2020 9:30 PM -0500';
+    const q3Date = 'Time & Date TBD'; // '6/26/2020 8:10 PM -0500';
+    const s2Date = 'Time & Date TBD'; // '6/26/2020 9:10 PM -0500';
+    const q4Date = 'Time & Date TBD'; // '6/26/2020 8:30 PM -0500';
+
+    const playoffArena = 'Champions Field';
+
     return (
       <>
         {/* <PageHeader headerText="RLL Season 2 Playoff Schedule" /> */}
@@ -99,8 +109,8 @@ class PlayoffSchedule extends Component {
                       <GameCardCompact
                         team1={team1}
                         team2={team8}
-                        time="6/26/2020 7:30 PM -0500"
-                        arena="Champions Field"
+                        time={q1Date}
+                        arena={playoffArena}
                         isPlayoffs
                       />
                     </Paper>
@@ -115,8 +125,8 @@ class PlayoffSchedule extends Component {
                       <GameCardCompact
                         team1={teamUnknown}
                         team2={teamUnknown}
-                        time="6/26/2020 8:50 PM -0500"
-                        arena="Champions Field"
+                        time={s1Date}
+                        arena={playoffArena}
                         isPlayoffs
                       />
                     </Paper>
@@ -131,8 +141,8 @@ class PlayoffSchedule extends Component {
                       <GameCardCompact
                         team1={team4}
                         team2={team5}
-                        time="6/26/2020 7:50 PM -0500"
-                        arena="Champions Field"
+                        time={q2Date}
+                        arena={playoffArena}
                         isPlayoffs
                       />
                     </Paper>
@@ -147,8 +157,8 @@ class PlayoffSchedule extends Component {
                       <GameCardCompact
                         team1={teamUnknown}
                         team2={teamUnknown}
-                        time="6/26/2020 9:30 PM -0500"
-                        arena="Champions Field"
+                        time={finalDate}
+                        arena={playoffArena}
                         isPlayoffs
                       />
                     </Paper>
@@ -163,8 +173,8 @@ class PlayoffSchedule extends Component {
                       <GameCardCompact
                         team1={team2}
                         team2={team7}
-                        time="6/26/2020 8:10 PM -0500"
-                        arena="Champions Field"
+                        time={q3Date}
+                        arena={playoffArena}
                         isPlayoffs
                       />
                     </Paper>
@@ -179,8 +189,8 @@ class PlayoffSchedule extends Component {
                       <GameCardCompact
                         team1={teamUnknown}
                         team2={teamUnknown}
-                        time="6/26/2020 9:10 PM -0500"
-                        arena="Champions Field"
+                        time={s2Date}
+                        arena={playoffArena}
                         isPlayoffs
                       />
                     </Paper>
@@ -195,8 +205,8 @@ class PlayoffSchedule extends Component {
                       <GameCardCompact
                         team1={team3}
                         team2={team6}
-                        time="6/26/2020 8:30 PM -0500"
-                        arena="Champions Field"
+                        time={q4Date}
+                        arena={playoffArena}
                         isPlayoffs
                       />
                     </Paper>
