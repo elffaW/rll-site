@@ -6,8 +6,6 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-// import { playersData } from './containers/Players';
-
 const useStyles = makeStyles((theme) => ({
   darkPaper: {
     padding: theme.spacing(1),
@@ -26,10 +24,23 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 110,
     float: 'left',
   },
+  systemLogo: {
+    float: 'right',
+    marginLeft: 8,
+    marginTop: 2,
+    width: 24,
+    height: 24,
+  },
   playerName: {
     fontVariant: 'small-caps',
     color: 'whitesmoke',
     float: 'left',
+    textShadow: '0px 0px 2px black',
+  },
+  playerSubName: {
+    fontWeight: 400,
+    color: 'whitesmoke !important',
+    marginTop: '1.5px',
   },
   playerTitle: {
     fontVariant: 'small-caps',
@@ -38,10 +49,14 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'end',
   },
   playerSecondaryTitle: {
-    fontSize: '0.8em',
+    fontSize: '0.9em',
+  },
+  playerPosition: {
+    transform: 'rotate(-90deg)',
+    marginTop: 6,
+    marginLeft: -8,
   },
   playerInfo: {
-    float: 'left',
     paddingLeft: theme.spacing(4),
   },
   playerDetails: {
@@ -78,6 +93,10 @@ const defaultProps = {
  *  numMVP,
  *  points,
  *  gamesPlayed,
+ *  value,
+ *  system,
+ *  country,
+ *  position,
  * }
  */
 function PlayerCard(props) {
@@ -93,13 +112,49 @@ function PlayerCard(props) {
     teamLogo = team.name;
   }
   const teamLogoSrc = require(`../images/LOGO_${teamLogo}.png`); // eslint-disable-line
+
+  /**
+   * System:
+   * - Robot_icon.svg (bots)
+   * - Nintendo_Switch_Logo.svg
+   * - PlayStation_logo.svg
+   * - Steam_icon_logo.svg (PC)
+   * - Xbox_one_logo.svg
+   */
+  let sysLogo = 'question.png';
+  let sysTitle = 'Unknown';
+  if (player.system) {
+    const sys = player.system.toLowerCase();
+    if (sys === 'bot') {
+      sysLogo = 'Robot_icon.svg';
+      sysTitle = 'BOT';
+    } else if (sys.indexOf('switch') > -1) {
+      sysLogo = 'Nintendo_Switch_Logo.svg';
+      sysTitle = 'Switch';
+    } else if (sys.indexOf('pc') > -1 || sys.indexOf('steam') > -1) {
+      sysLogo = 'Steam_icon_logo.svg';
+      sysTitle = 'PC / Steam';
+    } else if (sys.indexOf('ps') > -1 || sys.indexOf('playstation') > -1) {
+      sysLogo = 'PlayStation_logo.svg';
+      sysTitle = 'PS4';
+    } else if (sys.indexOf('x') > -1) {
+      sysLogo = 'Xbox_one_logo.svg';
+      sysTitle = 'XBox';
+    } else {
+      sysLogo = 'question.png';
+      sysTitle = 'Unknown';
+    }
+  }
+
+  const sysLogoSrc = require(`../images/${sysLogo}`); // eslint-disable-line
+  const robotIcon = require('../images/Robot_icon.svg'); // eslint-disable-line
   return (
     <Grid item xs={12} className={classes.playerCard}>
       <Paper className={classes.darkPaper} style={inTeam ? { maxHeight: 83.25 } : {}}>
         <Grid container alignItems="flex-start" justify="flex-start">
           {inTeam ? (
             <Grid item xs={2}>
-              <Avatar src={logoSrc} alt={playerCar} className={classes.playerIcon} />
+              <Avatar src={logoSrc} alt={`car ${playerCar}`} className={classes.playerIcon} />
             </Grid>
           ) : (
             <Grid item xs={1}>
@@ -118,29 +173,66 @@ function PlayerCard(props) {
                 )}
               >
                 <Tooltip title={playerCar}>
-                  <Avatar src={logoSrc} alt={playerCar} className={classes.playerIcon} />
+                  <Avatar src={logoSrc} alt={`car ${playerCar}`} className={classes.playerIcon} />
                 </Tooltip>
               </Badge>
             </Grid>
           )}
           <Grid item xs={4}>
-            <span className={classes.playerInfo}>
-              <Link to={showDetails ? '/players' : `/players/${player.name}`} exact>
-                <Typography variant="h5" className={classes.playerName}>{player.name}</Typography>
-              </Link>
+            <Grid container className={classes.playerInfo} direction="column" alignItems="flex-start" justify="flex-end">
+              <span>
+                <Typography variant="h6" className={`${classes.playerTitle} ${classes.playerSecondaryTitle} ${classes.playerPosition}`}>
+                  {player.position}
+                </Typography>
+                <Link to={showDetails ? '/players' : `/players/${player.name}`} exact>
+                  <Typography variant="h5" className={classes.playerName}>{player.name}</Typography>
+                </Link>
+                {inTeam || !player.rlName ? '' : (
+                  <Typography
+                    variant="h6"
+                    className={`${classes.playerTitle} ${classes.playerSubName}`}
+                    style={player.rlName.length > 15 ? { letterSpacing: 'calc(-2.5px + 0.01vw)' } : null}
+                  >
+                      &nbsp;&nbsp;
+                    {player.rlName}
+                  </Typography>
+                )}
+                {inTeam ? '' : (
+                  <>
+                    <Tooltip title={sysTitle}>
+                      <Avatar
+                        src={sysLogoSrc}
+                        variant="square"
+                        alt="system logo"
+                        className={classes.systemLogo}
+                        imgProps={{ style: { filter: 'none' } }}
+                        component="span"
+                      />
+                    </Tooltip>
+                    {player.name === 'Dan Bot' ? (
+                      <Tooltip title="BOT">
+                        <Avatar
+                          src={robotIcon}
+                          variant="square"
+                          alt="system logo"
+                          className={classes.systemLogo}
+                          imgProps={{ style: { filter: 'none' } }}
+                          component="span"
+                        />
+                      </Tooltip>
+                    ) : ''}
+                  </>
+                )}
+              </span>
               <br />
               <Typography variant="h6" className={classes.playerTitle}>
                 {player.primaryRole}
-                &nbsp;&nbsp;
-                <span className={classes.playerSecondaryTitle}>{player.secondaryRole}</span>
               </Typography>
-              {inTeam || !player.rlName ? '' : (
-                <>
-                  <br />
-                  <Typography variant="h6" className={classes.playerTitle}>{player.rlName}</Typography>
-                </>
-              )}
-            </span>
+              <br />
+              <Typography variant="h6" className={`${classes.playerTitle} ${classes.playerSecondaryTitle}`}>
+                {player.secondaryRole}
+              </Typography>
+            </Grid>
           </Grid>
           <Grid item xs={inTeam ? 3 : 2}>
             <span className={classes.playerDetails}>
