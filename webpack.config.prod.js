@@ -124,6 +124,10 @@ export default {
         ],
       },
       {
+        test: /\.mdx?$/,
+        use: ['babel-loader', '@mdx-js/loader'],
+      },
+      {
         test: /(\.css|\.scss|\.sass)$/,
         use: [
           MiniCssExtractPlugin.loader,

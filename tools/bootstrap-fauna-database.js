@@ -221,7 +221,16 @@ function getPlayersFromSheets(playersSheet, rolesSheet, allStats) {
       const playersRet = [];
       allPlayers.forEach((player) => {
         const {
-          ID: id, Name: name, 'Rocket League Name': rlName, 'Team Assignment': team, Car: car, 'Signing Value': signingValue, 'Current Value': value,
+          ID: id,
+          Name: name,
+          'Rocket League Name': rlName,
+          'Team Assignment': team,
+          Car: car,
+          'Signing Value': signingValue,
+          'Current Value': value,
+          System: system,
+          Country: country,
+          Position: position,
         } = player;
         const { primaryRole, secondaryRole } = playerRoles.find((role) => role.playerName === name.toUpperCase());
         const {
@@ -245,6 +254,9 @@ function getPlayersFromSheets(playersSheet, rolesSheet, allStats) {
           points,
           gamesPlayed,
           value,
+          system,
+          country,
+          position,
         };
         playersRet.push(playerObj);
       });

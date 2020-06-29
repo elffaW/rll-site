@@ -33,7 +33,7 @@ const baseTheme = createMuiTheme({
       dark: '#202020',
     },
     background: {
-      dark: '#6D4C41',
+      dark: '#4e0000', // darker red
     },
   },
 });

@@ -98,15 +98,8 @@ export default {
         ],
       },
       {
-        test: /\.md$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              /* your options here */
-            },
-          },
-        ],
+        test: /\.mdx?$/,
+        use: ['babel-loader', '@mdx-js/loader'],
       },
       {
         test: /(\.css|\.scss|\.sass)$/,

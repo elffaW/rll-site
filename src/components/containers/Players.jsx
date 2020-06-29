@@ -91,6 +91,18 @@ const playerFields = {
     friendly: 'Current Value',
     type: 'strnum', // float as string
   },
+  system: {
+    friendly: 'System',
+    type: 'string',
+  },
+  country: {
+    friendly: 'Country',
+    type: 'string',
+  },
+  position: {
+    friendly: 'Position',
+    type: 'string',
+  },
 };
 
 class Players extends Component {
