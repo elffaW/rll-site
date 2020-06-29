@@ -52,16 +52,41 @@ if (!process.env.FAUNADB_SECRET) {
 if (process.env.FAUNADB_SECRET) {
   // required env vars
   if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL) {
-    throw new Error('no GOOGLE_SERVICE_ACCOUNT_EMAIL env var set');
+    console.log(chalk.yellow('no GOOGLE_SERVICE_ACCOUNT_EMAIL env var set'));
+    process.exit(1);
   }
   if (!process.env.GOOGLE_PRIVATE_KEY) {
-    throw new Error('no GOOGLE_PRIVATE_KEY env var set');
+    console.log(chalk.yellow('no GOOGLE_PRIVATE_KEY env var set'));
+    process.exit(1);
   }
   if (!process.env.GOOGLE_SHEETS_SHEET_ID) {
     // spreadsheet key is the long id in the sheets URL
-    throw new Error('no GOOGLE_SHEETS_SHEET_ID env var set');
+    console.log(chalk.yellow('no GOOGLE_SHEETS_SHEET_ID env var set'));
+    process.exit(1);
   }
 
+  /**
+   *
+
+To check whether an index is "active", run the following query (replacing index_name with the name of the index that you want to check):
+
+```
+Select("active", Get(Index("index_name")))
+```
+
+If you see true in the output, the index is "active" and is ready for your queries. Otherwise, you should wait and check again later, until true appears in the output.
+
+   */
+  /**
+   *             1 - get collections
+   * a) they exist        || b) don't exist
+   * 2a - get sheets data || 2b - create collections
+   * 3a - get indexes     || 3b - get sheets data
+   *                      || 4b - create indexes (unique by ID)
+   * create data queries:
+   * - while index !active, setTimeout 500, then retry [query: `Select("active", Get(Index(`all_{collectionName}`)))`]
+   * - when index is active: insert data
+   */
   getDataFromSheets()
     .then((data) => {
       console.log(chalk.cyan('load db'));
@@ -420,7 +445,7 @@ function createFaunaDB(key, data) {
     collectionQueries.push(q.CreateCollection({ name: collectionKey }));
     collectionIndexQueries.push(q.Create(q.Ref('indexes'), {
       name: `all_${collectionKey}`,
-      source: q.Ref(`classes/${collectionKey}`),
+      source: q.Collection(collectionKey),
     }));
     collection.forEach((record) => recordQueries.push(q.Create(q.Collection(collectionKey), { data: record })));
   });
