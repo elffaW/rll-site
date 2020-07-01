@@ -63,6 +63,18 @@ export default {
         use: ['babel-loader'],
       },
       {
+        test: /\.jsx?$/,
+        include: /react-pivot/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-react'],
+            },
+          },
+        ],
+      },
+      {
         test: /\.eot(\?v=\d+.\d+.\d+)?$/,
         use: [
           {

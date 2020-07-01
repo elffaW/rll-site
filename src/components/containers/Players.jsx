@@ -14,6 +14,7 @@ import {
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import SortIcon from '@material-ui/icons/Sort';
+import ReactPivot from 'react-pivot';
 
 import BaseApp from './BaseApp';
 import PageHeader from '../PageHeader';
@@ -137,6 +138,7 @@ class Players extends Component {
         const playerTeam = teams.find((team) => parseInt(team.id, 10) === parseInt(tempPlayer.team, 10));
         if (playerTeam) {
           tempPlayer.team = playerTeam;
+          tempPlayer.teamName = playerTeam.name;
         }
         return tempPlayer;
       });
@@ -184,6 +186,86 @@ class Players extends Component {
     const { params } = match;
     const { playerName } = params;
 
+    const dimensions = [
+      { value: 'teamName', title: 'Team' },
+      { value: 'name', title: 'Name' },
+      { value: 'car', title: 'Car' },
+      { value: 'primaryRole', title: 'Primary Role' },
+      { value: 'secondaryRole', title: 'Secondary Role' },
+      { value: 'system', title: 'System' },
+      { value: 'country', title: 'Country' },
+      { value: 'position', title: 'Position' },
+      // score
+      // goals
+      // assists
+      // saves
+      // shots
+      // numMVP
+      // points
+      // gamesPlayed
+      // value
+    ];
+    const reduce = (row, memo) => {
+      /* eslint-disable no-param-reassign */
+      memo.goalsTotal = (memo.goalsTotal || 0) + parseFloat(row.goals);
+      memo.assistsTotal = (memo.assistsTotal || 0) + parseFloat(row.assists);
+      memo.savesTotal = (memo.savesTotal || 0) + parseFloat(row.saves);
+      memo.shotsTotal = (memo.shotsTotal || 0) + parseFloat(row.shots);
+      memo.numMVPTotal = (memo.numMVPTotal || 0) + parseFloat(row.numMVP);
+      memo.pointsTotal = (memo.pointsTotal || 0) + parseFloat(row.points);
+      memo.gamesPlayedTotal = (memo.gamesPlayedTotal || 0) + parseFloat(row.gamesPlayed);
+      memo.valueTotal = (memo.valueTotal || 0) + parseFloat(row.value);
+      memo.count = (memo.count || 0) + 1;
+      /* eslint-enable no-param-reassign */
+      return memo;
+    };
+    const calculations = [{
+      title: 'Count',
+      value: 'count',
+      template: (val) => val.toFixed(0),
+      sortBy: (row) => (Number.isNaN(row.count) ? 0 : row.count),
+    }, {
+      title: 'Total Goals',
+      value: 'goalsTotal',
+      template: (val) => val.toFixed(0),
+      sortBy: (row) => (Number.isNaN(row.goalsTotal) ? 0 : row.goalsTotal),
+    }, {
+      title: 'Total Assists',
+      value: 'assistsTotal',
+      template: (val) => val.toFixed(0),
+      sortBy: (row) => (Number.isNaN(row.assistsTotal) ? 0 : row.assistsTotal),
+    }, {
+      title: 'Total Saves',
+      value: 'savesTotal',
+      template: (val) => val.toFixed(0),
+      sortBy: (row) => (Number.isNaN(row.savesTotal) ? 0 : row.savesTotal),
+    }, {
+      title: 'Total Shots',
+      value: 'shotsTotal',
+      template: (val) => val.toFixed(0),
+      sortBy: (row) => (Number.isNaN(row.shotsTotal) ? 0 : row.shotsTotal),
+    }, {
+      title: 'Total MVP',
+      value: 'numMVPTotal',
+      template: (val) => val.toFixed(0),
+      sortBy: (row) => (Number.isNaN(row.numMVPTotal) ? 0 : row.numMVPTotal),
+    }, {
+      title: 'Total Points',
+      value: 'pointsTotal',
+      template: (val) => val.toFixed(0),
+      sortBy: (row) => (Number.isNaN(row.pointsTotal) ? 0 : row.pointsTotal),
+    }, {
+      title: 'Total Games Played',
+      value: 'gamesPlayedTotal',
+      template: (val) => val.toFixed(0),
+      sortBy: (row) => (Number.isNaN(row.gamesPlayedTotal) ? 0 : row.gamesPlayedTotal),
+    }, {
+      title: 'Total Value',
+      value: 'valueTotal',
+      template: (val) => `$${val.toFixed(2)}M`,
+      sortBy: (row) => (Number.isNaN(row.valueTotal) ? 0 : row.valueTotal),
+    }];
+
     let curPlayer;
     if (playerName) {
       curPlayer = players.find((player) => player.name.toLowerCase() === playerName.toLowerCase());
@@ -200,6 +282,17 @@ class Players extends Component {
         ) : (
           <Grid container justify="center">
             <Grid item xs={12} lg={10} xl={8}>
+              <Paper className={classes.paper}>
+                <ReactPivot
+                  rows={players}
+                  dimensions={dimensions}
+                  reduce={reduce}
+                  calculations={calculations}
+                  nPaginateRows={200}
+                  compact
+                  csvDownloadFileName="playerStats.csv"
+                />
+              </Paper>
               <Paper className={classes.paper}>
                 {curPlayer ? '' : (
                   <>

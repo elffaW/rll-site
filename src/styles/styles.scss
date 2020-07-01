@@ -9,3 +9,32 @@ body {
 .MuiAvatar-img[alt~="car"] {
   filter: drop-shadow(0 0 0.15rem #959796);
 }
+
+// override dumb react-pivot styles
+.reactPivot {
+  background: inherit !important;
+  color: inherit !important;
+  margin-top: inherit;
+  border-radius: 4px;
+  font-family: Roboto;
+  font-variant: small-caps;
+}
+
+.reactPivot-results tr:hover td {
+  background-color: #8e000022 !important;
+}
+
+.reactPivot select {
+  color: inherit !important;
+  background-color: inherit !important;
+}
+
+.reactPivot-csvExport button {
+  color: inherit !important;
+  background-color: inherit !important;
+  border: inherit !important;
+}
+
+.reactPivot-csvExport button:hover {
+  background-color: #8e000022 !important;
+}
