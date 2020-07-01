@@ -38,3 +38,13 @@ body {
 .reactPivot-csvExport button:hover {
   background-color: #8e000022 !important;
 }
+
+.reactPivot tr.reactPivot-level-0 {
+  font-weight: 500;
+  color: #4e0000;
+  line-height: 1rem !important;
+}
+
+.reactPivot tr[class^="reactPivot-level-"] {
+  line-height: 0.75rem;
+}

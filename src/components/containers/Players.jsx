@@ -212,7 +212,7 @@ class Players extends Component {
       memo.savesTotal = (memo.savesTotal || 0) + parseFloat(row.saves);
       memo.shotsTotal = (memo.shotsTotal || 0) + parseFloat(row.shots);
       memo.numMVPTotal = (memo.numMVPTotal || 0) + parseFloat(row.numMVP);
-      memo.pointsTotal = (memo.pointsTotal || 0) + parseFloat(row.points);
+      memo.scoreTotal = (memo.scoreTotal || 0) + parseFloat(row.score);
       memo.gamesPlayedTotal = (memo.gamesPlayedTotal || 0) + parseFloat(row.gamesPlayed);
       memo.valueTotal = (memo.valueTotal || 0) + parseFloat(row.value);
       memo.count = (memo.count || 0) + 1;
@@ -250,10 +250,10 @@ class Players extends Component {
       template: (val) => val.toFixed(0),
       sortBy: (row) => (Number.isNaN(row.numMVPTotal) ? 0 : row.numMVPTotal),
     }, {
-      title: 'Total Points',
-      value: 'pointsTotal',
+      title: 'Total Score',
+      value: 'scoreTotal',
       template: (val) => val.toFixed(0),
-      sortBy: (row) => (Number.isNaN(row.pointsTotal) ? 0 : row.pointsTotal),
+      sortBy: (row) => (Number.isNaN(row.scoreTotal) ? 0 : row.scoreTotal),
     }, {
       title: 'Total Games Played',
       value: 'gamesPlayedTotal',
@@ -262,7 +262,7 @@ class Players extends Component {
     }, {
       title: 'Total Value',
       value: 'valueTotal',
-      template: (val) => `$${val.toFixed(2)}M`,
+      template: (val) => `$${val.toFixed(1)}M`,
       sortBy: (row) => (Number.isNaN(row.valueTotal) ? 0 : row.valueTotal),
     }];
 
