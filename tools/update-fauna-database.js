@@ -16,7 +16,7 @@ if (!SEASON_NUMBER) {
   process.exit(1);
 }
 
-console.log(chalk.cyan('Creating your FaunaDB Database...\n'));
+console.log(chalk.cyan('Updating your FaunaDB Database...\n'));
 
 // 1. Check for required enviroment variables
 if (!process.env.FAUNADB_SECRET) {
@@ -40,10 +40,8 @@ if (!process.env.FAUNADB_SECRET) {
         .then((data) => {
           console.log(chalk.cyan('load db'));
           // console.log(JSON.stringify(data, null, 2));
-          createFaunaDB(process.env.FAUNADB_SECRET, data).then(() => {
-            createFaunaIndexes(process.env.FAUNADB_SECRET, data).then(() => {
-              console.log('Database created');
-            });
+          updateDatabase(process.env.FAUNADB_SECRET, data).then(() => {
+            console.log('Database created');
           }).catch((error) => {
             console.error(error);
           });
@@ -84,11 +82,16 @@ If you see true in the output, the index is "active" and is ready for your queri
 
    */
   /**
-   *             1 - get collections
-   * a) they exist        || b) don't exist
-   * 2a - get sheets data || 2b - create collections
-   * 3a - get indexes     || 3b - get sheets data
-   *                      || 4b - create indexes (unique by ID)
+   * ASSUMPTION: collections and indexes already exist, and have some data in them
+   * GOAL:
+   * - retrieve records from GSheets for the specified Season
+   * - if record exists, update record in Fauna for Players/Games/Teams
+   * - if record does not exist, insert record in Fauna for Players/Games/Teams
+   *
+   * PLAYER:  lookup/unique by [id + season]
+   * GAME:    lookup/unique by [id + season]
+   * TEAM:    lookup/unique by [id + season]
+   *
    * create data queries:
    * - while index !active, setTimeout 500, then retry [query: `Select("active", Get(Index(`all_{collectionName}`)))`]
    * - when index is active: insert data
@@ -97,10 +100,8 @@ If you see true in the output, the index is "active" and is ready for your queri
     .then((data) => {
       console.log(chalk.cyan('load db'));
       // console.log(JSON.stringify(data, null, 2));
-      createFaunaDB(process.env.FAUNADB_SECRET, data).then(() => {
-        createFaunaIndexes(process.env.FAUNADB_SECRET, data).then(() => {
-          console.log('Database created');
-        });
+      updateDatabase(process.env.FAUNADB_SECRET, data).then(() => {
+        console.log('Database created');
       }).catch((error) => {
         console.error(error);
       });
@@ -388,9 +389,12 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
         const gamesRet = [];
         let curArena = 'Salty Shores';
         let curGameweek = 1;
+        const curSeason = parseInt(SEASON_NUMBER, 10);
         for (let i = 0, allLen = allGames.length; i < allLen; i++) {
           const gameRowA = allGames[i];
           const gameRowB = allGames[i + 1];
+          const gameRowC = allGames[i + 2];
+          const gameRowD = allGames[i + 3];
 
           if (gameRowA.Date.startsWith('Gameweek')) {
             // eslint-disable-next-line prefer-destructuring
@@ -411,8 +415,10 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
             Team: teamIdB, G1: game1ScoreB, G2: game2ScoreB,
           } = gameRowB;
           const dateTime = `${dateA} ${timeA} -0500`;
-          const homeTeamId = parseInt(allTeams.find((team) => team.id === teamIdA).id, 10);
-          const awayTeamId = parseInt(allTeams.find((team) => team.id === teamIdB).id, 10);
+          const homeTeam = allTeams.find((team) => team.id === parseInt(teamIdA, 10));
+          const awayTeam = allTeams.find((team) => team.id === parseInt(teamIdB, 10));
+          const homeTeamId = parseInt(homeTeam.id, 10);
+          const awayTeamId = parseInt(awayTeam.id, 10);
           const game1Obj = {
             id: parseInt(matchNum, 10),
             gameTime: dateTime,
@@ -428,6 +434,34 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
           };
           // console.log(JSON.stringify(game1Obj));
           gamesRet.push(game1Obj);
+
+          if (curSeason !== 2 && gameRowC['Match #']) {
+            const {
+              'Match #': matchNum2, Team: teamIdA2, G1: game1ScoreA2, G2: game2ScoreA2,
+            } = gameRowC;
+            const {
+              Team: teamIdB2, G1: game1ScoreB2, G2: game2ScoreB2,
+            } = gameRowD;
+            const homeTeam2 = allTeams.find((team) => team.id === parseInt(teamIdA2, 10));
+            const awayTeam2 = allTeams.find((team) => team.id === parseInt(teamIdB2, 10));
+            const homeTeamId2 = parseInt(homeTeam2.id, 10);
+            const awayTeamId2 = parseInt(awayTeam2.id, 10);
+            const game2Obj = {
+              id: parseInt(matchNum2, 10),
+              gameTime: dateTime,
+              gameWeek: curGameweek,
+              arena: curArena,
+              homeTeamId: homeTeamId2,
+              homeTeamScoreA: game1ScoreA2,
+              homeTeamScoreB: game2ScoreA2,
+              awayTeamId: awayTeamId2,
+              awayTeamScoreA: game1ScoreB2,
+              awayTeamScoreB: game2ScoreB2,
+              season: parseInt(SEASON_NUMBER, 10),
+            };
+            // console.log(JSON.stringify(game1Obj));
+            gamesRet.push(game2Obj);
+          }
         }
         resolve(gamesRet);
       }).catch((err) => {
@@ -437,242 +471,114 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
 }
 
 /* idempotent operation */
-// function deleteFaunaDB(key, data) {
-//   console.log('Delete the database!');
-//   const client = new faunadb.Client({
-//     secret: key,
-//   });
-
-//   const deleteCollectionQueries = [];
-//   Object.keys(data).forEach((collectionKey) => {
-//     console.log(chalk.cyan('Delete collection', collectionKey));
-//     deleteCollectionQueries.push(q.Delete(q.Collection(collectionKey)));
-//   });
-
-//   return client.query(deleteCollectionQueries).then(() => {
-//     console.log('deleted collections');
-//   }).catch((e) => {
-//     // database already exists? or something?
-//     if (e.requestResult.statusCode === 400) {
-//       if (e.message === 'invalid ref') { // tried to delete collection that doesn't exist
-//         console.log('DB does not exist, nothing to delete');
-//       }
-//     }
-//     console.error('ERROR from deleteCollectionQueries');
-//     throw e;
-//   });
-// }
-
-/* idempotent operation */
-function createFaunaDB(key, data) {
-  console.log('Create the database collections!');
+function updateDatabase(key, data) {
+  console.log('Initialize the database with records!');
   const client = new faunadb.Client({
     secret: key,
   });
 
-  const collectionQueries = [];
+  const updateQueries = [];
+  const insertQueries = [];
   Object.keys(data).forEach((collectionKey) => {
-    console.log(chalk.cyan('Create collection', collectionKey));
-    collectionQueries.push(q.CreateCollection({ name: collectionKey }));
+    console.log(chalk.cyan('Init collection', collectionKey));
+    const collectionData = data[collectionKey];
+
+    collectionData.forEach((record) => {
+      updateQueries.push(q.Update(q.Select('ref', q.Get(q.Match(q.Index(`${collectionKey}_by_season_and_id`), parseInt(SEASON_NUMBER, 10), record.id))), { data: record }));
+      insertQueries.push(q.Create(q.Collection(collectionKey), { data: record }));
+    });
   });
 
-  return client.query(collectionQueries).then(() => {
-    console.log('created collections');
-  }).catch((e) => {
-    // database already exists? or something?
-    if (e.requestResult.statusCode === 400) {
-      if (e.message === 'instance not unique') {
-        console.log('DB already exists');
-        throw e;
-      } else if (e.message === 'instance already exists') { // tried to create collection that already exists
-        console.log('collections already exist, ignoring...');
+  return client.query(updateQueries)
+    .then(() => {
+      console.log('updated existing records');
+      // const recordQueries = [];
+      // Object.keys(data).forEach((collectionKey) => {
+      //   const collectionData = data[collectionKey];
+
+      //   dbRecords.forEach((dbRecord) => {
+      //     collectionData.some((record) => {
+      //       if (dbRecord.id === record.id) { // this should be good enough b/c index only returns correct Season
+      //         recordQueries.push(q.Update(q.Ref(dbRecord), { data: record }));
+      //         return true; // found it - break out of the some loop
+      //       }
+      //       return false; // continue
+      //     });
+      //   });
+      // });
+      // return client.query(recordQueries)
+      //   .catch((err) => {
+      //     console.error('ERROR from recordQueries');
+      //     console.log(err);
+      //   });
+    }).catch((e) => {
+      console.error('ERROR from updateQueries');
+      console.log(e);
+
+      if (e.message === 'instance not found') {
+        // responseRaw: '{"errors":[{"position":[25,"update","from"],"code":"instance not found","description":"Set not found."}, ... ]}
+        const errorResponses = JSON.parse(e.requestResult.responseRaw).errors;
+        const filteredInserts = [];
+        errorResponses.forEach((error) => {
+          filteredInserts.push(insertQueries[error.position[0]]);
+        });
+        // record doesn't exist yet - insert it instead of update
+        return client.query(filteredInserts)
+          .then(() => {
+            console.log('inserted new records, re-run to update existing');
+          }).catch((err) => {
+            console.log('ERROR from filteredInserts');
+            console.log(err);
+          });
+      // eslint-disable-next-line no-else-return
+      } else {
+        console.log(e);
+        throw new Error(e);
       }
-    }
-    console.error('ERROR from collectionQueries');
-    throw e;
-  });
+    });
 }
 
-/* idempotent operation */
-// function initDatabase(key, data) {
+// function updateDatabase(key, data) {
 //   console.log('Initialize the database with records!');
 //   const client = new faunadb.Client({
 //     secret: key,
 //   });
 
-//   const recordQueries = [];
+//   const lookupQueries = [];
 //   Object.keys(data).forEach((collectionKey) => {
 //     console.log(chalk.cyan('Init collection', collectionKey));
-//     const collection = data[collectionKey];
-//     collection.forEach((record) => recordQueries.push(q.Create(q.Collection(collectionKey), { data: record })));
+//     const collectionData = data[collectionKey];
+
+//     collectionData.forEach((record) => {
+//       lookupQueries.push(q.Get(q.Match(q.Index(`${collectionKey}_by_season_and_id`), parseInt(SEASON_NUMBER, 10), record.id)));
+//     });
 //   });
 
-//   return client.query(recordQueries)
-//     .catch((err) => {
-//       console.error('ERROR from recordQueries');
+//   return client.query(lookupQueries)
+//     .then((dbRecords) => {
+//       const recordQueries = [];
+//       Object.keys(data).forEach((collectionKey) => {
+//         const collectionData = data[collectionKey];
+
+//         dbRecords.forEach((dbRecord) => {
+//           collectionData.some((record) => {
+//             if (dbRecord.id === record.id) { // this should be good enough b/c index only returns correct Season
+//               recordQueries.push(q.Update(q.Ref(dbRecord), { data: record }));
+//               return true; // found it - break out of the some loop
+//             }
+//             return false; // continue
+//           });
+//         });
+//       });
+//       return client.query(recordQueries)
+//         .catch((err) => {
+//           console.error('ERROR from recordQueries');
+//           console.log(err);
+//         });
+//     }).catch((err) => {
+//       console.error('ERROR from lookupQueries');
 //       console.log(err);
 //     });
-// }
-
-/* idempotent operation */
-function createFaunaIndexes(key, data) {
-  console.log('Create the indexes!');
-  const client = new faunadb.Client({
-    secret: key,
-  });
-
-  const collectionIndexQueries = [];
-  Object.keys(data).forEach((collectionKey) => {
-    console.log(chalk.cyan('Create index for collection', collectionKey));
-    collectionIndexQueries.push(q.Create(q.Ref('indexes'), {
-      name: `all_${collectionKey}`,
-      source: q.Collection(collectionKey),
-    }));
-
-    collectionIndexQueries.push(q.Create(q.Ref('indexes'), {
-      name: `${collectionKey}_by_season`,
-      source: q.Collection(collectionKey),
-      terms: [{ field: ['data', 'season'] }],
-    }));
-
-    collectionIndexQueries.push(q.Create(q.Ref('indexes'), {
-      name: `${collectionKey}_by_season_and_id`,
-      source: q.Collection(collectionKey),
-      terms: [{ field: ['data', 'season'] }, { field: ['data', 'id'] }],
-      unique: true,
-      serialized: true,
-    }));
-  });
-
-  return client.query(collectionIndexQueries).then(() => {
-    console.log('created collection indexes');
-  }).catch((e) => {
-    // database already exists? or something?
-    if (e.requestResult.statusCode === 400) {
-      if (e.message === 'instance not unique') {
-        console.log('DB already exists');
-        throw e;
-      }
-    }
-    console.error('ERROR from collectionIndexQueries');
-    throw e;
-  });
-}
-
-/* idempotent operation */
-/**
- * this is the original "do everything" function - probably shouldn't be used anymore?
- * @param {*} key
- * @param {*} data
- */
-// function deleteCreateAndInitDB(key, data) {
-//   console.log('Create the database!');
-//   const client = new faunadb.Client({
-//     secret: key,
-//   });
-
-//   const deleteCollectionQueries = [];
-//   const collectionQueries = [];
-//   // const collectionIndexQueries = [];
-//   const recordQueries = [];
-//   Object.keys(data).forEach((collectionKey) => {
-//     console.log(chalk.cyan('Create collection', collectionKey));
-//     deleteCollectionQueries.push(q.Delete(q.Collection(collectionKey)));
-//     const collection = data[collectionKey];
-//     collectionQueries.push(q.CreateCollection({ name: collectionKey }));
-//     // collectionIndexQueries.push(q.Create(q.Ref('indexes'), {
-//     //   name: `all_${collectionKey}`,
-//     //   source: q.Collection(collectionKey),
-//     // }));
-//     collection.forEach((record) => recordQueries.push(q.Create(q.Collection(collectionKey), { data: record })));
-//   });
-
-//   // return Promise.all(deleteCollectionQueries)
-//   //   .then(() => Promise.all(collectionQueries)
-//   //     .then(() => Promise.all(recordQueries)
-//   //       .catch((err) => {
-//   //         console.error('ERROR from recordQueries');
-//   //         console.log(err);
-//   //       }))
-//   //     .catch((e) => {
-//   //       // database already exists? or something?
-//   //       if (e.requestResult.statusCode === 400 && e.message === 'instance not unique') {
-//   //         console.log('DB already exists');
-//   //         throw e;
-//   //       } else {
-//   //         console.error('ERROR from collectionQueries');
-//   //         console.log(e);
-//   //         throw e;
-//   //       }
-//   //     }))
-//   //   .catch((error) => {
-//   //     console.error('ERROR from delete queries');
-//   //     console.log(error);
-//   //     throw error;
-//   //   });
-//   return client.query(deleteCollectionQueries).then(() => {
-//     console.log('deleted collections, gonna wait 10sec for fauna to catch up');
-//     setTimeout(() => {
-//       console.log('done waiting -- create the collections');
-//       return client.query(collectionQueries).then(() => {
-//         console.log('created collections, gonna wait 10sec for fauna to catch up');
-//         setTimeout(() => {
-//           console.log('done waiting -- insert the records');
-//           return client.query(recordQueries)
-//             .catch((err) => {
-//               console.error('ERROR from recordQueries');
-//               console.log(err);
-//             });
-//         }, 10000);
-//       });
-//     }, 10000);
-//   }).catch((e) => {
-//     // database already exists? or something?
-//     if (e.requestResult.statusCode === 400) {
-//       if (e.message === 'instance not unique') {
-//         console.log('DB already exists');
-//         throw e;
-//       } else if (e.message === 'invalid ref') { // tried to delete collection that doesn't exist
-//         return client.query(collectionQueries).then(() => {
-//           console.log('created collections, gonna wait 10sec for fauna to catch up');
-//           setTimeout(() => {
-//             console.log('done waiting -- insert the records');
-//             return client.query(recordQueries)
-//               .catch((err) => {
-//                 console.error('ERROR from recordQueries');
-//                 console.log(err);
-//               });
-//           }, 10000);
-//         }).catch((err) => {
-//           console.error('ERROR from collectionQueries inside invalid ref');
-//           throw err;
-//         });
-//       } else if (e.message === 'instance already exists') { // tried to create collection that already exists
-//         console.log('collections already exist, continue with record insertion');
-//         return client.query(recordQueries)
-//           .catch((err) => {
-//             console.error('ERROR from recordQueries');
-//             console.log(err);
-//           });
-//       }
-//     }
-//     console.error('ERROR from collectionQueries');
-//     throw e;
-//   });
-
-//   // return client.query(q.Create(q.Ref('classes'), { name: 'players' }))
-//   //   .then(() => client.query(
-//   //     q.Create(q.Ref('indexes'), {
-//   //       name: 'all_players',
-//   //       source: q.Ref('classes/players'),
-//   //     }),
-//   //   )).catch((e) => {
-//   //     // Database already exists
-//   //     if (e.requestResult.statusCode === 400 && e.message === 'instance not unique') {
-//   //       console.log('DB already exists');
-//   //       throw e;
-//   //     }
-//   //   });
 // }
 
 /* util methods */
