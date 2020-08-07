@@ -111,7 +111,7 @@ function PlayerCard(props) {
   if (team && team.name) {
     teamLogo = team.name;
   }
-  const teamLogoSrc = require(`../images/LOGO_${teamLogo}.png`); // eslint-disable-line
+  const teamLogoSrc = require(`../images/LOGO_${teamLogo.toUpperCase()}.png`); // eslint-disable-line
 
   /**
    * System:

@@ -29,6 +29,7 @@ export default function AppRouter() {
             <Route path="/rules" component={Rules} />
             {/* SCHEDULE ROUTES */}
             {/* <Route path="/schedule/:weekNum" component={ScheduleDetails} /> */}
+            <Route path="/schedule/:gameNum" component={Schedule} />
             <Route path="/schedule" component={Schedule} />
             {/* STATS ROUTES */}
             {/* <Route path="/stats/:playerId" component={PlayerStats} /> */}

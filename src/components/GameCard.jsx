@@ -79,14 +79,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function GameCard(props) {
-  const { game } = props;
+  const { game, showDetails } = props;
   const classes = useStyles();
 
   const home = game.homeTeam;
   const away = game.awayTeam;
 
-  // const homeLogo = require(`../images/LOGO_${home.name}.png`);
-  // const awayLogo = require(`../images/LOGO_${away.name}.png`);
+  // const homeLogo = require(`../images/LOGO_${home.name.toUpperCase()}.png`);
+  // const awayLogo = require(`../images/LOGO_${away.name.toUpperCase()}.png`);
 
   const gameTime = new Date(game.gameTime).toLocaleString() + timezoneLookup(new Date().getTimezoneOffset());
 
@@ -160,6 +160,10 @@ function GameCard(props) {
 GameCard.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   game: PropTypes.object.isRequired,
+  showDetails: PropTypes.bool,
+};
+GameCard.defaultProps = {
+  showDetails: false,
 };
 
 export default GameCard;

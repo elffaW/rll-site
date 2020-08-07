@@ -326,18 +326,30 @@ function getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers) {
         const {
           'TEAM ID': teamId, TEAM: teamName, 'PLAYER A': playerAName, 'PLAYER B': playerBName, 'PLAYER C': playerCName,
         } = team;
-        if (playerAName && playerBName && playerCName) {
-          const playerA = parseInt(allPlayers.find((player) => player.name === playerAName).id, 10);
-          const playerB = parseInt(allPlayers.find((player) => player.name === playerBName).id, 10);
-          const playerC = parseInt(allPlayers.find((player) => player.name === playerCName).id, 10);
-          const teamMembers = [playerA, playerB, playerC];
-          const roster = {
-            id: parseInt(teamId, 10),
-            name: teamName,
-            members: teamMembers,
-          };
-          teamRosters.push(roster);
-          // console.log(roster);
+        if (teamName) {
+          if (playerAName && playerBName && playerCName) {
+            const playerA = parseInt(allPlayers.find((player) => player.name === playerAName).id, 10);
+            const playerB = parseInt(allPlayers.find((player) => player.name === playerBName).id, 10);
+            const playerC = parseInt(allPlayers.find((player) => player.name === playerCName).id, 10);
+            const teamMembers = [playerA, playerB, playerC];
+            const roster = {
+              id: parseInt(teamId, 10),
+              name: teamName,
+              members: teamMembers,
+            };
+            teamRosters.push(roster);
+            // console.log(roster);
+          } else if (playerAName && playerBName) {
+            const playerA = parseInt(allPlayers.find((player) => player.name === playerAName).id, 10);
+            const playerB = parseInt(allPlayers.find((player) => player.name === playerBName).id, 10);
+            const teamMembers = [playerA, playerB];
+            const roster = {
+              id: parseInt(teamId, 10),
+              name: teamName,
+              members: teamMembers,
+            };
+            teamRosters.push(roster);
+          }
         }
       });
 
@@ -435,7 +447,7 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
           // console.log(JSON.stringify(game1Obj));
           gamesRet.push(game1Obj);
 
-          if (curSeason !== 2 && gameRowC['Match #']) {
+          if (curSeason > 2 && gameRowC['Time (CT)']) {
             const {
               'Match #': matchNum2, Team: teamIdA2, G1: game1ScoreA2, G2: game2ScoreA2,
             } = gameRowC;

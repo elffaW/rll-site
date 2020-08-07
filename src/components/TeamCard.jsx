@@ -65,14 +65,15 @@ const useStyles = makeStyles((theme) => ({
 
 function TeamCard(props) {
   const {
-    team, inGame, showDetails, winner,
+    team, inGame, showDetails, winner, totalTeams,
   } = props;
   const classes = useStyles();
-  const defaultLogo = 'DinoBots';
-  const logoSrc = require(`../images/LOGO_${team.name || defaultLogo}.png`); // eslint-disable-line
+  const defaultLogo = 'DINOBOTS';
+  const logoSrc = require(`../images/LOGO_${team.name.toUpperCase() || defaultLogo}.png`); // eslint-disable-line
   const players = team.members;
   let rankSuffix = 'th';
-  let rankClass = '';
+  const numTeams = totalTeams || 8;
+  let rankClass = (parseInt(team.rank, 10) === numTeams) ? 'last' : '';
   switch (parseInt(team.rank, 10)) {
     case 1:
       rankSuffix = 'st';
@@ -85,7 +86,6 @@ function TeamCard(props) {
       rankSuffix = 'rd';
       break;
     case 8:
-      rankClass = 'last';
     // eslint-disable-next-line no-fallthrough
     case 4:
     case 5:
@@ -97,7 +97,7 @@ function TeamCard(props) {
       rankSuffix = 'th';
       break;
   }
-  const teamRank = parseInt(team.rank, 10) === 8 ? 'Last' : `${team.rank}${rankSuffix}`;
+  const teamRank = parseInt(team.rank, 10) === numTeams ? 'Last' : `${team.rank}${rankSuffix}`;
 
   const playersInfo = inGame ? '' : players.map((member) => (
     <PlayerCard player={member} inTeam={!showDetails} />
@@ -127,7 +127,7 @@ function TeamCard(props) {
   return (
     <Grid item xs={colsXS} md={colsMD} xl={colsXL}>
       <Paper className={classes.paper} style={winner ? { boxShadow: 'inset 0 0 0.75rem gold' } : null}>
-        <Grid container alignItems="center" justify="flex-start">
+        <Grid container alignItems="center" justify="space-between">
           <Grid item xs={showDetails ? 1 : 3} xl={showDetails ? false : 2}>
             <Avatar src={logoSrc} variant="square" className={classes.teamIcon} />
           </Grid>
@@ -155,12 +155,12 @@ function TeamCard(props) {
               </Grid>
             </>
           ) : ''}
-          <Grid item xs={2}>
+          <Grid item xs={inGame ? 3 : 2}>
             <Typography variant={showDetails ? 'h5' : 'body1'} className={`${classes.teamRecord} ${showDetails ? classes.bigRecord : ''}`}>
               {`${team.wins}-${team.losses}`}
             </Typography>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={inGame ? 5 : 4}>
             <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
               <span className={rankClass} style={rankClass === 'last' ? { letterSpacing: 'calc(0.01vw - 1px)' } : null}>{`${teamRank}`}</span>
               {' '}
@@ -172,11 +172,13 @@ function TeamCard(props) {
               {`${team.points} pts`}
             </Typography>
           </Grid>
-          <Grid item xs={3}>
-            <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
-              {team.value}
-            </Typography>
-          </Grid>
+          {inGame ? '' : (
+            <Grid item xs={3}>
+              <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
+                {team.value}
+              </Typography>
+            </Grid>
+          )}
           {playersInfo}
         </Grid>
       </Paper>
@@ -190,11 +192,13 @@ TeamCard.propTypes = {
   inGame: PropTypes.bool,
   showDetails: PropTypes.bool,
   winner: PropTypes.bool,
+  totalTeams: PropTypes.number,
 };
 TeamCard.defaultProps = {
   inGame: false,
   showDetails: false,
   winner: false,
+  totalTeams: 8,
 };
 
 export default TeamCard;

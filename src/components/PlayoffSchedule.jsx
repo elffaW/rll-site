@@ -7,9 +7,11 @@ import {
 import GameCardCompact from './GameCardCompact';
 import api from './utils/api';
 import { styles as paperStyles } from '../styles/themeStyles';
+import { SEASONS } from './containers/BaseApp';
 
 const defaultProps = {
   classes: '',
+  season: SEASONS[SEASONS.length - 1], // default to the last season in the list
 };
 
 class PlayoffSchedule extends Component {
@@ -23,18 +25,26 @@ class PlayoffSchedule extends Component {
   }
 
   componentDidMount() {
-    // update data?
-    this.getData();
+    const { season } = this.props;
+
+    this.getData(season || 2);
   }
 
-  getData = () => {
-    api.getAllTeams().then((allTeams) => {
+  componentDidUpdate(prevProps) {
+    const { season } = this.props;
+    if (season !== prevProps.season) {
+      this.getData(season);
+    }
+  }
+
+  getData = (season) => {
+    api.getTeamsBySeason(season).then((allTeams) => {
       const teams = allTeams.map((team) => team.data);
       teams.sort((a, b) => a.rank - b.rank); // sort with lower rank at top
 
       // disable these lint issues: import/no-dynamic-require global-require
       // eslint-disable-next-line
-      teams.forEach((team) => team.logo = require(`../images/LOGO_${team.name}.png`));
+      teams.forEach((team) => team.logo = require(`../images/LOGO_${team.name.toUpperCase()}.png`));
 
       const teamsByRank = {};
       teams.forEach((team) => {
@@ -66,13 +76,13 @@ class PlayoffSchedule extends Component {
       logo: require(`../images/RLL_logo.png`), // eslint-disable-line
     };
 
-    const q1Date = 'Time & Date TBD'; // '6/26/2020 7:30 PM -0500';
-    const s1Date = 'Time & Date TBD'; // '6/26/2020 8:50 PM -0500';
-    const q2Date = 'Time & Date TBD'; // '6/26/2020 7:50 PM -0500';
-    const finalDate = 'Time & Date TBD'; // '6/26/2020 9:30 PM -0500';
-    const q3Date = 'Time & Date TBD'; // '6/26/2020 8:10 PM -0500';
-    const s2Date = 'Time & Date TBD'; // '6/26/2020 9:10 PM -0500';
-    const q4Date = 'Time & Date TBD'; // '6/26/2020 8:30 PM -0500';
+    const q1Date = '7/8/2020 7:30 PM -0500';
+    const s1Date = '7/10/2020 8:30 PM -0500';
+    const q2Date = '7/10/2020 7:30 PM -0500';
+    const finalDate = '7/10/2020 9:10 PM -0500';
+    const q3Date = '7/10/2020 7:50 PM -0500';
+    const s2Date = '7/10/2020 8:50 PM -0500';
+    const q4Date = '7/10/2020 8:10 PM -0500';
 
     const playoffArena = 'Champions Field';
 
@@ -112,6 +122,12 @@ class PlayoffSchedule extends Component {
                         time={q1Date}
                         arena={playoffArena}
                         isPlayoffs
+                        homeScoreA={1}
+                        homeScoreB={4}
+                        homeScoreC={3}
+                        awayScoreA={3}
+                        awayScoreB={1}
+                        awayScoreC={0}
                       />
                     </Paper>
                   </Grid>
@@ -123,11 +139,15 @@ class PlayoffSchedule extends Component {
                   <Grid item xs={5}>
                     <Paper className={classes.darkPaper}>
                       <GameCardCompact
-                        team1={teamUnknown}
-                        team2={teamUnknown}
+                        team1={team1}
+                        team2={team5}
                         time={s1Date}
                         arena={playoffArena}
                         isPlayoffs
+                        homeScoreA={5}
+                        homeScoreB={3}
+                        awayScoreA={0}
+                        awayScoreB={0}
                       />
                     </Paper>
                   </Grid>
@@ -144,6 +164,12 @@ class PlayoffSchedule extends Component {
                         time={q2Date}
                         arena={playoffArena}
                         isPlayoffs
+                        homeScoreA={3}
+                        homeScoreB={1}
+                        homeScoreC={0}
+                        awayScoreA={1}
+                        awayScoreB={4}
+                        awayScoreC={3}
                       />
                     </Paper>
                   </Grid>
@@ -155,11 +181,17 @@ class PlayoffSchedule extends Component {
                   <Grid item xs={5}>
                     <Paper className={classes.darkPaper}>
                       <GameCardCompact
-                        team1={teamUnknown}
-                        team2={teamUnknown}
+                        team1={team1}
+                        team2={team7}
                         time={finalDate}
                         arena={playoffArena}
                         isPlayoffs
+                        homeScoreA={3}
+                        homeScoreB={3}
+                        homeScoreC={5}
+                        awayScoreA={2}
+                        awayScoreB={1}
+                        awayScoreC={1}
                       />
                     </Paper>
                   </Grid>
@@ -176,6 +208,10 @@ class PlayoffSchedule extends Component {
                         time={q3Date}
                         arena={playoffArena}
                         isPlayoffs
+                        homeScoreA={0}
+                        homeScoreB={3}
+                        awayScoreA={1}
+                        awayScoreB={4}
                       />
                     </Paper>
                   </Grid>
@@ -187,11 +223,15 @@ class PlayoffSchedule extends Component {
                   <Grid item xs={5}>
                     <Paper className={classes.darkPaper}>
                       <GameCardCompact
-                        team1={teamUnknown}
-                        team2={teamUnknown}
+                        team1={team7}
+                        team2={team3}
                         time={s2Date}
                         arena={playoffArena}
                         isPlayoffs
+                        homeScoreA={3}
+                        homeScoreB={4}
+                        awayScoreA={0}
+                        awayScoreB={2}
                       />
                     </Paper>
                   </Grid>
@@ -208,6 +248,12 @@ class PlayoffSchedule extends Component {
                         time={q4Date}
                         arena={playoffArena}
                         isPlayoffs
+                        homeScoreA={3}
+                        homeScoreB={3}
+                        homeScoreC={6}
+                        awayScoreA={5}
+                        awayScoreB={1}
+                        awayScoreC={1}
                       />
                     </Paper>
                   </Grid>
@@ -224,6 +270,7 @@ class PlayoffSchedule extends Component {
 PlayoffSchedule.propTypes = {
   // eslint-disable-next-line react/no-unused-prop-types
   classes: PropTypes.string,
+  season: PropTypes.number,
 };
 PlayoffSchedule.defaultProps = defaultProps;
 

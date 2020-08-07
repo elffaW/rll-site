@@ -10,19 +10,23 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Tooltip,
 } from '@material-ui/core';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import SortIcon from '@material-ui/icons/Sort';
 import ReactPivot from 'react-pivot';
 
-import BaseApp from './BaseApp';
+import BaseApp, { SEASONS } from './BaseApp';
 import PageHeader from '../PageHeader';
 import PlayerCard from '../PlayerCard';
+import SeasonSelector from '../SeasonSelector';
 
 import api from '../utils/api';
 
 import { styles as paperStyles } from '../../styles/themeStyles';
+
+import rllSvg from '../../images/RLL_logo_plain.svg';
 
 // eslint-disable-next-line import/no-unresolved
 // const Config = require('Config');
@@ -104,6 +108,10 @@ const playerFields = {
     friendly: 'Position',
     type: 'string',
   },
+  season: {
+    friendly: 'Season',
+    type: 'number',
+  },
 };
 
 class Players extends Component {
@@ -112,9 +120,12 @@ class Players extends Component {
 
     this.state = {
       players: [],
+      seasonPlayers: [],
       loading: true,
       sortField: 'value',
       sortDirection: true, // just a toggle
+      season: SEASONS[SEASONS.length - 1], // default to the last season in the list
+      avgTotal: true, // just a toggle (total === true)
     };
   }
 
@@ -125,8 +136,12 @@ class Players extends Component {
     this.getData();
   }
 
-  getData = () => {
+  getData = (newSeason) => {
+    const { season } = this.state;
+    const seasonQuery = newSeason || season;
+
     Promise.all([api.getAllPlayers(), api.getAllTeams()]).then((results) => {
+    // Promise.all([api.getPlayersBySeason(seasonQuery), api.getTeamsBySeason(seasonQuery)]).then((results) => {
       const allPlayers = results[0];
       const allTeams = results[1];
       const players = allPlayers.map((player) => player.data);
@@ -135,14 +150,17 @@ class Players extends Component {
       const teams = allTeams.map((player) => player.data);
       const playersWithTeams = players.map((player) => {
         const { ...tempPlayer } = player;
-        const playerTeam = teams.find((team) => parseInt(team.id, 10) === parseInt(tempPlayer.team, 10));
+        const playerTeam = teams.find((team) => parseInt(team.id, 10) === parseInt(tempPlayer.team, 10) && team.season === tempPlayer.season);
         if (playerTeam) {
           tempPlayer.team = playerTeam;
           tempPlayer.teamName = playerTeam.name;
         }
         return tempPlayer;
       });
-      this.setState({ players: playersWithTeams, loading: false });
+      const seasonPlayers = (seasonQuery === 'All') ? playersWithTeams : playersWithTeams.filter((player) => player.season === seasonQuery);
+      this.setState({
+        players: playersWithTeams, loading: false, season: seasonQuery, seasonPlayers,
+      });
     });
   }
 
@@ -163,7 +181,7 @@ class Players extends Component {
   }
 
   handleSort = (sortBy, direction) => {
-    const { players } = this.state;
+    const { players, season } = this.state;
     let sortedPlayers;
     if (playerFields[sortBy].type === 'string') {
       sortedPlayers = this.sortTextData(players, sortBy, direction);
@@ -175,12 +193,41 @@ class Players extends Component {
     } else {
       sortedPlayers = this.sortNumberData(players, sortBy, direction);
     }
-    this.setState({ players: sortedPlayers, sortField: sortBy, sortDirection: direction });
-  };
+
+    const seasonPlayers = (season === 'All') ? players : players.filter((player) => player.season === season);
+    this.setState({
+      players: sortedPlayers, sortField: sortBy, sortDirection: direction, seasonPlayers,
+    });
+  }
+
+  handleSeasonChange = (event) => {
+    const { season, players } = this.state;
+    const newSeason = event.target.value === 'All' ? 'All' : parseInt(event.target.value, 10);
+    if (season !== newSeason) {
+      if (newSeason === 'All') {
+        this.setState({ season: newSeason, seasonPlayers: players });
+      } else {
+        const seasonPlayers = players.filter((player) => player.season === newSeason);
+        this.setState({ season: newSeason, seasonPlayers });
+      }
+    }
+  }
+
+  refreshData = () => {
+    this.getData();
+  }
+
+  handleAvgTotal = (newValue) => {
+    const { avgTotal } = this.state;
+
+    if (avgTotal !== newValue) {
+      this.setState({ avgTotal: newValue });
+    }
+  }
 
   render() {
     const {
-      players, loading, sortField, sortDirection,
+      players, seasonPlayers, loading, sortField, sortDirection, season, avgTotal,
     } = this.state;
     const { classes, match } = this.props;
     const { params } = match;
@@ -195,6 +242,7 @@ class Players extends Component {
       { value: 'system', title: 'System' },
       { value: 'country', title: 'Country' },
       { value: 'position', title: 'Position' },
+      { value: 'season', title: 'Season' },
       // score
       // goals
       // assists
@@ -207,19 +255,27 @@ class Players extends Component {
     ];
     const reduce = (row, memo) => {
       /* eslint-disable no-param-reassign */
-      memo.goalsTotal = (memo.goalsTotal || 0) + parseFloat(row.goals);
-      memo.assistsTotal = (memo.assistsTotal || 0) + parseFloat(row.assists);
-      memo.savesTotal = (memo.savesTotal || 0) + parseFloat(row.saves);
-      memo.shotsTotal = (memo.shotsTotal || 0) + parseFloat(row.shots);
-      memo.numMVPTotal = (memo.numMVPTotal || 0) + parseFloat(row.numMVP);
-      memo.scoreTotal = (memo.scoreTotal || 0) + parseFloat(row.score);
-      memo.gamesPlayedTotal = (memo.gamesPlayedTotal || 0) + parseFloat(row.gamesPlayed);
-      memo.valueTotal = (memo.valueTotal || 0) + parseFloat(row.value);
       memo.count = (memo.count || 0) + 1;
+      memo.gamesPlayedTotal = (memo.gamesPlayedTotal || 0) + parseFloat(row.gamesPlayed);
+      memo.gamesPlayedAvg = (memo.gamesPlayedTotal || 0) / (memo.count || 1);
+      memo.goalsTotal = (memo.goalsTotal || 0) + parseFloat(row.goals);
+      memo.goalsAvg = (memo.goalsTotal || 0) / (memo.gamesPlayedTotal || 1);
+      memo.assistsTotal = (memo.assistsTotal || 0) + parseFloat(row.assists);
+      memo.assistsAvg = (memo.assistsTotal || 0) / (memo.gamesPlayedTotal || 1);
+      memo.savesTotal = (memo.savesTotal || 0) + parseFloat(row.saves);
+      memo.savesAvg = (memo.savesTotal || 0) / (memo.gamesPlayedTotal || 1);
+      memo.shotsTotal = (memo.shotsTotal || 0) + parseFloat(row.shots);
+      memo.shotsAvg = (memo.shotsTotal || 0) / (memo.gamesPlayedTotal || 1);
+      memo.numMVPTotal = (memo.numMVPTotal || 0) + parseFloat(row.numMVP);
+      memo.numMVPAvg = (memo.numMVPTotal || 0) / (memo.count || 1);
+      memo.scoreTotal = (memo.scoreTotal || 0) + parseFloat(row.score);
+      memo.scoreAvg = (memo.scoreTotal || 0) / (memo.gamesPlayedTotal || 1);
+      memo.valueTotal = (memo.valueTotal || 0) + parseFloat(row.value);
+      memo.valueAvg = (memo.valueTotal || 0) / (memo.count || 1);
       /* eslint-enable no-param-reassign */
       return memo;
     };
-    const calculations = [{
+    const calculations = avgTotal ? [{
       title: 'Count',
       value: 'count',
       template: (val) => val.toFixed(0),
@@ -264,35 +320,108 @@ class Players extends Component {
       value: 'valueTotal',
       template: (val) => `$${val.toFixed(1)}M`,
       sortBy: (row) => (Number.isNaN(row.valueTotal) ? 0 : row.valueTotal),
+    }] : [{
+      title: 'Count',
+      value: 'count',
+      template: (val) => val.toFixed(0),
+      sortBy: (row) => (Number.isNaN(row.count) ? 0 : row.count),
+    }, {
+      title: 'Avg Goals PG',
+      value: 'goalsAvg',
+      template: (val) => val.toFixed(1),
+      sortBy: (row) => (Number.isNaN(row.goalsAvg) ? 0 : row.goalsAvg),
+    }, {
+      title: 'Avg Assists PG',
+      value: 'assistsAvg',
+      template: (val) => val.toFixed(1),
+      sortBy: (row) => (Number.isNaN(row.assistsAvg) ? 0 : row.assistsAvg),
+    }, {
+      title: 'Avg Saves PG',
+      value: 'savesAvg',
+      template: (val) => val.toFixed(1),
+      sortBy: (row) => (Number.isNaN(row.savesAvg) ? 0 : row.savesAvg),
+    }, {
+      title: 'Avg Shots PG',
+      value: 'shotsAvg',
+      template: (val) => val.toFixed(1),
+      sortBy: (row) => (Number.isNaN(row.shotsAvg) ? 0 : row.shotsAvg),
+    }, {
+      title: 'Avg MVP',
+      value: 'numMVPAvg',
+      template: (val) => val.toFixed(1),
+      sortBy: (row) => (Number.isNaN(row.numMVPAvg) ? 0 : row.numMVPAvg),
+    }, {
+      title: 'Avg Score PG',
+      value: 'scoreAvg',
+      template: (val) => val.toFixed(1),
+      sortBy: (row) => (Number.isNaN(row.scoreAvg) ? 0 : row.scoreAvg),
+    }, {
+      title: 'Avg Games Played',
+      value: 'gamesPlayedAvg',
+      template: (val) => val.toFixed(1),
+      sortBy: (row) => (Number.isNaN(row.gamesPlayedAvg) ? 0 : row.gamesPlayedAvg),
+    }, {
+      title: 'Avg Value',
+      value: 'valueAvg',
+      template: (val) => `$${val.toFixed(1)}M`,
+      sortBy: (row) => (Number.isNaN(row.valueAvg) ? 0 : row.valueAvg),
     }];
 
     let curPlayer;
     if (playerName) {
-      curPlayer = players.find((player) => player.name.toLowerCase() === playerName.toLowerCase());
+      curPlayer = players.filter((player) => player.name.toLowerCase() === playerName.toLowerCase());
     }
     return (
       <BaseApp>
-        <PageHeader headerText="RLL Season 2 Players" />
+        <PageHeader headerText="RLL Players" />
+        {curPlayer ? '' : (
+          <>
+            <br />
+            <SeasonSelector
+              season={season}
+              showAllOption
+              handleSeasonChange={this.handleSeasonChange}
+              forceRefresh={this.refreshData}
+            />
+          </>
+        )}
         {loading ? (
           <>
             <CircularProgress color="secondary" />
             <Typography>Loading Players...</Typography>
-            <Button onClick={this.getData}>Taking forever?</Button>
+            <Button onClick={() => this.getData(season)}>Taking forever?</Button>
           </>
         ) : (
           <Grid container justify="center">
             <Grid item xs={12} lg={10} xl={8}>
-              <Paper className={classes.paper}>
-                <ReactPivot
-                  rows={players}
-                  dimensions={dimensions}
-                  reduce={reduce}
-                  calculations={calculations}
-                  nPaginateRows={200}
-                  compact
-                  csvDownloadFileName="playerStats.csv"
-                />
-              </Paper>
+              {curPlayer ? '' : (
+                <Paper className={classes.paper}>
+                  <ToggleButtonGroup
+                    id="average-total-toggle"
+                    onChange={(event, newValue) => this.handleAvgTotal(newValue)}
+                    value={avgTotal}
+                    exclusive
+                    size="large"
+                    style={{ float: 'right', margin: 8 }}
+                  >
+                    <ToggleButton key="option-total" value>
+                      Total
+                    </ToggleButton>
+                    <ToggleButton key="option-avg" value={false}>
+                      Avg
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                  <ReactPivot
+                    rows={seasonPlayers}
+                    dimensions={dimensions}
+                    reduce={reduce}
+                    calculations={calculations}
+                    nPaginateRows={200}
+                    compact
+                    csvDownloadFileName="playerStats.csv"
+                  />
+                </Paper>
+              )}
               <Paper className={classes.paper}>
                 {curPlayer ? '' : (
                   <>
@@ -327,12 +456,57 @@ class Players extends Component {
                     </FormControl>
                   </>
                 )}
-                <Grid container spacing={2} justify="center">
-                  {curPlayer ? (
-                    <PlayerCard player={curPlayer} inTeam={false} showDetails />
-                  ) : (
-                    players.map((player) => (
-                      <PlayerCard player={player} inTeam={false} />
+                <Grid container spacing={1} alignItems="center" justify="center">
+                  {curPlayer ? curPlayer.map((player) => (
+                    <>
+                      <Grid item xs={1}>
+                        <Typography
+                          variant="h4"
+                          // style={{
+                          //   color: 'white',
+                          //   backgroundImage: `url(${rllSvg})`,
+                          //   backgroundSize: '100%',
+                          //   backgroundPosition: 'center',
+                          //   backgroundRepeat: 'no-repeat',
+                          //   padding: 24,
+                          //   marginLeft: 16,
+                          //   paddingLeft: 12,
+                          // }}
+                          className={`player-season-${player.season}`}
+                        >
+                          <span className={`player-season-${player.season}-inside`} />
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={11}>
+                        <Grid container spacing={2} justify="center">
+                          <PlayerCard player={player} inTeam={false} showDetails />
+                        </Grid>
+                      </Grid>
+                    </>
+                  )) : (
+                    seasonPlayers.map((player) => (
+                      season === 'All' ? (
+                        <>
+                          <Grid item xs={1}>
+                            <Tooltip title={`Season ${player.season}`}>
+                              <Typography
+                                variant="h4"
+                                className={`player-season-${player.season}`}
+                                onClick={() => this.handleSeasonChange({ target: { value: player.season } })}
+                              >
+                                <span className={`player-season-${player.season}-inside`} />
+                              </Typography>
+                            </Tooltip>
+                          </Grid>
+                          <Grid item xs={11}>
+                            <Grid container spacing={2} justify="center">
+                              <PlayerCard player={player} inTeam={false} />
+                            </Grid>
+                          </Grid>
+                        </>
+                      ) : (
+                        <PlayerCard player={player} inTeam={false} />
+                      )
                     ))
                   )}
                 </Grid>

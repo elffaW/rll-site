@@ -11,6 +11,8 @@ import { lookupTabNumByPath } from '../utils/tabHelper';
 
 import logo from '../../images/RLL_logo.png';
 
+export const SEASONS = [1, 2, 3];
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -34,6 +36,15 @@ const useStyles = makeStyles((theme) => ({
     width: `calc(100% - ${theme.spacing(4)}px) !important`,
     margin: theme.spacing(1),
     backgroundColor: theme.palette.primary.main,
+  },
+  menuIcon: {
+    marginLeft: -8,
+    marginRight: theme.spacing(2),
+  },
+  menuDrawer: {
+    width: 160,
+    paddingLeft: theme.spacing(2),
+    fontVariant: 'small-caps',
   },
 }));
 
@@ -101,7 +112,7 @@ export default function BaseApp(props) {
       </AppBar>
       <Box id="main-content" bgcolor="primary.main" className={classes.mainContent}>
         <Container className={classes.contentContainer} maxWidth={false}>
-          { children }
+          {children}
         </Container>
       </Box>
     </div>

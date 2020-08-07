@@ -51,8 +51,8 @@ function GameCardCompact(props) {
 
   const timeAsDate = new Date(time);
   let gameTime = time;
-  if (!(timeAsDate instanceof Date && !Number.isNaN(timeAsDate))) { // time is a valid date, we can format it as such
-    gameTime = new Date(time).toLocaleString() + timezoneLookup(new Date().getTimezoneOffset());
+  if ((timeAsDate instanceof Date && !Number.isNaN(timeAsDate))) { // time is a valid date, we can format it as such
+    gameTime = timeAsDate.toLocaleString() + timezoneLookup(new Date().getTimezoneOffset());
   }
   const gameLocation = arena;
 
@@ -74,24 +74,26 @@ function GameCardCompact(props) {
     homeWinnerC = parseInt(homeScoreC, 10) > parseInt(awayScoreC, 10);
 
     homeWinnerOverall = isPlayoffs
-      ? ((homeWinnerA && homeWinnerB) || (homeWinnerA && homeWinnerC) || (homeWinnerA && homeWinnerC))
+      ? ((homeWinnerA && homeWinnerB) || (homeWinnerA && homeWinnerC) || (homeWinnerB && homeWinnerC))
       : homeWinnerA && homeWinnerB;
     awayWinnerOverall = isPlayoffs
-      ? ((!homeWinnerA && !homeWinnerB) || (!homeWinnerA && !homeWinnerC) || (!homeWinnerA && !homeWinnerC))
+      ? ((!homeWinnerA && !homeWinnerB) || (!homeWinnerA && !homeWinnerC) || (!homeWinnerB && !homeWinnerC))
       : !homeWinnerA && !homeWinnerB;
   }
 
   const homeStyle = {};
+  const awayStyle = {};
   if (homeWinnerOverall) {
     homeStyle.color = '#8e8e8e';
+    if (isPlayoffs) awayStyle.textDecoration = 'line-through';
   }
   if (team1.name.length > 14) {
     homeStyle.letterSpacing = `calc(0.05vw - ${team1.name.length / 8}px)`;
   }
 
-  const awayStyle = {};
   if (awayWinnerOverall) {
     awayStyle.color = '#8e8e8e';
+    if (isPlayoffs) homeStyle.textDecoration = 'line-through';
   }
   if (team2.name.length > 14) {
     awayStyle.letterSpacing = `calc(0.05vw - ${team2.name.length / 8}px)`;
@@ -162,7 +164,7 @@ function GameCardCompact(props) {
                   {homeScoreB}
                 </Typography>
               </Grid>
-              {isPlayoffs && (
+              {(isPlayoffs && (!!parseInt(homeScoreC, 10) || !!parseInt(awayScoreC, 10))) && (
                 <Grid item xs={4}>
                   <Typography variant="h5" className={classes.teamName} style={homeWinnerC ? { color: '#8e8e8e' } : null}>
                     {homeScoreC}
@@ -181,7 +183,7 @@ function GameCardCompact(props) {
                   {awayScoreB}
                 </Typography>
               </Grid>
-              {isPlayoffs && (
+              {(isPlayoffs && (!!parseInt(homeScoreC, 10) || !!parseInt(awayScoreC, 10))) && (
                 <Grid item xs={4}>
                   <Typography variant="h5" className={classes.teamName} style={!homeWinnerC ? { color: '#8e8e8e' } : null}>
                     {awayScoreC}

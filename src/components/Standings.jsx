@@ -9,6 +9,8 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import api from './utils/api';
 import { styles as paperStyles } from '../styles/themeStyles';
 
+import { SEASONS } from './containers/BaseApp';
+
 const teamFields = {
   rank: { friendly: 'Rank', type: 'number' },
   name: { friendly: 'Name', type: 'string' },
@@ -23,6 +25,7 @@ const teamFields = {
 
 const defaultProps = {
   classes: '',
+  season: SEASONS[SEASONS.length - 1], // default to the last season in the list
 };
 
 class Standings extends Component {
@@ -32,26 +35,36 @@ class Standings extends Component {
     this.state = {
       teams: [], // teamsData.sort((a, b) => b.points - a.points), // sort with higher points at top
       loading: true,
-      sortField: 'points',
+      sortField: 'rank',
       sortDirection: true, // just a toggle
     };
   }
 
   componentDidMount() {
+    const { season } = this.props;
     // update data?
-    this.getData();
+    this.getData(season);
   }
 
-  getData = () => {
-    api.getAllTeams().then((allTeams) => {
+  componentDidUpdate(prevProps) {
+    const { season } = this.props;
+    if (season !== prevProps.season) {
+      this.getData(season);
+    }
+  }
+
+  getData = (season) => {
+    api.getTeamsBySeason(season).then((allTeams) => {
       const teams = allTeams.map((team) => team.data);
-      teams.sort((a, b) => a.rank - b.rank); // sort with lower rank at top
+      teams.sort((a, b) => a.rank - b.rank); // sort with lower (better) rank at top
 
       // disable these lint issues: import/no-dynamic-require global-require
       // eslint-disable-next-line
-      teams.forEach((team) => team.logo = require(`../images/LOGO_${team.name}.png`));
+      teams.forEach((team) => team.logo = require(`../images/LOGO_${team.name.toUpperCase()}.png`));
 
-      this.setState({ teams, loading: false });
+      this.setState({
+        teams, loading: false, sortField: 'rank', sortDirection: true,
+      });
     });
   }
 
@@ -88,10 +101,10 @@ class Standings extends Component {
       sortedTeams = this.sortNumberData(teams, sortBy, direction);
     }
     this.setState({ teams: sortedTeams, sortField: sortBy, sortDirection: direction });
-  };
+  }
 
   render() {
-    const { classes } = this.props;
+    const { classes, season } = this.props;
     const {
       teams, loading, sortField, sortDirection,
     } = this.state;
@@ -157,7 +170,7 @@ class Standings extends Component {
           <>
             <CircularProgress color="secondary" />
             <Typography>Loading Standings...</Typography>
-            <Button onClick={this.getData}>Taking forever?</Button>
+            <Button onClick={() => this.getData(season)}>Taking forever?</Button>
           </>
         ) : (
           <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
@@ -235,6 +248,7 @@ class Standings extends Component {
 Standings.propTypes = {
   // eslint-disable-next-line react/no-unused-prop-types
   classes: PropTypes.string,
+  season: PropTypes.number,
 };
 Standings.defaultProps = defaultProps;
 

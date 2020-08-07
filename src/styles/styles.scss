@@ -10,6 +10,83 @@ body {
   filter: drop-shadow(0 0 0.15rem #959796);
 }
 
+div.MuiDrawer-root > .MuiDrawer-paper {
+  background-color: #8e8e8e ;
+}
+
+// player season colorings
+h4.player-season-1 {
+  position: relative;
+  padding: 24px;
+  cursor: pointer;
+}
+h4.player-season-1::before {
+  content: "";
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  // background-image is RLL_logo_plain.svg
+  background-image: url("/RLL_logo_S1.png");
+  // filter: brightness(0.5) sepia(1) hue-rotate(-70deg) saturate(5);
+  margin-left: 8px;
+}
+.player-season-1-inside {
+  position: relative;
+  color: #8e8e8e;
+  margin-left: 3px;
+}
+
+h4.player-season-2 {
+  position: relative;
+  padding: 24px;
+  cursor: pointer;
+}
+h4.player-season-2::before {
+  content: "";
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  // background-image is RLL_logo_plain.svg
+  background-image: url("/RLL_logo_S2.png");
+  // filter: brightness(0.2) sepia(1) hue-rotate(180deg) saturate(5);
+  margin-left: 8px;
+}
+.player-season-2-inside {
+  position: relative;
+  color: #8e8e8e;
+  margin-left: 3px;
+}
+
+h4.player-season-3 {
+  position: relative;
+  padding: 24px;
+  cursor: pointer;
+}
+h4.player-season-3::before {
+  content: "";
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  // background-image is RLL_logo_plain.svg
+  background-image: url("/RLL_logo_S3.png");
+  // filter: brightness(0.5) sepia(1) hue-rotate(70deg) saturate(6);
+  margin-left: 8px;
+}
+.player-season-3-inside {
+  position: relative;
+  color: #8e8e8e;
+  margin-left: 3px;
+}
+
 // override dumb react-pivot styles
 .reactPivot {
   background: inherit !important;

@@ -7,22 +7,18 @@ import {
 import BaseApp from './BaseApp';
 import PageHeader from '../PageHeader';
 import { styles as paperStyles } from '../../styles/themeStyles';
-// import combineStats from '../../images/CombineS2.png';
 
 const defaultProps = {
   classes: '',
 };
 
+// TODO rewrite as function component
 class Stats extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
     };
-  }
-
-  componentDidMount() {
-    // get all data for this page
   }
 
   render() {
@@ -32,6 +28,18 @@ class Stats extends Component {
         <PageHeader headerText="RLL Stats" />
         <Paper className={classes.paper}>
           <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
+            <Grid item xs={12} style={{ height: 'calc(100vh - 200px)' }}>
+              <Typography variant="h3">Season 3 Stats</Typography>
+              <iframe
+                title="rll-stats-season-3"
+                height="100%"
+                width="100%"
+                src="https://public.flourish.studio/story/498800/embed"
+              >
+                {/* <div class="flourish-embed" data-src="story/498800" data-url="https://flo.uri.sh/story/498800/embed"><script src="https://public.flourish.studio/resources/embed.js"></script></div> */}
+              </iframe>
+            </Grid>
+            <Grid item xs={12}><br /></Grid>
             <Grid item xs={12} style={{ height: 'calc(100vh - 200px)' }}>
               <Typography variant="h3">Season 2 Stats</Typography>
               <iframe
