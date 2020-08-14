@@ -447,7 +447,7 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
           // console.log(JSON.stringify(game1Obj));
           gamesRet.push(game1Obj);
 
-          if (curSeason > 2 && gameRowC['Time (CT)']) {
+          if (curSeason > 2 && !gameRowC['Time (CT)']) {
             const {
               'Match #': matchNum2, Team: teamIdA2, G1: game1ScoreA2, G2: game2ScoreA2,
             } = gameRowC;
