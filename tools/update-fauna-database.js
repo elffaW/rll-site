@@ -202,29 +202,33 @@ function getStatsFromSheets(statsSheet) {
           SH: playerShots,
           MVP: playerMVP,
           PTS: playerPts,
+          TYPE: statsType,
         } = stats;
         if (playerName) {
-          if (!statsByPlayer[playerName]) {
-            statsByPlayer[playerName] = {
-              name: playerName,
-              score: parseInt(playerScore, 10),
-              goals: parseInt(playerGoals, 10),
-              assists: parseInt(playerAssists, 10),
-              saves: parseInt(playerSaves, 10),
-              shots: parseInt(playerShots, 10),
-              numMVP: parseInt(playerMVP, 10),
-              points: parseInt(playerPts, 10),
-              gamesPlayed: 1,
-            };
-          } else {
-            statsByPlayer[playerName].score += parseInt(playerScore, 10);
-            statsByPlayer[playerName].goals += parseInt(playerGoals, 10);
-            statsByPlayer[playerName].assists += parseInt(playerAssists, 10);
-            statsByPlayer[playerName].saves += parseInt(playerSaves, 10);
-            statsByPlayer[playerName].shots += parseInt(playerShots, 10);
-            statsByPlayer[playerName].numMVP += parseInt(playerMVP, 10);
-            statsByPlayer[playerName].points += parseInt(playerPts, 10);
-            statsByPlayer[playerName].gamesPlayed += 1;
+          // statsType: RS, PO, SUB, BOT
+          if (statsType === 'RS' || statsType === 'PO') {
+            if (!statsByPlayer[playerName]) {
+              statsByPlayer[playerName] = {
+                name: playerName,
+                score: parseInt(playerScore, 10),
+                goals: parseInt(playerGoals, 10),
+                assists: parseInt(playerAssists, 10),
+                saves: parseInt(playerSaves, 10),
+                shots: parseInt(playerShots, 10),
+                numMVP: parseInt(playerMVP, 10),
+                points: parseInt(playerPts, 10),
+                gamesPlayed: 1,
+              };
+            } else {
+              statsByPlayer[playerName].score += parseInt(playerScore, 10);
+              statsByPlayer[playerName].goals += parseInt(playerGoals, 10);
+              statsByPlayer[playerName].assists += parseInt(playerAssists, 10);
+              statsByPlayer[playerName].saves += parseInt(playerSaves, 10);
+              statsByPlayer[playerName].shots += parseInt(playerShots, 10);
+              statsByPlayer[playerName].numMVP += parseInt(playerMVP, 10);
+              statsByPlayer[playerName].points += parseInt(playerPts, 10);
+              statsByPlayer[playerName].gamesPlayed += 1;
+            }
           }
         }
       });
