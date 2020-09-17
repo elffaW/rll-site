@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 
 function TeamCard(props) {
   const {
-    team, inGame, showDetails, winner, totalTeams,
+    team, inGame, showDetails, winner, totalTeams, gameweeks, winlossdraw,
   } = props;
   const classes = useStyles();
   const defaultLogo = 'DINOBOTS';
@@ -102,6 +102,30 @@ function TeamCard(props) {
   const playersInfo = inGame ? '' : players.map((member) => (
     <PlayerCard player={member} inTeam={!showDetails} />
   ));
+
+  const gridSizePerWeek = Math.floor(12 / gameweeks.length);
+  const seasonOverview = [];
+  if (winlossdraw && gameweeks) {
+    for (let i = 0; i < gameweeks.length; i++) {
+      const curWeek = gameweeks[i];
+      const curWeekResults = winlossdraw.filter((wld) => parseInt(wld.split(':')[0], 10) === parseInt(curWeek, 10));
+
+      const curWeekResultsObj = curWeekResults.map((wld) => (
+        // eslint-disable-next-line no-nested-ternary
+        <Typography variant="h5" style={wld.split(':')[1] === 'W' ? { color: 'green' } : wld.split(':')[1] === 'L' ? { color: '#8e0000' } : { color: 'blue' }}>{wld.split(':')[1]}</Typography>
+      ));
+      seasonOverview.push((
+        <Grid item xs={gridSizePerWeek}>
+          <Grid container direction="column" justify="center" alignItems="center">
+            <Typography variant="h4" style={{ color: '#383838' }}>{curWeek}</Typography>
+            <Grid container direction="row" justify="space-around" alignItems="center">
+              {curWeekResultsObj}
+            </Grid>
+          </Grid>
+        </Grid>
+      ));
+    }
+  }
 
   let colsXS = inGame ? 11 : 12;
   let colsMD = inGame ? false : 6;
@@ -179,6 +203,25 @@ function TeamCard(props) {
               </Typography>
             </Grid>
           )}
+          {showDetails && !inGame && (
+          <Paper className={classes.paper} style={{ minHeight: 112, marginBottom: 16 }}>
+            <Typography variant="h5" style={{ fontVariant: 'small-caps', marginBottom: 16 }}>Season Overview</Typography>
+            <Grid container direction="row" alignItems="center" justify="space-around">
+              {seasonOverview}
+            </Grid>
+            {/* <Grid container spacing={4} alignItems="center" justify="space-around" style={{ paddingLeft: 16, paddingRight: 16 }}>
+                  {gameweeks.map((gw) => (
+                    <Typography variant="h4" style={{ fontVariant: 'small-caps', color: '#383838' }}>{gw}</Typography>
+                  ))}
+                </Grid>
+                <Grid container spacing={4} alignItems="center" justify="space-evenly" style={{ marginTop: 16 }}>
+                  {winlossdraw.map((wld) => (
+                    // eslint-disable-next-line no-nested-ternary
+                    <Typography variant="h5" style={wld.split(':')[1] === 'W' ? { color: 'green' } : wld.split(':')[1] === 'L' ? { color: '#8e0000' } : { color: 'blue' }}>{wld.split(':')[1]}</Typography>
+                  ))}
+                </Grid> */}
+          </Paper>
+          )}
           {playersInfo}
         </Grid>
       </Paper>
@@ -187,18 +230,22 @@ function TeamCard(props) {
 }
 
 TeamCard.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
+  /* eslint-disable react/forbid-prop-types */
   team: PropTypes.object.isRequired,
   inGame: PropTypes.bool,
   showDetails: PropTypes.bool,
   winner: PropTypes.bool,
   totalTeams: PropTypes.number,
+  gameweeks: PropTypes.array,
+  winlossdraw: PropTypes.array,
 };
 TeamCard.defaultProps = {
   inGame: false,
   showDetails: false,
   winner: false,
   totalTeams: 8,
+  gameweeks: [],
+  winlossdraw: [],
 };
 
 export default TeamCard;

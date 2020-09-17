@@ -170,15 +170,85 @@ class Teams extends Component {
     const { teamName } = params;
 
     let curTeam;
-    if (teamName) {
+    let winlossdraw = [];
+    if (!loading && teamName && teams && teams.length > 0) {
       curTeam = teams.find((team) => team.name.toLowerCase() === teamName.toLowerCase());
+
+      winlossdraw = gamesByTeam[curTeam.id].map((game) => {
+        const homeScoreA = game.homeTeamScoreA;
+        const homeScoreB = game.homeTeamScoreB;
+        const homeScoreC = game.homeTeamScoreC;
+        const awayScoreA = game.awayTeamScoreA;
+        const awayScoreB = game.awayTeamScoreB;
+        const awayScoreC = game.awayTeamScoreC;
+
+        const isPlayoffs = !!(game.homeTeamScoreC && game.awayTeamScoreC);
+
+        const hasScores = !!(parseInt(homeScoreA, 10)
+          || parseInt(awayScoreA, 10)
+          || parseInt(homeScoreB, 10)
+          || parseInt(awayScoreB, 10)
+          || parseInt(homeScoreC, 10)
+          || parseInt(awayScoreC, 10));
+        let homeWinnerA = false;
+        let homeWinnerB = false;
+        let homeWinnerC = false;
+        let homeWinnerOverall = false;
+        let awayWinnerOverall = false;
+        if (hasScores) {
+          homeWinnerA = parseInt(homeScoreA, 10) > parseInt(awayScoreA, 10);
+          homeWinnerB = parseInt(homeScoreB, 10) > parseInt(awayScoreB, 10);
+          homeWinnerC = parseInt(homeScoreC, 10) > parseInt(awayScoreC, 10);
+
+          homeWinnerOverall = isPlayoffs
+            ? ((homeWinnerA && homeWinnerB) || (homeWinnerA && homeWinnerC) || (homeWinnerB && homeWinnerC))
+            : homeWinnerA && homeWinnerB;
+          awayWinnerOverall = isPlayoffs
+            ? ((!homeWinnerA && !homeWinnerB) || (!homeWinnerA && !homeWinnerC) || (!homeWinnerB && !homeWinnerC))
+            : !homeWinnerA && !homeWinnerB;
+        }
+        if (!hasScores) {
+          return null;
+        }
+        if (curTeam.id === game.homeTeamId) {
+          if (homeWinnerOverall) {
+            return `${game.gameWeek}:W`;
+          }
+          if (awayWinnerOverall) {
+            return `${game.gameWeek}:L`;
+          }
+        } else {
+          if (homeWinnerOverall) {
+            return `${game.gameWeek}:L`;
+          }
+          if (awayWinnerOverall) {
+            return `${game.gameWeek}:W`;
+          }
+        }
+
+        return `${game.gameWeek}:D`;
+      });
+    }
+    let lastGW = 0;
+    const gameweeks = [];
+    if (winlossdraw.length > 0) {
+      // eslint-disable-next-line prefer-destructuring
+      lastGW = winlossdraw[winlossdraw.length - 1].split(':')[0];
+      for (let i = 1; i <= lastGW; i++) {
+        gameweeks.push(i);
+      }
     }
 
     return (
       <BaseApp>
         <PageHeader headerText="RLL Teams" />
         <br />
-        <SeasonSelector season={season} disabled={!!curTeam} handleSeasonChange={this.handleSeasonChange} forceRefresh={this.refreshData} />
+        <SeasonSelector
+          season={season}
+          disabled={!!curTeam}
+          handleSeasonChange={this.handleSeasonChange}
+          forceRefresh={this.refreshData}
+        />
         { loading ? (
           <>
             <CircularProgress color="secondary" />
@@ -189,7 +259,7 @@ class Teams extends Component {
           <Grid container spacing={4} alignItems="flex-start" justify="flex-start">
             {curTeam ? (
               <>
-                <TeamCard team={curTeam} totalTeams={teams.length} showDetails />
+                <TeamCard team={curTeam} totalTeams={teams.length} showDetails gameweeks={gameweeks} winlossdraw={winlossdraw} />
                 {gamesByTeam[curTeam.id].map((game) => (
                   <Grid item xs={6} xl={4}>
                     <Paper className={classes.darkPaper}>
