@@ -26,7 +26,7 @@ import api from '../utils/api';
 
 import { styles as paperStyles } from '../../styles/themeStyles';
 
-import rllSvg from '../../images/RLL_logo_plain.svg';
+// import rllSvg from '../../images/RLL_logo_plain.svg';
 
 // eslint-disable-next-line import/no-unresolved
 // const Config = require('Config');
@@ -370,6 +370,17 @@ class Players extends Component {
     let curPlayer;
     if (playerName) {
       curPlayer = players.filter((player) => player.name.toLowerCase() === playerName.toLowerCase());
+
+      curPlayer.overallWins = 0;
+      curPlayer.overallLosses = 0;
+      curPlayer.overallPlusMinus = 0;
+      for (let i = 0; i < curPlayer.length; i++) {
+        const { team } = curPlayer[i];
+
+        curPlayer.overallWins += parseInt(team.wins || 0, 10);
+        curPlayer.overallLosses += parseInt(team.losses || 0, 10);
+        curPlayer.overallPlusMinus += parseInt(team.plusMinus || 0, 10);
+      }
     }
     return (
       <BaseApp>
@@ -457,6 +468,22 @@ class Players extends Component {
                   </>
                 )}
                 <Grid container spacing={1} alignItems="center" justify="center">
+                  {!!curPlayer && (
+                    <Grid container spacing={1} alignItems="center" justify="space-around">
+                      <Grid item xs={4}>
+                        <Typography variant="h5" style={{ fontVariant: 'small-caps' }}>Overall Record</Typography>
+                      </Grid>
+                      <Grid item xs={2}>
+                        <Typography variant="h4" style={{ color: 'whitesmoke' }}>{`${curPlayer.overallWins} - ${curPlayer.overallLosses}`}</Typography>
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Typography variant="h5" style={{ fontVariant: 'small-caps' }}>Overall +/-</Typography>
+                      </Grid>
+                      <Grid item xs={2}>
+                        <Typography variant="h4" style={{ color: '#383838' }}>{curPlayer.overallPlusMinus}</Typography>
+                      </Grid>
+                    </Grid>
+                  )}
                   {curPlayer ? curPlayer.map((player) => (
                     <>
                       <Grid item xs={1}>
