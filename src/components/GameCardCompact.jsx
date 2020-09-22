@@ -43,9 +43,13 @@ function GameCardCompact(props) {
     homeScoreA,
     homeScoreB,
     homeScoreC,
+    homeScoreD,
+    homeScoreE,
     awayScoreA,
     awayScoreB,
     awayScoreC,
+    awayScoreD,
+    awayScoreE,
   } = props;
   const classes = useStyles();
 
@@ -55,6 +59,16 @@ function GameCardCompact(props) {
     gameTime = timeAsDate.toLocaleString() + timezoneLookup(new Date().getTimezoneOffset());
   }
   const gameLocation = arena;
+
+  let gamesPlayed = 2;
+  if (parseInt(homeScoreE, 10)) {
+    gamesPlayed = 5;
+  } else if (parseInt(homeScoreD, 10)) {
+    gamesPlayed = 4;
+  } else if (parseInt(homeScoreC, 10)) {
+    gamesPlayed = 3;
+  }
+  const gameCellSize = Math.floor(12 / gamesPlayed);
 
   // truthiness of 0 is false, so hasScores is true if any score is non-zero
   const hasScores = !!(parseInt(homeScoreA, 10)
@@ -66,18 +80,37 @@ function GameCardCompact(props) {
   let homeWinnerA = false;
   let homeWinnerB = false;
   let homeWinnerC = false;
+  let homeWinnerD = false;
+  let homeWinnerE = false;
   let homeWinnerOverall = false;
   let awayWinnerOverall = false;
   if (hasScores) {
     homeWinnerA = parseInt(homeScoreA, 10) > parseInt(awayScoreA, 10);
     homeWinnerB = parseInt(homeScoreB, 10) > parseInt(awayScoreB, 10);
     homeWinnerC = parseInt(homeScoreC, 10) > parseInt(awayScoreC, 10);
+    homeWinnerD = parseInt(homeScoreD, 10) > parseInt(awayScoreD, 10);
+    homeWinnerE = parseInt(homeScoreE, 10) > parseInt(awayScoreE, 10);
+
+    let homeWins = homeWinnerA ? 1 : 0;
+    homeWins += homeWinnerB ? 1 : 0;
+    homeWins += homeWinnerC ? 1 : 0;
+    homeWins += homeWinnerD ? 1 : 0;
+    homeWins += homeWinnerE ? 1 : 0;
+
+    let awayWins = !homeWinnerA ? 1 : 0;
+    awayWins += !homeWinnerB ? 1 : 0;
+    awayWins += !homeWinnerC ? 1 : 0;
+    awayWins += !homeWinnerD ? 1 : 0;
+    awayWins += !homeWinnerE ? 1 : 0;
+
+    console.log('homeWins', homeWins);
+    console.log('awayWins', awayWins);
 
     homeWinnerOverall = isPlayoffs
-      ? ((homeWinnerA && homeWinnerB) || (homeWinnerA && homeWinnerC) || (homeWinnerB && homeWinnerC))
+      ? (homeWins > Math.floor(gamesPlayed / 2))
       : homeWinnerA && homeWinnerB;
     awayWinnerOverall = isPlayoffs
-      ? ((!homeWinnerA && !homeWinnerB) || (!homeWinnerA && !homeWinnerC) || (!homeWinnerB && !homeWinnerC))
+      ? (awayWins > Math.floor(gamesPlayed / 2))
       : !homeWinnerA && !homeWinnerB;
   }
 
@@ -86,18 +119,18 @@ function GameCardCompact(props) {
   if (homeWinnerOverall) {
     homeStyle.color = '#8e8e8e';
     if (isPlayoffs) awayStyle.textDecoration = 'line-through';
-  }
-  if (team1.name.length > 14) {
-    homeStyle.letterSpacing = `calc(0.05vw - ${team1.name.length / 8}px)`;
-  }
-
-  if (awayWinnerOverall) {
+  } else if (awayWinnerOverall) {
     awayStyle.color = '#8e8e8e';
     if (isPlayoffs) homeStyle.textDecoration = 'line-through';
+  }
+
+  if (team1.name.length > 14) {
+    homeStyle.letterSpacing = `calc(0.05vw - ${team1.name.length / 8}px)`;
   }
   if (team2.name.length > 14) {
     awayStyle.letterSpacing = `calc(0.05vw - ${team2.name.length / 8}px)`;
   }
+
 
   return (
     <Grid container alignItems="center" justify="flex-start">
@@ -121,7 +154,7 @@ function GameCardCompact(props) {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={7}>
+      <Grid item xs={gamesPlayed > 3 ? 6 : 7}>
         <Grid container spacing={0} direction="column" alignItems="flex-start" justify="flex-start">
           <Grid item xs>
             <Grid container spacing={0} direction="row" alignItems="flex-start" justify="space-around">
@@ -151,42 +184,70 @@ function GameCardCompact(props) {
       </Grid>
 
       {hasScores && (
-        <Grid item xs={3}>
+        <Grid item xs={gamesPlayed > 3 ? 4 : 3}>
           <Grid container spacing={0} direction="column" alignItems="flex-start" justify="flex-start">
             <Grid container justify="space-between">
-              <Grid item xs={4}>
+              <Grid item xs={gameCellSize}>
                 <Typography variant="h5" className={classes.teamName} style={homeWinnerA ? { color: '#8e8e8e' } : null}>
                   {homeScoreA}
                 </Typography>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={gameCellSize}>
                 <Typography variant="h5" className={classes.teamName} style={homeWinnerB ? { color: '#8e8e8e' } : null}>
                   {homeScoreB}
                 </Typography>
               </Grid>
               {(isPlayoffs && (!!parseInt(homeScoreC, 10) || !!parseInt(awayScoreC, 10))) && (
-                <Grid item xs={4}>
+                <Grid item xs={gameCellSize}>
                   <Typography variant="h5" className={classes.teamName} style={homeWinnerC ? { color: '#8e8e8e' } : null}>
                     {homeScoreC}
                   </Typography>
                 </Grid>
               )}
+              {(isPlayoffs && (!!parseInt(homeScoreD, 10) || !!parseInt(awayScoreD, 10))) && (
+                <Grid item xs={gameCellSize}>
+                  <Typography variant="h5" className={classes.teamName} style={homeWinnerD ? { color: '#8e8e8e' } : null}>
+                    {homeScoreD}
+                  </Typography>
+                </Grid>
+              )}
+              {(isPlayoffs && (!!parseInt(homeScoreE, 10) || !!parseInt(awayScoreE, 10))) && (
+                <Grid item xs={gameCellSize}>
+                  <Typography variant="h5" className={classes.teamName} style={homeWinnerE ? { color: '#8e8e8e' } : null}>
+                    {homeScoreE}
+                  </Typography>
+                </Grid>
+              )}
             </Grid>
             <Grid container justify="space-between">
-              <Grid item xs={4}>
+              <Grid item xs={gameCellSize}>
                 <Typography variant="h5" className={classes.teamName} style={!homeWinnerA ? { color: '#8e8e8e' } : null}>
                   {awayScoreA}
                 </Typography>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={gameCellSize}>
                 <Typography variant="h5" className={classes.teamName} style={!homeWinnerB ? { color: '#8e8e8e' } : null}>
                   {awayScoreB}
                 </Typography>
               </Grid>
               {(isPlayoffs && (!!parseInt(homeScoreC, 10) || !!parseInt(awayScoreC, 10))) && (
-                <Grid item xs={4}>
+                <Grid item xs={gameCellSize}>
                   <Typography variant="h5" className={classes.teamName} style={!homeWinnerC ? { color: '#8e8e8e' } : null}>
                     {awayScoreC}
+                  </Typography>
+                </Grid>
+              )}
+              {(isPlayoffs && (!!parseInt(homeScoreD, 10) || !!parseInt(awayScoreD, 10))) && (
+                <Grid item xs={gameCellSize}>
+                  <Typography variant="h5" className={classes.teamName} style={!homeWinnerD ? { color: '#8e8e8e' } : null}>
+                    {awayScoreD}
+                  </Typography>
+                </Grid>
+              )}
+              {(isPlayoffs && (!!parseInt(homeScoreE, 10) || !!parseInt(awayScoreE, 10))) && (
+                <Grid item xs={gameCellSize}>
+                  <Typography variant="h5" className={classes.teamName} style={!homeWinnerE ? { color: '#8e8e8e' } : null}>
+                    {awayScoreE}
                   </Typography>
                 </Grid>
               )}
@@ -216,9 +277,13 @@ GameCardCompact.propTypes = {
   homeScoreA: PropTypes.string,
   homeScoreB: PropTypes.string,
   homeScoreC: PropTypes.string,
+  homeScoreD: PropTypes.string,
+  homeScoreE: PropTypes.string,
   awayScoreA: PropTypes.string,
   awayScoreB: PropTypes.string,
   awayScoreC: PropTypes.string,
+  awayScoreD: PropTypes.string,
+  awayScoreE: PropTypes.string,
 };
 GameCardCompact.defaultProps = {
   time: '',
@@ -227,9 +292,13 @@ GameCardCompact.defaultProps = {
   homeScoreA: '0',
   homeScoreB: '0',
   homeScoreC: '0',
+  homeScoreD: '0',
+  homeScoreE: '0',
   awayScoreA: '0',
   awayScoreB: '0',
   awayScoreC: '0',
+  awayScoreD: '0',
+  awayScoreE: '0',
 };
 
 export default GameCardCompact;

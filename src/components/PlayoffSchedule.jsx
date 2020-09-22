@@ -104,12 +104,12 @@ class PlayoffSchedule extends Component {
 
     // S3 times
     const q1Date = '9/18/2020 7:30 PM -0500';
-    const s1Date = '9/18/2020 8:10 PM -0500';
-    const q2Date = '9/18/2020 7:30 PM -0500';
-    const finalDate = '9/18/2020 8:50 PM -0500';
-    const q3Date = '9/18/2020 7:50 PM -0500';
-    const s2Date = '9/18/2020 8:30 PM -0500';
-    const q4Date = '9/18/2020 7:50 PM -0500';
+    const s1Date = '9/23/2020 7:00 PM -0500';
+    const q2Date = '9/19/2020 7:00 PM -0500';
+    const finalDate = '9/23/2020 8:30 PM -0500';
+    const q3Date = '9/21/2020 7:00 PM -0500';
+    const s2Date = '9/23/2020 7:45 PM -0500';
+    const q4Date = '9/18/2020 7:30 PM -0500';
 
     const playoffArena = 'Champions Field';
 
@@ -151,8 +151,10 @@ class PlayoffSchedule extends Component {
                         isPlayoffs
                         homeScoreA={1}
                         homeScoreB={1}
+                        homeScoreC={1}
                         awayScoreA={0}
                         awayScoreB={0}
+                        awayScoreC={0}
                       />
                     </Paper>
                   </Grid>
@@ -165,7 +167,7 @@ class PlayoffSchedule extends Component {
                     <Paper className={classes.darkPaper}>
                       <GameCardCompact
                         team1={team1}
-                        team2={teamUnknown}
+                        team2={team5}
                         time={s1Date}
                         arena={playoffArena}
                         isPlayoffs
@@ -189,12 +191,12 @@ class PlayoffSchedule extends Component {
                         time={q2Date}
                         arena={playoffArena}
                         isPlayoffs
-                        // homeScoreA={3}
-                        // homeScoreB={1}
-                        // homeScoreC={0}
-                        // awayScoreA={1}
-                        // awayScoreB={4}
-                        // awayScoreC={3}
+                        homeScoreA={3}
+                        homeScoreB={1}
+                        homeScoreC={3}
+                        awayScoreA={4}
+                        awayScoreB={2}
+                        awayScoreC={4}
                       />
                     </Paper>
                   </Grid>
@@ -235,8 +237,10 @@ class PlayoffSchedule extends Component {
                         isPlayoffs
                         homeScoreA={1}
                         homeScoreB={1}
+                        homeScoreC={1}
                         awayScoreA={0}
                         awayScoreB={0}
+                        awayScoreC={0}
                       />
                     </Paper>
                   </Grid>
@@ -249,7 +253,7 @@ class PlayoffSchedule extends Component {
                     <Paper className={classes.darkPaper}>
                       <GameCardCompact
                         team1={team2}
-                        team2={teamUnknown}
+                        team2={team3}
                         time={s2Date}
                         arena={playoffArena}
                         isPlayoffs
@@ -273,12 +277,14 @@ class PlayoffSchedule extends Component {
                         time={q4Date}
                         arena={playoffArena}
                         isPlayoffs
-                        // homeScoreA={3}
-                        // homeScoreB={3}
-                        // homeScoreC={6}
-                        // awayScoreA={5}
-                        // awayScoreB={1}
-                        // awayScoreC={1}
+                        homeScoreA={8}
+                        homeScoreB={4}
+                        homeScoreC={2}
+                        homeScoreD={6}
+                        awayScoreA={2}
+                        awayScoreB={3}
+                        awayScoreC={3}
+                        awayScoreD={0}
                       />
                     </Paper>
                   </Grid>
