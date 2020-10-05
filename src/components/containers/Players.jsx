@@ -155,6 +155,11 @@ class Players extends Component {
           tempPlayer.team = playerTeam;
           tempPlayer.teamName = playerTeam.name;
         }
+
+        tempPlayer.wins = parseInt(playerTeam.wins || 0, 10);
+        tempPlayer.losses = parseInt(playerTeam.losses || 0, 10);
+        tempPlayer.plusMinus = parseInt(playerTeam.plusMinus || 0, 10);
+
         return tempPlayer;
       });
       const seasonPlayers = (seasonQuery === 'All') ? playersWithTeams : playersWithTeams.filter((player) => player.season === seasonQuery);
@@ -258,10 +263,18 @@ class Players extends Component {
       memo.count = (memo.count || 0) + 1;
       memo.gamesPlayedTotal = (memo.gamesPlayedTotal || 0) + parseFloat(row.gamesPlayed);
       memo.gamesPlayedAvg = (memo.gamesPlayedTotal || 0) / (memo.count || 1);
+      memo.winsTotal = (memo.winsTotal || 0) + parseFloat(row.wins);
+      memo.winsAvg = (memo.winsTotal || 0) / (memo.count || 1);
+      memo.lossesTotal = (memo.lossesTotal || 0) + parseFloat(row.losses);
+      memo.lossesAvg = (memo.lossesTotal || 0) / (memo.count || 1);
+      memo.plusMinusTotal = (memo.plusMinusTotal || 0) + parseFloat(row.plusMinus);
+      memo.plusMinusAvg = (memo.plusMinusTotal || 0) / (memo.gamesPlayedTotal || 1);
       memo.goalsTotal = (memo.goalsTotal || 0) + parseFloat(row.goals);
       memo.goalsAvg = (memo.goalsTotal || 0) / (memo.gamesPlayedTotal || 1);
       memo.assistsTotal = (memo.assistsTotal || 0) + parseFloat(row.assists);
       memo.assistsAvg = (memo.assistsTotal || 0) / (memo.gamesPlayedTotal || 1);
+      memo.pointsTotal = (memo.pointsTotal || 0) + parseFloat(row.goals) + parseFloat(row.assists); // derived stat
+      memo.pointsAvg = (memo.pointsTotal || 0) / (memo.gamesPlayedTotal || 1);
       memo.savesTotal = (memo.savesTotal || 0) + parseFloat(row.saves);
       memo.savesAvg = (memo.savesTotal || 0) / (memo.gamesPlayedTotal || 1);
       memo.shotsTotal = (memo.shotsTotal || 0) + parseFloat(row.shots);
@@ -291,6 +304,11 @@ class Players extends Component {
       template: (val) => val.toFixed(0),
       sortBy: (row) => (Number.isNaN(row.assistsTotal) ? 0 : row.assistsTotal),
     }, {
+      title: 'Total Points',
+      value: 'pointsTotal',
+      template: (val) => val.toFixed(0),
+      sortBy: (row) => (Number.isNaN(row.pointsTotal) ? 0 : row.pointsTotal),
+    }, {
       title: 'Total Saves',
       value: 'savesTotal',
       template: (val) => val.toFixed(0),
@@ -316,6 +334,21 @@ class Players extends Component {
       template: (val) => val.toFixed(0),
       sortBy: (row) => (Number.isNaN(row.gamesPlayedTotal) ? 0 : row.gamesPlayedTotal),
     }, {
+      title: 'Total Wins',
+      value: 'winsTotal',
+      template: (val) => val.toFixed(0),
+      sortBy: (row) => (Number.isNaN(row.winsTotal) ? 0 : row.winsTotal),
+    }, {
+      title: 'Total Losses',
+      value: 'lossesTotal',
+      template: (val) => val.toFixed(0),
+      sortBy: (row) => (Number.isNaN(row.lossesTotal) ? 0 : row.lossesTotal),
+    }, {
+      title: 'Total +/-',
+      value: 'plusMinusTotal',
+      template: (val) => val.toFixed(0),
+      sortBy: (row) => (Number.isNaN(row.plusMinusTotal) ? 0 : row.plusMinusTotal),
+    }, {
       title: 'Total Value',
       value: 'valueTotal',
       template: (val) => `$${val.toFixed(1)}M`,
@@ -335,6 +368,11 @@ class Players extends Component {
       value: 'assistsAvg',
       template: (val) => val.toFixed(1),
       sortBy: (row) => (Number.isNaN(row.assistsAvg) ? 0 : row.assistsAvg),
+    }, {
+      title: 'Avg Points PG',
+      value: 'pointsAvg',
+      template: (val) => val.toFixed(1),
+      sortBy: (row) => (Number.isNaN(row.pointsAvg) ? 0 : row.pointsAvg),
     }, {
       title: 'Avg Saves PG',
       value: 'savesAvg',
@@ -360,6 +398,21 @@ class Players extends Component {
       value: 'gamesPlayedAvg',
       template: (val) => val.toFixed(1),
       sortBy: (row) => (Number.isNaN(row.gamesPlayedAvg) ? 0 : row.gamesPlayedAvg),
+    }, {
+      title: 'Avg Wins',
+      value: 'winsAvg',
+      template: (val) => val.toFixed(0),
+      sortBy: (row) => (Number.isNaN(row.winsAvg) ? 0 : row.winsAvg),
+    }, {
+      title: 'Avg Losses',
+      value: 'lossesAvg',
+      template: (val) => val.toFixed(0),
+      sortBy: (row) => (Number.isNaN(row.lossesAvg) ? 0 : row.lossesAvg),
+    }, {
+      title: 'Avg +/- PG',
+      value: 'plusMinusAvg',
+      template: (val) => val.toFixed(1),
+      sortBy: (row) => (Number.isNaN(row.plusMinusAvg) ? 0 : row.plusMinusAvg),
     }, {
       title: 'Avg Value',
       value: 'valueAvg',
