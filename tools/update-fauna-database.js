@@ -412,12 +412,12 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
           const gameRowC = allGames[i + 2];
           const gameRowD = allGames[i + 3];
 
+          if (!gameRowA.Date) {
+            continue; // eslint-disable-line
+          }
           if (gameRowA.Date.startsWith('Gameweek')) {
             // eslint-disable-next-line prefer-destructuring
             curGameweek = gameRowA.Date.split(' ')[1];
-            continue; // eslint-disable-line
-          }
-          if (!gameRowA.Date) {
             continue; // eslint-disable-line
           }
           if (gameRowA.Arena) {
