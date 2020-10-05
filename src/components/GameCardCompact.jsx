@@ -61,11 +61,11 @@ function GameCardCompact(props) {
   const gameLocation = arena;
 
   let gamesPlayed = 2;
-  if (parseInt(homeScoreE, 10)) {
+  if (parseInt(homeScoreE, 10) || parseInt(awayScoreE, 10)) {
     gamesPlayed = 5;
-  } else if (parseInt(homeScoreD, 10)) {
+  } else if (parseInt(homeScoreD, 10) || parseInt(awayScoreD, 10)) {
     gamesPlayed = 4;
-  } else if (parseInt(homeScoreC, 10)) {
+  } else if (parseInt(homeScoreC, 10) || parseInt(awayScoreC, 10)) {
     gamesPlayed = 3;
   }
   const gameCellSize = Math.floor(12 / gamesPlayed);
@@ -103,8 +103,8 @@ function GameCardCompact(props) {
     awayWins += !homeWinnerD ? 1 : 0;
     awayWins += !homeWinnerE ? 1 : 0;
 
-    console.log('homeWins', homeWins);
-    console.log('awayWins', awayWins);
+    // console.log('homeWins', homeWins);
+    // console.log('awayWins', awayWins);
 
     homeWinnerOverall = isPlayoffs
       ? (homeWins > Math.floor(gamesPlayed / 2))
