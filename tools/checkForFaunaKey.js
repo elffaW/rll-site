@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 const chalk = require('chalk');
 // const util = require('util');
 // const { exec } = require('child_process');

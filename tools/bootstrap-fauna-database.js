@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-use-before-define */
 /* bootstrap database in your FaunaDB account */
 const readline = require('readline');

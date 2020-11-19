@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-use-before-define */
 /* bootstrap database in your FaunaDB account */
 const readline = require('readline');
@@ -5,6 +6,7 @@ const faunadb = require('faunadb');
 const chalk = require('chalk');
 
 const { GoogleSpreadsheet } = require('google-spreadsheet');
+const { RestaurantMenuOutlined } = require('@material-ui/icons');
 
 const insideNetlify = insideNetlifyBuildContext();
 const q = faunadb.query;
@@ -143,20 +145,22 @@ function getDataFromSheets() {
         doc.loadInfo().then(() => {
           /**
            * 0: Standings
-           * 1: Schedule
-           * 2: Leaderboards
+           * 1: Leaderboards
+           * 2: Schedule
            * 3: Playoff Bracket
            * 4: Players
            * 5: Roster
            * 6: Stats
            * 7: EXPORT
-           * 8: ROLES
+           * 8: ROLES*
+           *
+           * ROLES sheet removed season 4
            */
           const playersSheet = doc.sheetsByIndex[4];
           const rolesSheet = doc.sheetsByIndex[8];
           const rostersSheet = doc.sheetsByIndex[5];
           const standingsSheet = doc.sheetsByIndex[0];
-          const scheduleSheet = doc.sheetsByIndex[1];
+          const scheduleSheet = doc.sheetsByIndex[2];
           const statsSheet = doc.sheetsByIndex[6];
 
           getStatsFromSheets(statsSheet).then((allStats) => {
@@ -184,17 +188,17 @@ function getStatsFromSheets(statsSheet) {
   return new Promise((resolve, reject) => {
     statsSheet.getRows().then((allStats) => {
       const statsRet = {};
-      // const statsByGame = {};
+      const statsByGame = {};
       const statsByPlayer = {};
-      // const statsByTeam = {};
+      const statsByTeam = {};
       allStats.forEach((stats) => {
         const {
-          // GN: gameId,
+          GN: gameId,
           PLAYER: playerName,
-          // TM: teamName,
-          // OPP: opposingTeam,
-          // 'TM SC': teamGoals,
-          // 'OPP SC': opponentGoals,
+          TM: teamName,
+          OPP: opposingTeam,
+          'TM SC': teamGoals,
+          'OPP SC': opponentGoals,
           SCORE: playerScore,
           G: playerGoals,
           A: playerAssists,
@@ -203,9 +207,59 @@ function getStatsFromSheets(statsSheet) {
           MVP: playerMVP,
           PTS: playerPts,
           TYPE: statsType,
+          W: playerWin,
+          L: playerLoss,
+          'TM TOT SC': teamTotScore,
+          'TM AVG SCORE': teamAvgScore,
+          'TM%': playerPercentOfTeam,
+          RATING: playerRatingVsTeam,
+          'OPP TOT SCORE': oppTotScore,
+          RATIO: teamsScoreRatio,
+          TOUCHES: playerBallTouches,
+          'AIR TIME HIGH': playerTimeHighInAir,
+          'AIR TIME LOW': playerTimeLowInAir,
+          'AIR HITS': playerTotalAerials,
+          DEMOS: playerNumDemosInflicted,
+          'DEMOS TAKEN': playerNumDemosTaken,
+          'FIRST TOUCHES': playerNumTimeFirstTouch,
+          'KICKOFF AFK': playerNumTimeAfk,
+          CLEARS: playerTotalClears,
+          PASSES: playerTotalPasses,
+          TURNOVERS: playerTurnovers,
+          'TURNOVERS WON': playerTakeaways,
+          'BOOST USAGE': playerBoostUsage,
+          'SMALL BOOSTS': playerNumSmallBoosts,
+          'LARGE BOOSTS': playerNumLargeBoosts,
+          'WASTED BOOST': playerWastedUsage,
+          'AVG BOOST': playerAverageBoostLevel,
+          'STOLEN BOOSTS': playerNumStolenBoosts,
+          'AVG SPEED': playerAverageSpeed,
+          'AVG HIT DISTANCE': playerAverageHitDistance,
+          'SLOW SPEED TIME': playerTimeAtSlowSpeed,
+          'BOOST SPEED TIME': playerTimeAtBoostSpeed,
+          'SUPERSONIC TIME': playerTimeAtSuperSonic,
+          'BALLCAM TIME': playerTimeBallcam,
+          'TIME ON WALL': playerTimeOnWall,
+          'TIME MOST FORWARD': playerTimeMostForwardPlayer,
+          'TIME MOST BACK': playerTimeMostBackPlayer,
+          'TIME BETWEEN': playerTimeBetweenPlayers,
+          'TIME BEHIND BALL': playerTimeBehindBall,
+          'TIME IN FRONT BALL': playerTimeInFrontBall,
+          'BALL HIT FORWARD': playerBallHitForwardDist,
+          'BALL HIT BACKWARD': playerBallHitBackwardDist,
+          'TIME CLOSE TO BALL': playerTimeCloseToBall,
+          'BALL CARRIES': playerTotalCarries,
+          'CARRY DISTANCE': playerTotalCarryDistance,
+          'DRIBBLE HITS': playerTotalDribbles,
+          'TIME CLUMPED': teamTimeClumped,
+          'USEFUL HITS': playerUsefulHits,
+          'TIME IN GAME': playerTimeInGame,
+          'TIME DEF THIRD': playerTimeInDefendingThird,
+          'TIME NEUTRAL THIRD': playerTimeInNeutralThird,
+          'TIME ATTACK THIRD': playerTimeInAttackingThird,
         } = stats;
         if (playerName) {
-          // statsType: RS, PO, SUB, BOT
+          // statsType: RS, PO, SUB, BOT, COMB (combine)
           if (statsType === 'RS' || statsType === 'PO') {
             if (!statsByPlayer[playerName]) {
               statsByPlayer[playerName] = {
@@ -218,6 +272,51 @@ function getStatsFromSheets(statsSheet) {
                 numMVP: parseInt(playerMVP, 10),
                 points: parseInt(playerPts, 10),
                 gamesPlayed: 1,
+                wins: parseInt(playerWin, 10) || 0,
+                losses: parseInt(playerLoss, 10) || 0,
+                scorePercentOfTeam: parseFloat(playerPercentOfTeam) || 0,
+                scoreRatingVsTeam: parseFloat(playerRatingVsTeam) || 0,
+                ballTouches: parseInt(playerBallTouches, 10) || 0,
+                timeHighInAir: parseFloat(playerTimeHighInAir) || 0,
+                timeLowInAir: parseFloat(playerTimeLowInAir) || 0,
+                totalAerials: parseInt(playerTotalAerials, 10) || 0,
+                numDemosInflicted: parseInt(playerNumDemosInflicted, 10) || 0,
+                numDemosTaken: parseInt(playerNumDemosTaken, 10) || 0,
+                numKickoffFirstTouch: parseInt(playerNumTimeFirstTouch, 10) || 0,
+                numKickoffAfk: parseInt(playerNumTimeAfk, 10) || 0,
+                totalClears: parseInt(playerTotalClears, 10) || 0,
+                totalPasses: parseInt(playerTotalPasses, 10) || 0,
+                turnovers: parseInt(playerTurnovers, 10) || 0,
+                takeaways: parseInt(playerTakeaways, 10) || 0,
+                boostUsage: parseFloat(playerBoostUsage) || 0,
+                numSmallBoosts: parseInt(playerNumSmallBoosts, 10) || 0,
+                numLargeBoosts: parseInt(playerNumLargeBoosts, 10) || 0,
+                wastedUsage: parseFloat(playerWastedUsage) || 0,
+                averageBoostLevel: parseFloat(playerAverageBoostLevel) || 0,
+                numStolenBoosts: parseInt(playerNumStolenBoosts, 10) || 0,
+                averageSpeed: parseFloat(playerAverageSpeed) || 0,
+                averageHitDistance: parseFloat(playerAverageHitDistance) || 0,
+                timeAtSlowSpeed: parseFloat(playerTimeAtSlowSpeed) || 0,
+                timeAtBoostSpeed: parseFloat(playerTimeAtBoostSpeed) || 0,
+                timeAtSuperSonic: parseFloat(playerTimeAtSuperSonic) || 0,
+                timeBallcam: parseFloat(playerTimeBallcam) || 0,
+                timeOnWall: parseFloat(playerTimeOnWall) || 0,
+                timeMostForwardPlayer: parseFloat(playerTimeMostForwardPlayer) || 0,
+                timeMostBackPlayer: parseFloat(playerTimeMostBackPlayer) || 0,
+                timeBetweenPlayers: parseFloat(playerTimeBetweenPlayers) || 0,
+                timeBehindBall: parseFloat(playerTimeBehindBall) || 0,
+                timeInFrontBall: parseFloat(playerTimeInFrontBall) || 0,
+                ballHitForwardDist: parseFloat(playerBallHitForwardDist) || 0,
+                ballHitBackwardDist: parseFloat(playerBallHitBackwardDist) || 0,
+                timeCloseToBall: parseFloat(playerTimeCloseToBall) || 0,
+                totalCarries: parseInt(playerTotalCarries, 10) || 0,
+                totalCarryDistance: parseFloat(playerTotalCarryDistance) || 0,
+                totalDribbles: parseInt(playerTotalDribbles, 10) || 0,
+                usefulHits: parseInt(playerUsefulHits, 10) || 0,
+                timeInGame: parseFloat(playerTimeInGame) || 0,
+                timeInDefendingThird: parseFloat(playerTimeInDefendingThird) || 0,
+                timeInNeutralThird: parseFloat(playerTimeInNeutralThird) || 0,
+                timeInAttackingThird: parseFloat(playerTimeInAttackingThird) || 0,
               };
             } else {
               statsByPlayer[playerName].score += parseInt(playerScore, 10);
@@ -228,11 +327,94 @@ function getStatsFromSheets(statsSheet) {
               statsByPlayer[playerName].numMVP += parseInt(playerMVP, 10);
               statsByPlayer[playerName].points += parseInt(playerPts, 10);
               statsByPlayer[playerName].gamesPlayed += 1;
+              statsByPlayer[playerName].wins += parseInt(playerWin, 10);
+              statsByPlayer[playerName].losses += parseInt(playerLoss, 10);
+              statsByPlayer[playerName].scorePercentOfTeam += (parseFloat(playerPercentOfTeam) || 0);
+              statsByPlayer[playerName].scoreRatingVsTeam += (parseFloat(playerRatingVsTeam) || 0);
+              statsByPlayer[playerName].ballTouches += (parseInt(playerBallTouches, 10) || 0);
+              statsByPlayer[playerName].timeHighInAir += (parseFloat(playerTimeHighInAir) || 0);
+              statsByPlayer[playerName].timeLowInAir += (parseFloat(playerTimeLowInAir) || 0);
+              statsByPlayer[playerName].totalAerials += (parseInt(playerTotalAerials, 10) || 0);
+              statsByPlayer[playerName].numDemosInflicted += (parseInt(playerNumDemosInflicted, 10) || 0);
+              statsByPlayer[playerName].numDemosTaken += (parseInt(playerNumDemosTaken, 10) || 0);
+              statsByPlayer[playerName].numKickoffFirstTouch += (parseInt(playerNumTimeFirstTouch, 10) || 0);
+              statsByPlayer[playerName].numKickoffAfk += (parseInt(playerNumTimeAfk, 10) || 0);
+              statsByPlayer[playerName].totalClears += (parseInt(playerTotalClears, 10) || 0);
+              statsByPlayer[playerName].totalPasses += (parseInt(playerTotalPasses, 10) || 0);
+              statsByPlayer[playerName].turnovers += (parseInt(playerTurnovers, 10) || 0);
+              statsByPlayer[playerName].takeaways += (parseInt(playerTakeaways, 10) || 0);
+              statsByPlayer[playerName].boostUsage += (parseFloat(playerBoostUsage) || 0);
+              statsByPlayer[playerName].numSmallBoosts += (parseInt(playerNumSmallBoosts, 10) || 0);
+              statsByPlayer[playerName].numLargeBoosts += (parseInt(playerNumLargeBoosts, 10) || 0);
+              statsByPlayer[playerName].wastedUsage += (parseFloat(playerWastedUsage) || 0);
+              statsByPlayer[playerName].averageBoostLevel += (parseFloat(playerAverageBoostLevel) || 0);
+              statsByPlayer[playerName].numStolenBoosts += (parseInt(playerNumStolenBoosts, 10) || 0);
+              statsByPlayer[playerName].averageSpeed += (parseFloat(playerAverageSpeed) || 0);
+              statsByPlayer[playerName].averageHitDistance += (parseFloat(playerAverageHitDistance) || 0);
+              statsByPlayer[playerName].timeAtSlowSpeed += (parseFloat(playerTimeAtSlowSpeed) || 0);
+              statsByPlayer[playerName].timeAtBoostSpeed += (parseFloat(playerTimeAtBoostSpeed) || 0);
+              statsByPlayer[playerName].timeAtSuperSonic += (parseFloat(playerTimeAtSuperSonic) || 0);
+              statsByPlayer[playerName].timeBallcam += (parseFloat(playerTimeBallcam) || 0);
+              statsByPlayer[playerName].timeOnWall += (parseFloat(playerTimeOnWall) || 0);
+              statsByPlayer[playerName].timeMostForwardPlayer += (parseFloat(playerTimeMostForwardPlayer) || 0);
+              statsByPlayer[playerName].timeMostBackPlayer += (parseFloat(playerTimeMostBackPlayer) || 0);
+              statsByPlayer[playerName].timeBetweenPlayers += (parseFloat(playerTimeBetweenPlayers) || 0);
+              statsByPlayer[playerName].timeBehindBall += (parseFloat(playerTimeBehindBall) || 0);
+              statsByPlayer[playerName].timeInFrontBall += (parseFloat(playerTimeInFrontBall) || 0);
+              statsByPlayer[playerName].ballHitForwardDist += (parseFloat(playerBallHitForwardDist) || 0);
+              statsByPlayer[playerName].ballHitBackwardDist += (parseFloat(playerBallHitBackwardDist) || 0);
+              statsByPlayer[playerName].timeCloseToBall += (parseFloat(playerTimeCloseToBall) || 0);
+              statsByPlayer[playerName].totalCarries += (parseInt(playerTotalCarries, 10) || 0);
+              statsByPlayer[playerName].totalCarryDistance += (parseFloat(playerTotalCarryDistance) || 0);
+              statsByPlayer[playerName].totalDribbles += (parseInt(playerTotalDribbles, 10) || 0);
+              statsByPlayer[playerName].usefulHits += (parseInt(playerUsefulHits, 10) || 0);
+              statsByPlayer[playerName].timeInGame += (parseFloat(playerTimeInGame) || 0);
+              statsByPlayer[playerName].timeInDefendingThird += (parseFloat(playerTimeInDefendingThird) || 0);
+              statsByPlayer[playerName].timeInNeutralThird += (parseFloat(playerTimeInNeutralThird) || 0);
+              statsByPlayer[playerName].timeInAttackingThird += (parseFloat(playerTimeInAttackingThird) || 0);
+            }
+            if (!statsByGame[gameId]) {
+              statsByGame[gameId] = {
+                id: gameId,
+                team0: teamName,
+                team1: opposingTeam,
+                team0Goals: parseInt(teamGoals, 10),
+                team1Goals: parseInt(opponentGoals, 10),
+                team0Score: parseInt(teamTotScore, 10),
+                team0AvgScore: parseFloat(teamAvgScore),
+                team1Score: parseInt(oppTotScore, 10),
+                team0to1ScoreRatio: parseFloat(teamsScoreRatio),
+              };
+            }
+            if (!statsByTeam[teamName]) {
+              statsByTeam[teamName] = {
+                gamesPlayed: 1,
+                teamName,
+                goals: parseInt(teamGoals, 10),
+                goalsAllowed: parseInt(opponentGoals, 10),
+                score: parseInt(teamTotScore, 10),
+                avgScore: parseFloat(teamAvgScore),
+                timeClumped: parseFloat(teamTimeClumped) || 0,
+              };
+            } else {
+              statsByTeam[teamName].gamesPlayed += 1;
+              statsByTeam[teamName].goals += parseInt(teamGoals, 10);
+              statsByTeam[teamName].goalsAllowed += parseInt(opponentGoals, 10);
+              statsByTeam[teamName].score += parseInt(teamTotScore, 10);
+              statsByTeam[teamName].avgScore += parseFloat(teamAvgScore);
+              statsByTeam[teamName].avgScore /= statsByTeam[teamName].gamesPlayed;
+
+              statsByTeam[teamName].timeClumped += parseFloat(teamTimeClumped) || 0;
             }
           }
         }
       });
       statsRet.statsByPlayer = statsByPlayer;
+      statsRet.statsByGame = statsByGame;
+      statsRet.statsByTeam = statsByTeam;
+      console.log(`Got ${Object.keys(statsRet.statsByPlayer).length} PLAYER stats records from Stats`);
+      console.log(`Got ${Object.keys(statsRet.statsByGame).length} GAME   stats records from Stats`);
+      console.log(`Got ${Object.keys(statsRet.statsByTeam).length} TEAM   stats records from Stats`);
       resolve(statsRet);
     }).catch((err) => {
       reject(err);
@@ -247,60 +429,121 @@ function getStatsFromSheets(statsSheet) {
   */
 function getPlayersFromSheets(playersSheet, rolesSheet, allStats) {
   return new Promise((resolve, reject) => {
-    playersSheet.getRows().then((allPlayers) => rolesSheet.getRows().then((allRoles) => {
-      const playerRoles = [];
-      allRoles.forEach((role) => {
-        const { PLAYER: playerName, 'ROLE PRIMARY': primaryRole, 'ROLE SECONDARY': secondaryRole } = role;
-        playerRoles.push({ playerName, primaryRole, secondaryRole });
-      });
+    if (SEASON_NUMBER < 4) {
+      playersSheet.getRows().then((allPlayers) => rolesSheet.getRows().then((allRoles) => {
+        const playerRoles = [];
+        allRoles.forEach((role) => {
+          const { PLAYER: playerName, 'ROLE PRIMARY': primaryRole, 'ROLE SECONDARY': secondaryRole } = role;
+          playerRoles.push({ playerName, primaryRole, secondaryRole });
+        });
 
-      const playersRet = [];
-      allPlayers.forEach((player) => {
-        const {
-          ID: id,
-          Name: name,
-          'Rocket League Name': rlName,
-          'Team Assignment': team,
-          Car: car,
-          'Signing Value': signingValue,
-          'Current Value': value,
-          System: system,
-          Country: country,
-          Position: position,
-        } = player;
-        const { primaryRole, secondaryRole } = playerRoles.find((role) => role.playerName === name.toUpperCase());
-        const {
-          score, goals, assists, saves, shots, numMVP, points, gamesPlayed,
-        } = allStats.statsByPlayer[name.toUpperCase()];
-        const playerObj = {
-          id: parseInt(id, 10),
-          name,
-          rlName,
-          team,
-          car,
-          signingValue,
-          primaryRole,
-          secondaryRole,
-          score,
-          goals,
-          assists,
-          saves,
-          shots,
-          numMVP,
-          points,
-          gamesPlayed,
-          value,
-          system,
-          country,
-          position,
-          season: parseInt(SEASON_NUMBER, 10),
-        };
-        playersRet.push(playerObj);
+        const playersRet = [];
+        allPlayers.forEach((player) => {
+          const {
+            ID: id,
+            Name: name,
+            'Rocket League Name': rlName,
+            'Team Assignment': team,
+            Car: car,
+            'Signing Value': signingValue,
+            'Current Value': value,
+            System: system,
+            Country: country,
+            Position: position,
+          } = player;
+          const { primaryRole, secondaryRole } = playerRoles.find((role) => role.playerName === name.toUpperCase());
+          const {
+            score, goals, assists, saves, shots, numMVP, points, gamesPlayed, ...otherStats
+          } = allStats.statsByPlayer[name.toUpperCase()];
+          const playerObj = {
+            id: parseInt(id, 10),
+            name,
+            rlName,
+            team,
+            car,
+            signingValue,
+            primaryRole,
+            secondaryRole,
+            score,
+            goals,
+            assists,
+            saves,
+            shots,
+            numMVP,
+            points,
+            gamesPlayed,
+            ...otherStats,
+            value,
+            system,
+            country,
+            position,
+            season: parseInt(SEASON_NUMBER, 10),
+          };
+          playersRet.push(playerObj);
+        });
+        console.log(`Got ${playersRet.length} players from Players`);
+        resolve(playersRet);
+      })).catch((err) => {
+        reject(err);
       });
-      resolve(playersRet);
-    })).catch((err) => {
-      reject(err);
-    });
+    } else { // SEASON 4 removed roles sheet
+      playersSheet.getRows().then((allPlayers) => {
+        const playersRet = [];
+        allPlayers.forEach((player) => {
+          const {
+            ID: id,
+            Name: name,
+            'Rocket League Name': rlName,
+            'Team Assignment': team,
+            Car: car,
+            'Signing Value': signingValue,
+            'Current Value': value,
+            System: system,
+            Country: country,
+            Position: position,
+          } = player;
+          const {
+            score = 0,
+            goals = 0,
+            assists = 0,
+            saves = 0,
+            shots = 0,
+            numMVP = 0,
+            points = 0,
+            gamesPlayed = 0,
+            name: capsName, // we don't use this, but without it `otherStats` will overwrite the name we want
+            ...otherStats
+          } = allStats.statsByPlayer[name.toUpperCase()] || {};
+          const playerObj = {
+            id: parseInt(id, 10),
+            name,
+            rlName,
+            team,
+            car,
+            signingValue,
+            score,
+            goals,
+            assists,
+            saves,
+            shots,
+            numMVP,
+            points,
+            gamesPlayed,
+            ...otherStats,
+            value,
+            system,
+            country,
+            position,
+            season: parseInt(SEASON_NUMBER, 10),
+          };
+          playersRet.push(playerObj);
+        });
+        console.log(`Got ${playersRet.length} players from Players`);
+        resolve(playersRet);
+      }).catch((err) => {
+        reject(err);
+      });
+    }
   });
 }
 
@@ -332,6 +575,7 @@ function getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers) {
         } = team;
         if (teamName) {
           if (playerAName && playerBName && playerCName) {
+            console.log(playerAName, playerBName, playerCName);
             const playerA = parseInt(allPlayers.find((player) => player.name === playerAName).id, 10);
             const playerB = parseInt(allPlayers.find((player) => player.name === playerBName).id, 10);
             const playerC = parseInt(allPlayers.find((player) => player.name === playerCName).id, 10);
@@ -363,27 +607,30 @@ function getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers) {
         const {
           Rank: teamRank, TEAM: rankedName, PTS: teamPts, GF: goalsFor, GA: goalsAgainst, '+/-': plusMinus, W: wins, L: losses, VALUE: teamValue,
         } = rankedTeam;
-        const { id, members } = teamRosters.find((team) => team.name === rankedName);
+        if (rankedName && teamRank) {
+          const { id, members } = teamRosters.find((team) => team.name === rankedName);
 
-        const teamObj = {
-          id,
-          name: rankedName,
-          members,
-          rank: teamRank,
-          wins,
-          losses,
-          plusMinus,
-          goalsFor,
-          goalsAgainst,
-          points: teamPts,
-          value: teamValue,
-          season: parseInt(SEASON_NUMBER, 10),
-        };
+          const teamObj = {
+            id,
+            name: rankedName,
+            members,
+            rank: teamRank,
+            wins,
+            losses,
+            plusMinus,
+            goalsFor,
+            goalsAgainst,
+            points: teamPts,
+            value: teamValue,
+            season: parseInt(SEASON_NUMBER, 10),
+          };
 
-        // console.log(chalk.cyan(JSON.stringify(teamObj)));
+          // console.log(chalk.cyan(JSON.stringify(teamObj)));
 
-        teamsRet.push(teamObj);
+          teamsRet.push(teamObj);
+        }
       }
+      console.log(`Got ${teamsRet.length} teams from Rosters`);
       resolve(teamsRet);
       resolve([]);
     })).catch((err) => {
@@ -401,7 +648,6 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
   return new Promise((resolve, reject) => {
     scheduleSheet.getRows()
       .then((allGames) => {
-        // console.log('allGames', allGames);
         const gamesRet = [];
         let curArena = 'Salty Shores';
         let curGameweek = 1;
@@ -448,9 +694,9 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
             awayTeamScoreB: game2ScoreB,
             season: parseInt(SEASON_NUMBER, 10),
           };
-          // console.log(JSON.stringify(game1Obj));
           gamesRet.push(game1Obj);
 
+          // after season 2 we did 2 games at a time so the schedule sheet changed
           if (curSeason > 2 && !gameRowC['Time (CT)']) {
             const {
               'Match #': matchNum2, Team: teamIdA2, G1: game1ScoreA2, G2: game2ScoreA2,
@@ -475,10 +721,10 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
               awayTeamScoreB: game2ScoreB2,
               season: parseInt(SEASON_NUMBER, 10),
             };
-            // console.log(JSON.stringify(game1Obj));
             gamesRet.push(game2Obj);
           }
         }
+        console.log(`Got ${gamesRet.length} games from Schedule`);
         resolve(gamesRet);
       }).catch((err) => {
         reject(err);
