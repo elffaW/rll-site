@@ -9,7 +9,7 @@ const client = new faunadb.Client({
 export async function handler(event, context) {
   console.log('Function `teams-getAll` invoked');
 
-  return client.query(q.Paginate(q.Match(q.Index('all_teams'))))
+  return client.query(q.Paginate(q.Match(q.Index('all_teams')), { size: 500 }))
     .then((response) => {
       const allRefs = response.data;
       const getAll = allRefs.map((ref) => q.Get(ref));
