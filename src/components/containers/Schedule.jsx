@@ -44,6 +44,7 @@ class Schedule extends Component {
       const teamsData = results[1];
       const games = allGames.map((game) => game.data);
       games.sort((a, b) => new Date(a.gameTime) - new Date(b.gameTime)); // earlier game times first
+      games.sort((a, b) => (a.id - b.id)); // sort by game ID
 
       const allTeams = teamsData.map((team) => team.data);
       const gamesWithTeams = games.map((game) => {

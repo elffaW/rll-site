@@ -51,13 +51,16 @@ class Dashboard extends Component {
       // const curWeekGames = games.filter((game) => game.gameWeek === CURRENT_GAME_WEEK);
       const remainingGames = games.filter((game) => game.homeTeamScoreA === '');
       remainingGames.sort((a, b) => new Date(a.gameTime) - new Date(b.gameTime)); // earlier game times first
+      remainingGames.sort((a, b) => (a.id - b.id)); // earlier ids first
       const curWeekGames = remainingGames.slice(0, 12); // show next 12 games - assumes 12 games per week
 
       const allTeams = teamsData.map((team) => team.data);
       const gamesWithTeams = curWeekGames.map((game) => {
         const { ...tempGame } = game;
-        tempGame.homeTeam = allTeams.find((team) => parseInt(team.id, 10) === parseInt(tempGame.homeTeamId, 10) && team.season === tempGame.season);
-        tempGame.awayTeam = allTeams.find((team) => parseInt(team.id, 10) === parseInt(tempGame.awayTeamId, 10) && team.season === tempGame.season);
+        tempGame.homeTeam = allTeams.find((team) => (
+          parseInt(team.id, 10) === parseInt(tempGame.homeTeamId, 10) && team.season === tempGame.season));
+        tempGame.awayTeam = allTeams.find((team) => (
+          parseInt(team.id, 10) === parseInt(tempGame.awayTeamId, 10) && team.season === tempGame.season));
         return tempGame;
       });
 
@@ -97,7 +100,11 @@ class Dashboard extends Component {
             <PageHeader headerText="Welcome to the Rocket League League league site!" />
           </Grid>
           <Grid item xs={12}>
-            <SeasonSelector season={season} handleSeasonChange={this.handleSeasonChange} forceRefresh={this.refreshData} />
+            <SeasonSelector
+              season={season}
+              handleSeasonChange={this.handleSeasonChange}
+              forceRefresh={this.refreshData}
+            />
             <Standings season={season} />
           </Grid>
           <Grid item xs={12} style={{ width: '100%' }}>
