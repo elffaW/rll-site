@@ -207,35 +207,41 @@ class Teams extends Component {
             ? ((!homeWinnerA && !homeWinnerB) || (!homeWinnerA && !homeWinnerC) || (!homeWinnerB && !homeWinnerC))
             : !homeWinnerA && !homeWinnerB;
         }
-        if (!hasScores) {
-          return null;
-        }
         if (curTeam.id === game.homeTeamId) {
           if (homeWinnerOverall) {
-            return `${game.gameWeek}:W`;
+            return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:W`;
           }
           if (awayWinnerOverall) {
-            return `${game.gameWeek}:L`;
+            return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:L`;
           }
-        } else {
-          if (homeWinnerOverall) {
-            return `${game.gameWeek}:L`;
+          if (!hasScores) {
+            return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:-`;
           }
-          if (awayWinnerOverall) {
-            return `${game.gameWeek}:W`;
-          }
+          return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:D`;
+        } // else {
+        if (homeWinnerOverall) {
+          return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:L`;
         }
-
-        return `${game.gameWeek}:D`;
+        if (awayWinnerOverall) {
+          return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:W`;
+        }
+        if (!hasScores) {
+          return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:-`;
+        }
+        return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:D`;
+        // }
       });
     }
     let lastGW = 0;
     const gameweeks = [];
     if (winlossdraw.length > 0) {
-      // eslint-disable-next-line prefer-destructuring
-      lastGW = winlossdraw[winlossdraw.length - 1].split(':')[0];
-      for (let i = 1; i <= lastGW; i++) {
-        gameweeks.push(i);
+      winlossdraw = winlossdraw.filter((wld) => !!wld);
+      if (winlossdraw[winlossdraw.length - 1]) {
+        // eslint-disable-next-line prefer-destructuring
+        lastGW = winlossdraw[winlossdraw.length - 1].split(':')[0];
+        for (let i = 1; i <= lastGW; i++) {
+          gameweeks.push(i);
+        }
       }
     }
 
