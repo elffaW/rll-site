@@ -17,6 +17,14 @@ export const styles = withStyles((theme) => createStyles({
     marginTop: 0,
     paddingLeft: theme.spacing(1),
   },
+  statsPaper: {
+    textAlign: 'center',
+    color: theme.otherColors.text.light,
+    backgroundColor: theme.palette.primary.dark,
+    marginTop: -8,
+    marginBottom: 60,
+    height: '100%',
+  },
   teamName: {
     fontVariant: 'small-caps',
     float: 'left',
