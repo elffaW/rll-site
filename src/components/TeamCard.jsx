@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.6em',
     color: 'whitesmoke',
     fontWeight: 700,
+    textShadow: '1px 1px 2px black',
   },
   bigRecord: {
     fontSize: '2.5em',
@@ -70,6 +71,7 @@ function TeamCard(props) {
   const classes = useStyles();
   const defaultLogo = 'DINOBOTS';
   const logoSrc = require(`../images/LOGO_${team.name.toUpperCase() || defaultLogo}.png`); // eslint-disable-line
+
   const players = team.members;
   let rankSuffix = 'th';
   const numTeams = totalTeams || 8;
@@ -110,14 +112,36 @@ function TeamCard(props) {
       const curWeek = gameweeks[i];
       const curWeekResults = winlossdraw.filter((wld) => parseInt(wld.split(':')[0], 10) === parseInt(curWeek, 10));
 
-      const curWeekResultsObj = curWeekResults.map((wld) => (
-        // eslint-disable-next-line no-nested-ternary
-        <Typography variant="h5" style={wld.split(':')[1] === 'W' ? { color: 'green' } : wld.split(':')[1] === 'L' ? { color: '#8e0000' } : { color: 'blue' }}>{wld.split(':')[1]}</Typography>
-      ));
+      const curWeekOppObj = curWeekResults.map((wld) => {
+        const oppTeam = wld.split(':')[1];
+        const oppLogoSrc = require(`../images/LOGO_${oppTeam || defaultLogo}.png`); // eslint-disable-line
+
+        return {
+          name: oppTeam,
+          logo: oppLogoSrc,
+        };
+        // return (
+        //   <Avatar src={oppLogoSrc} variant="square" />
+        // );
+      });
+      const curWeekResultsObj = curWeekResults.map((wld) => {
+        const result = wld.split(':')[2];
+        return (
+          // eslint-disable-next-line no-nested-ternary
+          <Typography variant="h5" style={result === 'W' ? { color: 'green' } : result === 'L' ? { color: '#8e0000' } : result === 'D' ? { color: 'blue' } : { color: 'inherit' }}>{result}</Typography>
+        );
+      });
       seasonOverview.push((
         <Grid item xs={gridSizePerWeek}>
           <Grid container direction="column" justify="center" alignItems="center">
             <Typography variant="h4" style={{ color: '#383838' }}>{curWeek}</Typography>
+            <Grid container direction="row" justify="space-around" alignItems="center">
+              {curWeekOppObj.map((opp) => (
+                <Link to={`/teams/${opp.name}`} exact>
+                  <Avatar src={opp.logo} variant="square" />
+                </Link>
+              ))}
+            </Grid>
             <Grid container direction="row" justify="space-around" alignItems="center">
               {curWeekResultsObj}
             </Grid>
@@ -134,6 +158,13 @@ function TeamCard(props) {
     colsXS = 12;
     colsMD = false;
     colsXL = false;
+  }
+
+  let teamValue = team.value;
+  if (!teamValue) {
+    teamValue = '$';
+    teamValue += players.map((p) => parseFloat(p.value)).reduce((accum, cur) => accum + cur).toFixed(2);
+    teamValue += 'M';
   }
   /**
    * show:
@@ -196,14 +227,14 @@ function TeamCard(props) {
               {`${team.points} pts`}
             </Typography>
           </Grid>
-          {inGame ? '' : (
+          {!inGame && (
             <Grid item xs={3}>
               <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
-                {team.value}
+                {teamValue}
               </Typography>
             </Grid>
           )}
-          {showDetails && !inGame && (
+          {showDetails && !inGame && (seasonOverview.length > 0) && (
           <Paper className={classes.paper} style={{ minHeight: 112, marginBottom: 16 }}>
             <Typography variant="h5" style={{ fontVariant: 'small-caps', marginBottom: 16 }}>Season Overview</Typography>
             <Grid container direction="row" alignItems="center" justify="space-around">
