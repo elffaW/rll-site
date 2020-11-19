@@ -18,10 +18,10 @@ div.MuiDrawer-root > .MuiDrawer-paper {
 h4.player-season-1 {
   position: relative;
   padding: 24px;
-  cursor: pointer;
+  // cursor: pointer;
 }
 h4.player-season-1::before {
-  content: "";
+  color: white;
   background-size: 100%;
   background-position: center;
   background-repeat: no-repeat;
@@ -29,23 +29,27 @@ h4.player-season-1::before {
   top: 0; left: 0;
   width: 100%; height: 100%;
   // background-image is RLL_logo_plain.svg
-  background-image: url("/RLL_logo_S1.png");
-  // filter: brightness(0.5) sepia(1) hue-rotate(-70deg) saturate(5);
+  background-image: url("/RLL_logo_plain.png");
+  // SEE https://codepen.io/sosuke/pen/Pjoqqp to create filter
+  filter: invert(91%) sepia(64%) saturate(7500%) hue-rotate(356deg) brightness(102%) contrast(102%);
+  content: "";
   margin-left: 8px;
 }
 .player-season-1-inside {
   position: relative;
-  color: #8e8e8e;
-  margin-left: 3px;
+  // color: #8e8e8e;
+  margin-left: 10px;
+  font-weight: 700;
+  font-size: 3rem;
 }
 
 h4.player-season-2 {
   position: relative;
   padding: 24px;
-  cursor: pointer;
+  // cursor: pointer;
 }
 h4.player-season-2::before {
-  content: "";
+  color: white;
   background-size: 100%;
   background-position: center;
   background-repeat: no-repeat;
@@ -53,23 +57,27 @@ h4.player-season-2::before {
   top: 0; left: 0;
   width: 100%; height: 100%;
   // background-image is RLL_logo_plain.svg
-  background-image: url("/RLL_logo_S2.png");
-  // filter: brightness(0.2) sepia(1) hue-rotate(180deg) saturate(5);
+  background-image: url("/RLL_logo_plain.png");
+  // SEE https://codepen.io/sosuke/pen/Pjoqqp to create filter
+  filter: invert(88%) sepia(37%) saturate(3659%) hue-rotate(120deg) brightness(104%) contrast(102%);
+  content: "";
   margin-left: 8px;
 }
 .player-season-2-inside {
   position: relative;
-  color: #8e8e8e;
-  margin-left: 3px;
+  // color: #8e8e8e;
+  margin-left: 10px;
+  font-weight: 700;
+  font-size: 3rem;
 }
 
 h4.player-season-3 {
   position: relative;
   padding: 24px;
-  cursor: pointer;
+  // cursor: pointer;
 }
 h4.player-season-3::before {
-  content: "";
+  color: white;
   background-size: 100%;
   background-position: center;
   background-repeat: no-repeat;
@@ -77,14 +85,46 @@ h4.player-season-3::before {
   top: 0; left: 0;
   width: 100%; height: 100%;
   // background-image is RLL_logo_plain.svg
-  background-image: url("/RLL_logo_S3.png");
-  // filter: brightness(0.5) sepia(1) hue-rotate(70deg) saturate(6);
+  background-image: url("/RLL_logo_plain.png");
+  // SEE https://codepen.io/sosuke/pen/Pjoqqp to create filter
+  filter: invert(25%) sepia(62%) saturate(7431%) hue-rotate(292deg) brightness(113%) contrast(128%);
+  content: "";
   margin-left: 8px;
 }
 .player-season-3-inside {
   position: relative;
-  color: #8e8e8e;
-  margin-left: 3px;
+  // color: #8e8e8e;
+  margin-left: 10px;
+  font-weight: 700;
+  font-size: 3rem;
+}
+
+h4.player-season-4 {
+  position: relative;
+  padding: 24px;
+  // cursor: pointer;
+}
+h4.player-season-4::before {
+  color: white;
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  // background-image is RLL_logo_plain.svg
+  background-image: url("/RLL_logo_plain.png");
+  // SEE https://codepen.io/sosuke/pen/Pjoqqp to create filter
+  filter: invert(83%) sepia(60%) saturate(407%) hue-rotate(56deg) brightness(101%) contrast(101%);
+  content: "";
+  margin-left: 8px;
+}
+.player-season-4-inside {
+  position: relative;
+  // color: #8e8e8e;
+  margin-left: 10px;
+  font-weight: 700;
+  font-size: 3rem;
 }
 
 // override dumb react-pivot styles

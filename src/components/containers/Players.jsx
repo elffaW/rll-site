@@ -150,7 +150,8 @@ class Players extends Component {
       const teams = allTeams.map((player) => player.data);
       const playersWithTeams = players.map((player) => {
         const { ...tempPlayer } = player;
-        const playerTeam = teams.find((team) => parseInt(team.id, 10) === parseInt(tempPlayer.team, 10) && team.season === tempPlayer.season);
+        const playerTeam = teams.find((team) => (
+          parseInt(team.id, 10) === parseInt(tempPlayer.team, 10) && team.season === tempPlayer.season));
         if (playerTeam) {
           tempPlayer.team = playerTeam;
           tempPlayer.teamName = playerTeam.name;
@@ -162,6 +163,7 @@ class Players extends Component {
 
         return tempPlayer;
       });
+
       const seasonPlayers = (seasonQuery === 'All') ? playersWithTeams : playersWithTeams.filter((player) => player.season === seasonQuery);
       this.setState({
         players: playersWithTeams, loading: false, season: seasonQuery, seasonPlayers,
@@ -434,6 +436,8 @@ class Players extends Component {
         curPlayer.overallLosses += parseInt(team.losses || 0, 10);
         curPlayer.overallPlusMinus += parseInt(team.plusMinus || 0, 10);
       }
+
+      curPlayer.sort((p1, p2) => p1.season - p2.season);
     }
     return (
       <BaseApp>
@@ -554,7 +558,9 @@ class Players extends Component {
                           // }}
                           className={`player-season-${player.season}`}
                         >
-                          <span className={`player-season-${player.season}-inside`} />
+                          <span className={`player-season-${player.season}-inside`}>
+                            {player.season}
+                          </span>
                         </Typography>
                       </Grid>
                       <Grid item xs={11}>
@@ -574,7 +580,9 @@ class Players extends Component {
                                 className={`player-season-${player.season}`}
                                 onClick={() => this.handleSeasonChange({ target: { value: player.season } })}
                               >
-                                <span className={`player-season-${player.season}-inside`} />
+                                <span className={`player-season-${player.season}-inside`}>
+                                  {player.season}
+                                </span>
                               </Typography>
                             </Tooltip>
                           </Grid>
