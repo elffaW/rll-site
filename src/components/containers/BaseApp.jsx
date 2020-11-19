@@ -11,7 +11,7 @@ import { lookupTabNumByPath } from '../utils/tabHelper';
 
 import logo from '../../images/RLL_logo.png';
 
-export const SEASONS = [1, 2, 3];
+export const SEASONS = [1, 2, 3, 4];
 
 const useStyles = makeStyles((theme) => ({
   root: {
