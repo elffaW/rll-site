@@ -7,8 +7,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 
 import PlayerCard from './PlayerCard';
-
-// import { playersData } from './containers/Players';
+import PlayerCardMini from './PlayerCardMini';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -27,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     float: 'left',
     marginLeft: theme.spacing(1),
     color: 'whitesmoke',
-    fontSize: '2rem',
+    fontSize: '2.5rem',
     textShadow: '0px 0px 2px black',
   },
   bigName: {
@@ -127,7 +126,7 @@ function TeamCard(props) {
       const curWeekResultsObj = curWeekResults.map((wld) => {
         const result = wld.split(':')[2];
         return (
-          // eslint-disable-next-line no-nested-ternary
+        // eslint-disable-next-line no-nested-ternary
           <Typography variant="h5" style={result === 'W' ? { color: 'green' } : result === 'L' ? { color: '#8e0000' } : result === 'D' ? { color: 'blue' } : { color: 'inherit' }}>{result}</Typography>
         );
       });
@@ -151,14 +150,7 @@ function TeamCard(props) {
     }
   }
 
-  let colsXS = inGame ? 11 : 12;
-  let colsMD = inGame ? false : 6;
-  let colsXL = inGame ? false : 3;
-  if (showDetails) {
-    colsXS = 12;
-    colsMD = false;
-    colsXL = false;
-  }
+  const colsXS = inGame && !showDetails ? 11 : 12;
 
   let teamValue = team.value;
   if (!teamValue) {
@@ -180,7 +172,7 @@ function TeamCard(props) {
    * - goals against
    */
   return (
-    <Grid item xs={colsXS} md={colsMD} xl={colsXL}>
+    <Grid item xs={colsXS}>
       <Paper className={classes.paper} style={winner ? { boxShadow: 'inset 0 0 0.75rem gold' } : null}>
         <Grid container alignItems="center" justify="space-between">
           <Grid item xs={showDetails ? 1 : 3} xl={showDetails ? false : 2}>
@@ -234,7 +226,7 @@ function TeamCard(props) {
               </Typography>
             </Grid>
           )}
-          {showDetails && !inGame && (seasonOverview.length > 0) && (
+          {!inGame && (seasonOverview.length > 0) && (
           <Paper className={classes.paper} style={{ minHeight: 112, marginBottom: 16 }}>
             <Typography variant="h5" style={{ fontVariant: 'small-caps', marginBottom: 16 }}>Season Overview</Typography>
             <Grid container direction="row" alignItems="center" justify="space-around">
@@ -253,7 +245,7 @@ function TeamCard(props) {
                 </Grid> */}
           </Paper>
           )}
-          {playersInfo && showDetails ? playersInfo : players.map((p) => <Typography>{p.name}</Typography>)}
+          {playersInfo && showDetails ? playersInfo : players.map((p) => <PlayerCardMini player={p} />)}
         </Grid>
       </Paper>
     </Grid>
