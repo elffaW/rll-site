@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import {
-  Grid, Paper, Avatar, Typography,
+  Grid, Paper, Avatar, Typography, LinearProgress
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -10,6 +10,11 @@ import PlayerCard from './PlayerCard';
 import PlayerCardMini from './PlayerCardMini';
 
 const useStyles = makeStyles((theme) => ({
+  mainPaper: {
+    textAlign: 'center',
+    backgroundColor: theme.palette.primary.light,
+    width: '100%',
+  },
   paper: {
     padding: theme.spacing(1),
     margin: theme.spacing(1),
@@ -26,7 +31,6 @@ const useStyles = makeStyles((theme) => ({
     float: 'left',
     marginLeft: theme.spacing(1),
     color: 'whitesmoke',
-    fontSize: '2.5rem',
     textShadow: '0px 0px 2px black',
   },
   bigName: {
@@ -100,7 +104,7 @@ function TeamCard(props) {
   }
   const teamRank = parseInt(team.rank, 10) === numTeams ? 'Last' : `${team.rank}${rankSuffix}`;
 
-  const playersInfo = inGame ? '' : players.map((member) => (
+  const playersInfo = !inGame && players.map((member) => (
     <PlayerCard player={member} inTeam={!showDetails} />
   ));
 
@@ -133,7 +137,7 @@ function TeamCard(props) {
       seasonOverview.push((
         <Grid item xs={gridSizePerWeek}>
           <Grid container direction="column" justify="center" alignItems="center">
-            <Typography variant="h4" style={{ color: '#383838' }}>{curWeek}</Typography>
+            {showDetails && <Typography variant="h4" style={{ color: '#383838' }}>{curWeek}</Typography>}
             <Grid container direction="row" justify="space-around" alignItems="center">
               {curWeekOppObj.map((opp) => (
                 <Link to={`/teams/${opp.name}`} exact>
@@ -150,14 +154,19 @@ function TeamCard(props) {
     }
   }
 
-  const colsXS = inGame && !showDetails ? 11 : 12;
-
   let teamValue = team.value;
   if (!teamValue) {
     teamValue = '$';
     teamValue += players.map((p) => parseFloat(p.value)).reduce((accum, cur) => accum + cur).toFixed(2);
     teamValue += 'M';
   }
+
+  const totalValue = players.map((p) => parseFloat(p.value)).reduce((accum, cur) => accum + cur);
+  const p1 = players[0];
+  const p2 = players[1];
+  const player1Pct = (parseFloat(p1.value) / totalValue) * 100;
+  const player2Pct = ((parseFloat(p1.value) + parseFloat(p2.value)) / totalValue) * 100;
+
   /**
    * show:
    * - name
@@ -172,16 +181,16 @@ function TeamCard(props) {
    * - goals against
    */
   return (
-    <Grid item xs={colsXS}>
-      <Paper className={classes.paper} style={winner ? { boxShadow: 'inset 0 0 0.75rem gold' } : null}>
+    <Grid item xs={12}>
+      <Paper className={showDetails ? classes.paper : classes.mainPaper} style={winner ? { boxShadow: 'inset 0 0 0.75rem gold' } : null}>
         <Grid container alignItems="center" justify="space-between">
-          <Grid item xs={showDetails ? 1 : 3} xl={showDetails ? false : 2}>
+          <Grid item xs={2}>
             <Avatar src={logoSrc} variant="square" className={classes.teamIcon} />
           </Grid>
-          <Grid item xs={showDetails ? 8 : 9}>
+          <Grid item xs={inGame ? 10 : 4}>
             <Link to={showDetails ? '/teams' : `/teams/${team.name}`} exact>
               <Typography
-                variant={showDetails ? 'h4' : 'h5'}
+                variant={showDetails ? 'h2' : 'h3'}
                 className={`${classes.teamName} ${showDetails ? classes.bigName : ''}`}
                 style={team.name.length > 14 ? { letterSpacing: `calc(0.01vw - ${team.name.length / 5}px)` } : null}
               >
@@ -189,7 +198,7 @@ function TeamCard(props) {
               </Typography>
             </Link>
           </Grid>
-          {showDetails ? (
+          {showDetails && (
             <>
               <Grid item xs={1}>
                 <Typography className={classes.teamDetails}>{`GF: ${team.goalsFor}`}</Typography>
@@ -201,51 +210,51 @@ function TeamCard(props) {
                 <Typography className={classes.teamDetails}>{`+/-: ${team.plusMinus}`}</Typography>
               </Grid>
             </>
-          ) : ''}
-          <Grid item xs={inGame ? 3 : 2}>
-            <Typography variant={showDetails ? 'h5' : 'body1'} className={`${classes.teamRecord} ${showDetails ? classes.bigRecord : ''}`}>
-              {`${team.wins}-${team.losses}`}
-            </Typography>
-          </Grid>
-          <Grid item xs={inGame ? 5 : 4}>
-            <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
-              <span className={rankClass} style={rankClass === 'last' ? { letterSpacing: 'calc(0.01vw - 1px)' } : null}>{`${teamRank}`}</span>
-              {' '}
-              place
-            </Typography>
-          </Grid>
-          <Grid item xs={3}>
-            <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
-              {`${team.points} pts`}
-            </Typography>
-          </Grid>
-          {!inGame && (
-            <Grid item xs={3}>
-              <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
-                {teamValue}
-              </Typography>
-            </Grid>
           )}
+          <Grid item xs={inGame || showDetails ? 12 : 6}>
+            <Grid container direction="row">
+              <Grid item xs={inGame ? 3 : 2}>
+                <Typography variant={showDetails ? 'h5' : 'body1'} className={`${classes.teamRecord} ${showDetails ? classes.bigRecord : ''}`}>
+                  {`${team.wins}-${team.losses}`}
+                </Typography>
+              </Grid>
+              <Grid item xs={inGame ? 5 : 4}>
+                <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
+                  <span className={rankClass} style={rankClass === 'last' ? { letterSpacing: 'calc(0.01vw - 1px)' } : null}>{`${teamRank}`}</span>
+                  {' '}
+                  place
+                </Typography>
+              </Grid>
+              <Grid item xs={3}>
+                <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
+                  {`${team.points} pts`}
+                </Typography>
+              </Grid>
+              {!inGame && (
+                <Grid item xs={3}>
+                  <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
+                    {teamValue}
+                  </Typography>
+                </Grid>
+              )}
+            </Grid>
+          </Grid>
           {!inGame && (seasonOverview.length > 0) && (
-          <Paper className={classes.paper} style={{ minHeight: 112, marginBottom: 16 }}>
-            <Typography variant="h5" style={{ fontVariant: 'small-caps', marginBottom: 16 }}>Season Overview</Typography>
+          <Paper className={classes.paper} style={{ marginBottom: 16 }}>
+            {showDetails && <Typography variant="h5" style={{ fontVariant: 'small-caps', marginBottom: 16 }}>Season Overview</Typography>}
             <Grid container direction="row" alignItems="center" justify="space-around">
               {seasonOverview}
             </Grid>
-            {/* <Grid container spacing={4} alignItems="center" justify="space-around" style={{ paddingLeft: 16, paddingRight: 16 }}>
-                  {gameweeks.map((gw) => (
-                    <Typography variant="h4" style={{ fontVariant: 'small-caps', color: '#383838' }}>{gw}</Typography>
-                  ))}
-                </Grid>
-                <Grid container spacing={4} alignItems="center" justify="space-evenly" style={{ marginTop: 16 }}>
-                  {winlossdraw.map((wld) => (
-                    // eslint-disable-next-line no-nested-ternary
-                    <Typography variant="h5" style={wld.split(':')[1] === 'W' ? { color: 'green' } : wld.split(':')[1] === 'L' ? { color: '#8e0000' } : { color: 'blue' }}>{wld.split(':')[1]}</Typography>
-                  ))}
-                </Grid> */}
           </Paper>
           )}
-          {playersInfo && showDetails ? playersInfo : players.map((p) => <PlayerCardMini player={p} />)}
+          {playersInfo && showDetails ? playersInfo : !inGame && (
+            <>
+              <Grid container direction="row" justify="space-around">
+                {players.map((p) => <PlayerCardMini player={p} />)}
+              </Grid>
+              <LinearProgress style={{ width: '100%' }} color="secondary" variant="buffer" value={player1Pct} valueBuffer={player2Pct} />
+            </>
+          )}
         </Grid>
       </Paper>
     </Grid>

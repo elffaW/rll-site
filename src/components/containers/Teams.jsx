@@ -243,10 +243,8 @@ class Teams extends Component {
       teams.map((team) => {
         winlossdraw[team.id] = winlossdraw[team.id].filter((wld) => !!wld);
         if (winlossdraw[team.id][winlossdraw[team.id].length - 1]) {
-          console.log(winlossdraw[team.id][winlossdraw[team.id].length - 1]);
           // eslint-disable-next-line prefer-destructuring
           lastGW = winlossdraw[team.id][winlossdraw[team.id].length - 1].split(':')[0];
-          console.log(lastGW);
           for (let i = 1; i <= lastGW; i++) {
             gameweeks.push(i);
           }

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Typography, Avatar, Grid,
+  Typography, Avatar, Grid, Tooltip,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -31,26 +31,32 @@ export default function PlayerCardMini(props) {
   const scorePerGame = (parseInt(player.score, 10) / parseInt(player.gamesPlayed, 10)).toFixed(0);
 
   return (
-    <Grid item>
-      <Avatar src={logoSrc} variant="square" />
-      <Typography
-        variant="h5"
-        className={classes.playerPosition}
-      >
-        {player.position[0]}
-      </Typography>
-      <Typography
-        variant="h4"
-        className={classes.playerName}
-      >
-        {player.name}
-      </Typography>
-      <Typography
-        variant="h5"
-        className={classes.playerInfo}
-      >
-        {`$${playerValue}M [${scorePerGame} PG]`}
-      </Typography>
+    <Grid item xs={4}>
+      <Grid container alignItems="flex-start" justify="center" direction="row">
+        <Tooltip title={playerCar}>
+          <Avatar src={logoSrc} variant="square" />
+        </Tooltip>
+        {player.position && (
+          <Typography
+            variant="h5"
+            className={classes.playerPosition}
+          >
+            {player.position[0]}
+          </Typography>
+        )}
+        <Typography
+          variant="h4"
+          className={classes.playerName}
+        >
+          {player.name}
+        </Typography>
+        <Typography
+          variant="h5"
+          className={classes.playerInfo}
+        >
+          {`$${playerValue}M [${scorePerGame} PG]`}
+        </Typography>
+      </Grid>
     </Grid>
   );
 }

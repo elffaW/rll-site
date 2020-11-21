@@ -127,6 +127,15 @@ h4.player-season-4::before {
   font-size: 3rem;
 }
 
+// override loading progress buffer styles
+.MuiLinearProgress-dashed {
+  animation: none !important;
+}
+.MuiLinearProgress-dashedColorSecondary {
+  background-image: none !important;
+  background-color: #ccc;
+}
+
 // override dumb react-pivot styles
 .reactPivot {
   background: inherit !important;
