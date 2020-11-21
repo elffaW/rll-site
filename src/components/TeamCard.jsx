@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
   bigName: {
     letterSpacing: 4,
     fontSize: '3rem',
+    fontWeight: 400,
   },
   teamDesc: {
     fontVariant: 'small-caps',
@@ -185,7 +186,7 @@ function TeamCard(props) {
       <Paper className={showDetails ? classes.paper : classes.mainPaper} style={winner ? { boxShadow: 'inset 0 0 0.75rem gold' } : null}>
         <Grid container alignItems="center" justify="space-between">
           <Grid item xs={2}>
-            <Avatar src={logoSrc} variant="square" className={classes.teamIcon} />
+            <Avatar src={logoSrc} variant="square" className={classes.teamIcon} style={!inGame ? { paddingLeft: 24 } : {}} />
           </Grid>
           <Grid item xs={inGame ? 10 : 4}>
             <Link to={showDetails ? '/teams' : `/teams/${team.name}`} exact>

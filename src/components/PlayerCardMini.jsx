@@ -19,6 +19,9 @@ const useStyles = makeStyles(() => ({
     fontWeight: 400,
     color: 'whitesmoke',
   },
+  carIcon: {
+    width: 56,
+  }
 }));
 
 export default function PlayerCardMini(props) {
@@ -32,9 +35,9 @@ export default function PlayerCardMini(props) {
 
   return (
     <Grid item xs={4}>
-      <Grid container alignItems="flex-start" justify="center" direction="row">
+      <Grid container alignItems="center" justify="center" direction="row">
         <Tooltip title={playerCar}>
-          <Avatar src={logoSrc} variant="square" />
+          <Avatar className={classes.carIcon} src={logoSrc} variant="square" />
         </Tooltip>
         {player.position && (
           <Typography
@@ -54,7 +57,10 @@ export default function PlayerCardMini(props) {
           variant="h5"
           className={classes.playerInfo}
         >
-          {`$${playerValue}M [${scorePerGame} PG]`}
+          {`$${playerValue}M`}
+          {' ['}
+          <span style={{ color: 'whitesmoke', fontStyle: 'italic' }}>{scorePerGame}</span>
+          {' pg]'}
         </Typography>
       </Grid>
     </Grid>
