@@ -170,79 +170,83 @@ class Teams extends Component {
     const { teamName } = params;
 
     let curTeam;
-    let winlossdraw = [];
-    if (!loading && teamName && teams && teams.length > 0) {
-      curTeam = teams.find((team) => team.name.toLowerCase() === teamName.toLowerCase());
+    let winlossdraw = {};
 
-      winlossdraw = gamesByTeam[curTeam.id].map((game) => {
-        const homeScoreA = game.homeTeamScoreA;
-        const homeScoreB = game.homeTeamScoreB;
-        const homeScoreC = game.homeTeamScoreC;
-        const awayScoreA = game.awayTeamScoreA;
-        const awayScoreB = game.awayTeamScoreB;
-        const awayScoreC = game.awayTeamScoreC;
-
-        const isPlayoffs = !!(game.homeTeamScoreC && game.awayTeamScoreC);
-
-        const hasScores = !!(parseInt(homeScoreA, 10)
-          || parseInt(awayScoreA, 10)
-          || parseInt(homeScoreB, 10)
-          || parseInt(awayScoreB, 10)
-          || parseInt(homeScoreC, 10)
-          || parseInt(awayScoreC, 10));
-        let homeWinnerA = false;
-        let homeWinnerB = false;
-        let homeWinnerC = false;
-        let homeWinnerOverall = false;
-        let awayWinnerOverall = false;
-        if (hasScores) {
-          homeWinnerA = parseInt(homeScoreA, 10) > parseInt(awayScoreA, 10);
-          homeWinnerB = parseInt(homeScoreB, 10) > parseInt(awayScoreB, 10);
-          homeWinnerC = parseInt(homeScoreC, 10) > parseInt(awayScoreC, 10);
-
-          homeWinnerOverall = isPlayoffs
-            ? ((homeWinnerA && homeWinnerB) || (homeWinnerA && homeWinnerC) || (homeWinnerB && homeWinnerC))
-            : homeWinnerA && homeWinnerB;
-          awayWinnerOverall = isPlayoffs
-            ? ((!homeWinnerA && !homeWinnerB) || (!homeWinnerA && !homeWinnerC) || (!homeWinnerB && !homeWinnerC))
-            : !homeWinnerA && !homeWinnerB;
-        }
-        if (curTeam.id === game.homeTeamId) {
+    if (!loading && teams && teams.length > 0) {
+      teams.map((curTeam) => {
+        winlossdraw[curTeam.id] = gamesByTeam[curTeam.id].map((game) => {
+          const homeScoreA = game.homeTeamScoreA;
+          const homeScoreB = game.homeTeamScoreB;
+          const homeScoreC = game.homeTeamScoreC;
+          const awayScoreA = game.awayTeamScoreA;
+          const awayScoreB = game.awayTeamScoreB;
+          const awayScoreC = game.awayTeamScoreC;
+  
+          const isPlayoffs = !!(game.homeTeamScoreC && game.awayTeamScoreC);
+  
+          const hasScores = !!(parseInt(homeScoreA, 10)
+            || parseInt(awayScoreA, 10)
+            || parseInt(homeScoreB, 10)
+            || parseInt(awayScoreB, 10)
+            || parseInt(homeScoreC, 10)
+            || parseInt(awayScoreC, 10));
+          let homeWinnerA = false;
+          let homeWinnerB = false;
+          let homeWinnerC = false;
+          let homeWinnerOverall = false;
+          let awayWinnerOverall = false;
+          if (hasScores) {
+            homeWinnerA = parseInt(homeScoreA, 10) > parseInt(awayScoreA, 10);
+            homeWinnerB = parseInt(homeScoreB, 10) > parseInt(awayScoreB, 10);
+            homeWinnerC = parseInt(homeScoreC, 10) > parseInt(awayScoreC, 10);
+  
+            homeWinnerOverall = isPlayoffs
+              ? ((homeWinnerA && homeWinnerB) || (homeWinnerA && homeWinnerC) || (homeWinnerB && homeWinnerC))
+              : homeWinnerA && homeWinnerB;
+            awayWinnerOverall = isPlayoffs
+              ? ((!homeWinnerA && !homeWinnerB) || (!homeWinnerA && !homeWinnerC) || (!homeWinnerB && !homeWinnerC))
+              : !homeWinnerA && !homeWinnerB;
+          }
+          if (curTeam.id === game.homeTeamId) {
+            if (homeWinnerOverall) {
+              return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:W`;
+            }
+            if (awayWinnerOverall) {
+              return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:L`;
+            }
+            if (!hasScores) {
+              return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:-`;
+            }
+            return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:D`;
+          } // else {
           if (homeWinnerOverall) {
-            return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:W`;
+            return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:L`;
           }
           if (awayWinnerOverall) {
-            return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:L`;
+            return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:W`;
           }
           if (!hasScores) {
-            return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:-`;
+            return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:-`;
           }
-          return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:D`;
-        } // else {
-        if (homeWinnerOverall) {
-          return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:L`;
-        }
-        if (awayWinnerOverall) {
-          return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:W`;
-        }
-        if (!hasScores) {
-          return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:-`;
-        }
-        return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:D`;
-        // }
-      });
+          return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:D`;
+          // }
+        });
+      })
     }
+
     let lastGW = 0;
     const gameweeks = [];
-    if (winlossdraw.length > 0) {
-      winlossdraw = winlossdraw.filter((wld) => !!wld);
-      if (winlossdraw[winlossdraw.length - 1]) {
-        // eslint-disable-next-line prefer-destructuring
-        lastGW = winlossdraw[winlossdraw.length - 1].split(':')[0];
-        for (let i = 1; i <= lastGW; i++) {
-          gameweeks.push(i);
+    if (Object.keys(winlossdraw).length > 0 && winlossdraw[teams[0].id].length > 0) {
+      teams.map((team) => {
+        winlossdraw[team.id] = winlossdraw[team.id].filter((wld) => !!wld);
+        if (winlossdraw[team.id][winlossdraw[team.id].length - 1]) {
+          // eslint-disable-next-line prefer-destructuring
+          lastGW = winlossdraw[team.id][winlossdraw[team.id].length - 1].split(':')[0];
+          for (let i = 1; i <= lastGW; i++) {
+            gameweeks.push(i);
+          }
         }
-      }
+      });
     }
 
     return (
@@ -287,7 +291,7 @@ class Teams extends Component {
                 ))}
               </>
             ) : (teams.map((team) => (
-              <TeamCard team={team} />
+              <TeamCard team={team} gameweeks={gameweeks} winlossdraw={winlossdraw[team.id]} />
             )))}
           </Grid>
         )}

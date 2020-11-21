@@ -253,7 +253,7 @@ function TeamCard(props) {
                 </Grid> */}
           </Paper>
           )}
-          {playersInfo}
+          {playersInfo && showDetails ? playersInfo : players.map((p) => <Typography>{p.name}</Typography>)}
         </Grid>
       </Paper>
     </Grid>
