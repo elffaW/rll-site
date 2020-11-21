@@ -562,6 +562,11 @@ class Players extends Component {
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.count) ? 0 : row.count),
       }, {
+        title: 'Useful Hits',
+        value: 'usefulHits',
+        template: (val) => val.toFixed(0),
+        sortBy: (row) => (Number.isNaN(row.usefulHits) ? 0 : row.usefulHits),
+      }, {
         title: 'Touches',
         value: 'ballTouches',
         template: (val) => val.toFixed(0),
@@ -642,11 +647,6 @@ class Players extends Component {
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.totalDribbles) ? 0 : row.totalDribbles),
       }, {
-        title: 'Useful Hits',
-        value: 'usefulHits',
-        template: (val) => val.toFixed(0),
-        sortBy: (row) => (Number.isNaN(row.usefulHits) ? 0 : row.usefulHits),
-      }, {
         title: 'Games Played',
         value: 'gamesPlayedTotal',
         template: (val) => val.toFixed(0),
@@ -665,6 +665,11 @@ class Players extends Component {
       //   template: (val) => val.toFixed(1),
       //   sortBy: (row) => (Number.isNaN(row.scoreRatingVsTeamAvg) ? 0 : row.scoreRatingVsTeamAvg),
       // }, {
+        title: 'Useful Hits PG',
+        value: 'usefulHitsAvg',
+        template: (val) => val.toFixed(1),
+        sortBy: (row) => (Number.isNaN(row.usefulHitsAvg) ? 0 : row.usefulHitsAvg),
+      }, {
         title: 'Touches PG',
         value: 'ballTouchesAvg',
         template: (val) => val.toFixed(1),
@@ -760,11 +765,6 @@ class Players extends Component {
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.totalDribblesAvg) ? 0 : row.totalDribblesAvg),
       }, {
-        title: 'Useful Hits PG',
-        value: 'usefulHitsAvg',
-        template: (val) => val.toFixed(1),
-        sortBy: (row) => (Number.isNaN(row.usefulHitsAvg) ? 0 : row.usefulHitsAvg),
-      }, {
         title: 'Avg Games Played',
         value: 'gamesPlayedAvg',
         template: (val) => val.toFixed(0),
@@ -772,12 +772,12 @@ class Players extends Component {
       }];
     } else if (statsView === 'timeStats') {
       calculations = [{
-        title: 'High Air',
+        title: 'High Air Time',
         value: 'timeHighInAir',
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.timeHighInAir) ? 0 : row.timeHighInAir),
       }, {
-        title: 'Low Air',
+        title: 'Low Air Time',
         value: 'timeLowInAir',
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.timeLowInAir) ? 0 : row.timeLowInAir),
@@ -797,7 +797,7 @@ class Players extends Component {
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.timeAtSuperSonic) ? 0 : row.timeAtSuperSonic),
       }, {
-        title: 'Ballcam',
+        title: 'Ballcam Time',
         value: 'timeBallcam',
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.timeBallcam) ? 0 : row.timeBallcam),
@@ -807,12 +807,12 @@ class Players extends Component {
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.timeOnWall) ? 0 : row.timeOnWall),
       }, {
-        title: 'Most Forward',
+        title: 'Time Most Forward',
         value: 'timeMostForwardPlayer',
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.timeMostForwardPlayer) ? 0 : row.timeMostForwardPlayer),
       }, {
-        title: 'Most Back',
+        title: 'Time Most Back',
         value: 'timeMostBackPlayer',
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.timeMostBackPlayer) ? 0 : row.timeMostBackPlayer),
@@ -822,17 +822,17 @@ class Players extends Component {
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.timeBetweenPlayers) ? 0 : row.timeBetweenPlayers),
       }, {
-        title: 'Behind Ball',
+        title: 'Time Behind Ball',
         value: 'timeBehindBall',
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.timeBehindBall) ? 0 : row.timeBehindBall),
       }, {
-        title: 'In Front Ball',
+        title: 'Time In Front Ball',
         value: 'timeInFrontBall',
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.timeInFrontBall) ? 0 : row.timeInFrontBall),
       }, {
-        title: 'Close To Ball',
+        title: 'Time Near Ball',
         value: 'timeCloseToBall',
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.timeCloseToBall) ? 0 : row.timeCloseToBall),
@@ -842,29 +842,29 @@ class Players extends Component {
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.timeInGame) ? 0 : row.timeInGame),
       }, {
-        title: 'Def 3rd',
+        title: 'Time Def 3rd',
         value: 'timeInDefendingThird',
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.timeInDefendingThird) ? 0 : row.timeInDefendingThird),
       }, {
-        title: 'Neutral 3rd',
+        title: 'Time Neutral 3rd',
         value: 'timeInNeutralThird',
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.timeInNeutralThird) ? 0 : row.timeInNeutralThird),
       }, {
-        title: 'Atk 3rd',
+        title: 'Time Atk 3rd',
         value: 'timeInAttackingThird',
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.timeInAttackingThird) ? 0 : row.timeInAttackingThird),
       }];
     } else if (statsView === 'timeStatsAvg') {
       calculations = [{
-        title: 'High Air PG',
+        title: 'High Air Time PG',
         value: 'timeHighInAirAvg',
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.timeHighInAirAvg) ? 0 : row.timeHighInAirAvg),
       }, {
-        title: 'Low Air PG',
+        title: 'Low Air Time PG',
         value: 'timeLowInAirAvg',
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.timeLowInAirAvg) ? 0 : row.timeLowInAirAvg),
@@ -884,7 +884,7 @@ class Players extends Component {
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.timeAtSuperSonicAvg) ? 0 : row.timeAtSuperSonicAvg),
       }, {
-        title: 'Ballcam PG',
+        title: 'Ballcam Time PG',
         value: 'timeBallcamAvg',
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.timeBallcamAvg) ? 0 : row.timeBallcamAvg),
@@ -894,12 +894,12 @@ class Players extends Component {
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.timeOnWallAvg) ? 0 : row.timeOnWallAvg),
       }, {
-        title: 'Most Forward PG',
+        title: 'Time Most Forward PG',
         value: 'timeMostForwardPlayerAvg',
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.timeMostForwardPlayerAvg) ? 0 : row.timeMostForwardPlayerAvg),
       }, {
-        title: 'Most Back PG',
+        title: 'Time Most Back PG',
         value: 'timeMostBackPlayerAvg',
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.timeMostBackPlayerAvg) ? 0 : row.timeMostBackPlayerAvg),
@@ -909,17 +909,17 @@ class Players extends Component {
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.timeBetweenPlayersAvg) ? 0 : row.timeBetweenPlayersAvg),
       }, {
-        title: 'Behind Ball PG',
+        title: 'Time Behind Ball PG',
         value: 'timeBehindBallAvg',
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.timeBehindBallAvg) ? 0 : row.timeBehindBallAvg),
       }, {
-        title: 'In Front Ball PG',
+        title: 'Time In Front Ball PG',
         value: 'timeInFrontBallAvg',
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.timeInFrontBallAvg) ? 0 : row.timeInFrontBallAvg),
       }, {
-        title: 'Close To Ball PG',
+        title: 'Time Near Ball PG',
         value: 'timeCloseToBallAvg',
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.timeCloseToBallAvg) ? 0 : row.timeCloseToBallAvg),
@@ -929,17 +929,17 @@ class Players extends Component {
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.timeInGameAvg) ? 0 : row.timeInGameAvg),
       }, {
-        title: 'Def 3rd PG',
+        title: 'Time Def 3rd PG',
         value: 'timeInDefendingThirdAvg',
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.timeInDefendingThirdAvg) ? 0 : row.timeInDefendingThirdAvg),
       }, {
-        title: 'Neut 3rd PG',
+        title: 'Time Neut 3rd PG',
         value: 'timeInNeutralThirdAvg',
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.timeInNeutralThirdAvg) ? 0 : row.timeInNeutralThirdAvg),
       }, {
-        title: 'Atk 3rd PG',
+        title: 'Time Atk 3rd PG',
         value: 'timeInAttackingThirdAvg',
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.timeInAttackingThirdAvg) ? 0 : row.timeInAttackingThirdAvg),
