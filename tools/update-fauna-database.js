@@ -6,7 +6,6 @@ const faunadb = require('faunadb');
 const chalk = require('chalk');
 
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-const { RestaurantMenuOutlined } = require('@material-ui/icons');
 
 const insideNetlify = insideNetlifyBuildContext();
 const q = faunadb.query;
