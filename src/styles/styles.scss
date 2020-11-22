@@ -30,6 +30,7 @@ h4.player-season-1::before {
   width: 100%; height: 100%;
   // background-image is RLL_logo_plain.svg
   background-image: url("/RLL_logo_plain.png");
+  background-size: contain;
   // SEE https://codepen.io/sosuke/pen/Pjoqqp to create filter
   filter: invert(91%) sepia(64%) saturate(7500%) hue-rotate(356deg) brightness(102%) contrast(102%);
   content: "";
@@ -58,6 +59,7 @@ h4.player-season-2::before {
   width: 100%; height: 100%;
   // background-image is RLL_logo_plain.svg
   background-image: url("/RLL_logo_plain.png");
+  background-size: contain;
   // SEE https://codepen.io/sosuke/pen/Pjoqqp to create filter
   filter: invert(88%) sepia(37%) saturate(3659%) hue-rotate(120deg) brightness(104%) contrast(102%);
   content: "";
@@ -86,6 +88,7 @@ h4.player-season-3::before {
   width: 100%; height: 100%;
   // background-image is RLL_logo_plain.svg
   background-image: url("/RLL_logo_plain.png");
+  background-size: contain;
   // SEE https://codepen.io/sosuke/pen/Pjoqqp to create filter
   filter: invert(25%) sepia(62%) saturate(7431%) hue-rotate(292deg) brightness(113%) contrast(128%);
   content: "";
@@ -114,6 +117,7 @@ h4.player-season-4::before {
   width: 100%; height: 100%;
   // background-image is RLL_logo_plain.svg
   background-image: url("/RLL_logo_plain.png");
+  background-size: contain;
   // SEE https://codepen.io/sosuke/pen/Pjoqqp to create filter
   filter: invert(83%) sepia(60%) saturate(407%) hue-rotate(56deg) brightness(101%) contrast(101%);
   content: "";

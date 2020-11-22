@@ -57,7 +57,7 @@ export default function PlayerCardMini(props) {
   const scorePerGame = (parseInt(player.score, 10) / parseInt(player.gamesPlayed, 10)).toFixed(0);
 
   return (
-    <Grid item xs={4}>
+    <Grid item>
       <Grid container className={classes.playerRow} alignItems="center" justify="center" direction="row">
         <Tooltip title={playerCar}>
           <Avatar className={classes.carIcon} src={logoSrc} variant="square" />

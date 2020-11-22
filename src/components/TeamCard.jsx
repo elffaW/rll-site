@@ -232,7 +232,7 @@ function TeamCard(props) {
                 </Link>
               </Grid>
               <Grid item xs={3}>
-                <Typography variant={showDetails ? 'h5' : 'body1'} className={`${classes.teamRecord} ${showDetails && classes.bigRecord}`}>
+                <Typography variant={showDetails ? 'h5' : 'body1'} className={classes.teamRecord}>
                   {`${team.wins}-${team.losses}`}
                 </Typography>
               </Grid>
@@ -250,13 +250,13 @@ function TeamCard(props) {
                 <Typography className={classes.teamDetails}>{`+/-: ${team.plusMinus}`}</Typography>
               </Grid>
               <Grid item xs={inGame ? 3 : 6}>
-                <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
+                <Typography className={classes.teamDesc}>
                   {`${team.points} pts`}
                 </Typography>
               </Grid>
               {!inGame && (
                 <Grid item xs={inGame ? 3 : 6}>
-                  <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
+                  <Typography className={classes.teamDesc}>
                     {teamValue}
                   </Typography>
                 </Grid>
@@ -265,7 +265,6 @@ function TeamCard(props) {
           </Grid>
           {!inGame && (seasonOverview.length > 0) && (
           <Paper className={classes.paper} style={{ marginBottom: 16 }}>
-            {showDetails && <Typography variant="h5" style={{ fontVariant: 'small-caps', marginBottom: 16 }}>Season Overview</Typography>}
             <Grid container direction="row" alignItems="center" justify="space-around">
               {seasonOverview}
             </Grid>
@@ -273,8 +272,8 @@ function TeamCard(props) {
           )}
           {playersInfo && showDetails ? playersInfo : !inGame && (
             <>
-              <Grid container direction="row" justify="space-around">
-                {players.map((p) => <PlayerCardMini player={p} />)}
+              <Grid container direction="row" justify="space-between">
+                {players.map((p, idx) => <PlayerCardMini player={p} />)}
               </Grid>
               <LinearProgress className={classes.playerBar} color="secondary" variant="buffer" value={player1Pct} valueBuffer={player2Pct} />
               <LinearProgress style={{ width: '100%' }} color="secondary" variant="buffer" value={player1Pct} valueBuffer={player2Pct} />
