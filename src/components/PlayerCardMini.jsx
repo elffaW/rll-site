@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import {
   Typography, Avatar, Grid, Tooltip,
 } from '@material-ui/core';
@@ -11,11 +12,16 @@ const useStyles = makeStyles((theme) => ({
   },
   playerName: {
     zIndex: 99,
+    color: theme.otherColors.text.dark,
     fontVariant: 'small-caps',
     fontWeight: 700,
     textShadow: '1px 1px 1px white',
     paddingRight: theme.spacing(1),
     paddingLeft: theme.spacing(1),
+  },
+  nameLink: {
+    color: 'inherit',
+    textDecoration: 'inherit',
   },
   playerInfo: {
     zIndex: 99,
@@ -31,12 +37,7 @@ const useStyles = makeStyles((theme) => ({
     color: 'whitesmoke',
     paddingRight: theme.spacing(1),
     paddingLeft: theme.spacing(1),
-  },
-  playerScore: {
-    zIndex: 99,
-    color: 'whitesmoke',
-    marginLeft: theme.spacing(2),
-    fontWeight: 700,
+    textShadow: '0 0 5px black',
   },
   carIcon: {
     zIndex: 99,
@@ -73,15 +74,15 @@ export default function PlayerCardMini(props) {
           variant="h4"
           className={classes.playerName}
         >
-          {player.name}
+          <Link to={`/players/${player.name}`} className={classes.nameLink} exact>
+            {player.name}
+          </Link>
         </Typography>
         <Typography
           variant="h5"
           className={classes.playerInfo}
         >
           {`$${playerValue}M`}
-          <span className={classes.playerScore}>{scorePerGame}</span>
-          {' pg'}
         </Typography>
       </Grid>
     </Grid>

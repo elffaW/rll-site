@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import {
-  Grid, Paper, Avatar, Typography, LinearProgress
+  Grid, Paper, Avatar, Typography, LinearProgress, Tooltip,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -135,19 +135,20 @@ function TeamCard(props) {
         const oppLogoSrc = require(`../images/LOGO_${oppTeam || defaultLogo}.png`); // eslint-disable-line
         const result = wld.split(':')[2];
 
-        let oppLogoStyle = { backgroundColor: 'gray', filter: 'saturate(33%)' };
+        let oppLogoStyle = { backgroundColor: 'gray', filter: 'saturate(50%)' };
         if (result === 'W') {
-          oppLogoStyle = { backgroundColor: 'green', filter: 'saturate(33%)' };
+          oppLogoStyle = { backgroundColor: 'green', filter: 'saturate(50%)' };
         } else if (result === 'L') {
-          oppLogoStyle = { backgroundColor: 'red', filter: 'saturate(33%)' };
+          oppLogoStyle = { backgroundColor: 'red', filter: 'saturate(50%)' };
         } else if (result === 'D') {
-          oppLogoStyle = { backgroundColor: 'blue', filter: 'saturate(33%)' };
+          oppLogoStyle = { backgroundColor: 'blue', filter: 'saturate(50%)' };
         }
 
         return {
           name: oppTeam,
           logo: oppLogoSrc,
           style: oppLogoStyle,
+          result,
         };
       });
       // const curWeekResultsObj = curWeekResults.map((wld) => {
@@ -164,7 +165,9 @@ function TeamCard(props) {
             <Grid container direction="row" justify="space-around" alignItems="center">
               {curWeekOppObj.map((opp) => (
                 <Link to={`/teams/${opp.name}`} exact>
-                  <Avatar src={opp.logo} variant="circle" style={opp.style} />
+                  <Tooltip title={`${opp.result} (${opp.name})`}>
+                    <Avatar src={opp.logo} variant="circle" style={opp.style} />
+                  </Tooltip>
                 </Link>
               ))}
             </Grid>
