@@ -31,7 +31,8 @@ const useStyles = makeStyles((theme) => ({
     float: 'left',
     marginLeft: theme.spacing(1),
     color: 'whitesmoke',
-    textShadow: '0px 0px 2px black',
+    fontWeight: 700,
+    textShadow: '1px 1px 2px black',
   },
   bigName: {
     letterSpacing: 4,
@@ -48,23 +49,36 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.secondary.dark,
     },
   },
+  teamRank: {
+    fontSize: '4rem',
+    fontWeight: 700,
+    color: 'whitesmoke',
+    textShadow: '1px 1px 2px black',
+  },
   teamRecord: {
     fontVariant: 'small-caps',
     fontSize: '1.6em',
     color: 'whitesmoke',
-    fontWeight: 700,
-    textShadow: '1px 1px 2px black',
+    paddingLeft: theme.spacing(1),
+    textShadow: '0px 0px 2px black',
   },
   bigRecord: {
     fontSize: '2.5em',
     float: 'left',
-    paddingLeft: theme.spacing(2),
-    paddingTop: theme.spacing(1),
   },
   teamDetails: {
     fontVariant: 'small-caps',
     fontSize: '1.4em',
     color: '#444444',
+  },
+  oppIcon: {
+    filter: 'grayscale(75%)',
+  },
+  playerBar: {
+    width: '100%',
+    height: theme.spacing(8),
+    opacity: '20%',
+    marginTop: -theme.spacing(8),
   },
 }));
 
@@ -119,22 +133,30 @@ function TeamCard(props) {
       const curWeekOppObj = curWeekResults.map((wld) => {
         const oppTeam = wld.split(':')[1];
         const oppLogoSrc = require(`../images/LOGO_${oppTeam || defaultLogo}.png`); // eslint-disable-line
+        const result = wld.split(':')[2];
+
+        let oppLogoStyle = { backgroundColor: 'gray', filter: 'saturate(33%)' };
+        if (result === 'W') {
+          oppLogoStyle = { backgroundColor: 'green', filter: 'saturate(33%)' };
+        } else if (result === 'L') {
+          oppLogoStyle = { backgroundColor: 'red', filter: 'saturate(33%)' };
+        } else if (result === 'D') {
+          oppLogoStyle = { backgroundColor: 'blue', filter: 'saturate(33%)' };
+        }
 
         return {
           name: oppTeam,
           logo: oppLogoSrc,
+          style: oppLogoStyle,
         };
-        // return (
-        //   <Avatar src={oppLogoSrc} variant="square" />
-        // );
       });
-      const curWeekResultsObj = curWeekResults.map((wld) => {
-        const result = wld.split(':')[2];
-        return (
-        // eslint-disable-next-line no-nested-ternary
-          <Typography variant="h5" style={result === 'W' ? { color: 'green' } : result === 'L' ? { color: '#8e0000' } : result === 'D' ? { color: 'blue' } : { color: 'inherit' }}>{result}</Typography>
-        );
-      });
+      // const curWeekResultsObj = curWeekResults.map((wld) => {
+      //   const result = wld.split(':')[2];
+      //   return (
+      //   // eslint-disable-next-line no-nested-ternary
+      //     <Typography variant="h5" style={result === 'W' ? { color: 'green' } : result === 'L' ? { color: '#8e0000' } : result === 'D' ? { color: 'blue' } : { color: 'inherit' }}>{result}</Typography>
+      //   );
+      // });
       seasonOverview.push((
         <Grid item xs={gridSizePerWeek}>
           <Grid container direction="column" justify="center" alignItems="center">
@@ -142,13 +164,13 @@ function TeamCard(props) {
             <Grid container direction="row" justify="space-around" alignItems="center">
               {curWeekOppObj.map((opp) => (
                 <Link to={`/teams/${opp.name}`} exact>
-                  <Avatar src={opp.logo} variant="square" />
+                  <Avatar src={opp.logo} variant="circle" style={opp.style} />
                 </Link>
               ))}
             </Grid>
-            <Grid container direction="row" justify="space-around" alignItems="center">
+            {/* <Grid container direction="row" justify="space-around" alignItems="center">
               {curWeekResultsObj}
-            </Grid>
+            </Grid> */}
           </Grid>
         </Grid>
       ));
@@ -184,55 +206,53 @@ function TeamCard(props) {
   return (
     <Grid item xs={12}>
       <Paper className={showDetails ? classes.paper : classes.mainPaper} style={winner ? { boxShadow: 'inset 0 0 0.75rem gold' } : null}>
-        <Grid container alignItems="center" justify="space-between">
-          <Grid item xs={2}>
-            <Avatar src={logoSrc} variant="square" className={classes.teamIcon} style={!inGame ? { paddingLeft: 24 } : {}} />
+        <Grid container alignItems="center" justify="flex-start">
+          <Grid item xs={1}>
+            <Typography variant="h2" className={`${classes.teamDesc} ${classes.teamRank} ${rankClass}`}>
+              {team.rank}
+            </Typography>
           </Grid>
-          <Grid item xs={inGame ? 10 : 4}>
-            <Link to={showDetails ? '/teams' : `/teams/${team.name}`} exact>
-              <Typography
-                variant={showDetails ? 'h2' : 'h3'}
-                className={`${classes.teamName} ${showDetails ? classes.bigName : ''}`}
-                style={team.name.length > 14 ? { letterSpacing: `calc(0.01vw - ${team.name.length / 5}px)` } : null}
-              >
-                {team.name}
-              </Typography>
-            </Link>
+          <Grid item xs={inGame ? 2 : 1}>
+            <Avatar src={logoSrc} variant="square" className={classes.teamIcon} />
           </Grid>
-          {showDetails && (
-            <>
-              <Grid item xs={1}>
-                <Typography className={classes.teamDetails}>{`GF: ${team.goalsFor}`}</Typography>
+          <Grid item xs={inGame ? 9 : 4}>
+            <Grid container alignItems="flex-end" justify="flex-start" direction="row">
+              <Grid item>
+                <Link to={showDetails ? '/teams' : `/teams/${team.name}`} exact>
+                  <Typography
+                    variant={showDetails ? 'h2' : 'h3'}
+                    className={`${classes.teamName} ${showDetails ? classes.bigName : ''}`}
+                    style={team.name.length > 14 ? { letterSpacing: `calc(0.01vw - ${team.name.length / 5}px)` } : null}
+                  >
+                    {team.name}
+                  </Typography>
+                </Link>
               </Grid>
-              <Grid item xs={1}>
-                <Typography className={classes.teamDetails}>{`GA: ${team.goalsAgainst}`}</Typography>
-              </Grid>
-              <Grid item xs={1}>
-                <Typography className={classes.teamDetails}>{`+/-: ${team.plusMinus}`}</Typography>
-              </Grid>
-            </>
-          )}
-          <Grid item xs={inGame || showDetails ? 12 : 6}>
-            <Grid container direction="row">
-              <Grid item xs={inGame ? 3 : 2}>
-                <Typography variant={showDetails ? 'h5' : 'body1'} className={`${classes.teamRecord} ${showDetails ? classes.bigRecord : ''}`}>
+              <Grid item xs={3}>
+                <Typography variant={showDetails ? 'h5' : 'body1'} className={`${classes.teamRecord} ${showDetails && classes.bigRecord}`}>
                   {`${team.wins}-${team.losses}`}
                 </Typography>
               </Grid>
-              <Grid item xs={inGame ? 5 : 4}>
-                <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
-                  <span className={rankClass} style={rankClass === 'last' ? { letterSpacing: 'calc(0.01vw - 1px)' } : null}>{`${teamRank}`}</span>
-                  {' '}
-                  place
-                </Typography>
+            </Grid>
+          </Grid>
+          <Grid item xs={inGame ? 12 : 6}>
+            <Grid container alignItems="flex-start" justify="center" direction="row">
+              <Grid item xs={inGame ? 2 : 4}>
+                <Typography className={classes.teamDetails}>{`GF: ${team.goalsFor}`}</Typography>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={inGame ? 2 : 4}>
+                <Typography className={classes.teamDetails}>{`GA: ${team.goalsAgainst}`}</Typography>
+              </Grid>
+              <Grid item xs={inGame ? 2 : 4}>
+                <Typography className={classes.teamDetails}>{`+/-: ${team.plusMinus}`}</Typography>
+              </Grid>
+              <Grid item xs={inGame ? 3 : 6}>
                 <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
                   {`${team.points} pts`}
                 </Typography>
               </Grid>
               {!inGame && (
-                <Grid item xs={3}>
+                <Grid item xs={inGame ? 3 : 6}>
                   <Typography className={`${classes.teamDesc} ${showDetails ? classes.bigRecord : ''}`}>
                     {teamValue}
                   </Typography>
@@ -253,6 +273,7 @@ function TeamCard(props) {
               <Grid container direction="row" justify="space-around">
                 {players.map((p) => <PlayerCardMini player={p} />)}
               </Grid>
+              <LinearProgress className={classes.playerBar} color="secondary" variant="buffer" value={player1Pct} valueBuffer={player2Pct} />
               <LinearProgress style={{ width: '100%' }} color="secondary" variant="buffer" value={player1Pct} valueBuffer={player2Pct} />
             </>
           )}

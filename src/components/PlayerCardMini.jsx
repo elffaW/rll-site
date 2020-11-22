@@ -5,22 +5,44 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
+  playerRow: {
+    marginBottom: theme.spacing(1),
+  },
   playerName: {
+    zIndex: 99,
     fontVariant: 'small-caps',
     fontWeight: 700,
+    textShadow: '1px 1px 1px white',
+    paddingRight: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
   },
   playerInfo: {
+    zIndex: 99,
     fontVariant: 'small-caps',
     fontWeight: 100,
+    paddingRight: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
   },
   playerPosition: {
+    zIndex: 99,
     fontVariant: 'small-caps',
     fontWeight: 400,
     color: 'whitesmoke',
+    paddingRight: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
+  },
+  playerScore: {
+    zIndex: 99,
+    color: 'whitesmoke',
+    marginLeft: theme.spacing(2),
+    fontWeight: 700,
   },
   carIcon: {
-    width: 56,
+    zIndex: 99,
+    width: theme.spacing(7),
+    paddingRight: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
   }
 }));
 
@@ -35,7 +57,7 @@ export default function PlayerCardMini(props) {
 
   return (
     <Grid item xs={4}>
-      <Grid container alignItems="center" justify="center" direction="row">
+      <Grid container className={classes.playerRow} alignItems="center" justify="center" direction="row">
         <Tooltip title={playerCar}>
           <Avatar className={classes.carIcon} src={logoSrc} variant="square" />
         </Tooltip>
@@ -58,9 +80,8 @@ export default function PlayerCardMini(props) {
           className={classes.playerInfo}
         >
           {`$${playerValue}M`}
-          {' ['}
-          <span style={{ color: 'whitesmoke', fontStyle: 'italic' }}>{scorePerGame}</span>
-          {' pg]'}
+          <span className={classes.playerScore}>{scorePerGame}</span>
+          {' pg'}
         </Typography>
       </Grid>
     </Grid>
