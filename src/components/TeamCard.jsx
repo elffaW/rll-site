@@ -91,19 +91,19 @@ function TeamCard(props) {
   const logoSrc = require(`../images/LOGO_${team.name.toUpperCase() || defaultLogo}.png`); // eslint-disable-line
 
   const players = team.members;
-  let rankSuffix = 'th';
+  // let rankSuffix = 'th';
   const numTeams = totalTeams || 8;
   let rankClass = (parseInt(team.rank, 10) === numTeams) ? 'last' : '';
   switch (parseInt(team.rank, 10)) {
     case 1:
-      rankSuffix = 'st';
+      // rankSuffix = 'st';
       rankClass = 'first';
       break;
     case 2:
-      rankSuffix = 'nd';
+      // rankSuffix = 'nd';
       break;
     case 3:
-      rankSuffix = 'rd';
+      // rankSuffix = 'rd';
       break;
     case 8:
     // eslint-disable-next-line no-fallthrough
@@ -114,10 +114,10 @@ function TeamCard(props) {
     case 9:
     case 0:
     default:
-      rankSuffix = 'th';
+      // rankSuffix = 'th';
       break;
   }
-  const teamRank = parseInt(team.rank, 10) === numTeams ? 'Last' : `${team.rank}${rankSuffix}`;
+  // const teamRank = parseInt(team.rank, 10) === numTeams ? 'Last' : `${team.rank}${rankSuffix}`;
 
   const playersInfo = !inGame && players.map((member) => (
     <PlayerCard player={member} inTeam={!showDetails} />
@@ -231,7 +231,7 @@ function TeamCard(props) {
                   </Typography>
                 </Link>
               </Grid>
-              <Grid item xs={3}>
+              <Grid item>
                 <Typography variant={showDetails ? 'h5' : 'body1'} className={classes.teamRecord}>
                   {`${team.wins}-${team.losses}`}
                 </Typography>
