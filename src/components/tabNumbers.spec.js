@@ -10,25 +10,25 @@ describe('Tab Helper', () => {
       expect(lookupTabNumByPath(path)).toEqual(expectedReturn);
     });
 
-    it('returns 4 for players path', () => {
+    it('returns 3 for players path', () => {
       const path = '/players';
-      const expectedReturn = 4;
+      const expectedReturn = 3;
 
       // assert
       expect(lookupTabNumByPath(path)).toEqual(expectedReturn);
     });
 
-    it('returns 5 for teams path', () => {
+    it('returns 2 for teams path', () => {
       const path = '/teams';
-      const expectedReturn = 5;
+      const expectedReturn = 2;
 
       // assert
       expect(lookupTabNumByPath(path)).toEqual(expectedReturn);
     });
 
-    it('returns 6 for videos path', () => {
+    it('returns 7 for videos path', () => {
       const path = '/videos';
-      const expectedReturn = 6;
+      const expectedReturn = 7;
 
       // assert
       expect(lookupTabNumByPath(path)).toEqual(expectedReturn);
@@ -42,9 +42,17 @@ describe('Tab Helper', () => {
       expect(lookupTabNumByPath(path)).toEqual(expectedReturn);
     });
 
-    it('returns 3 for stats path with extra path info', () => {
+    it('returns 4 for stats path with extra path info', () => {
       const path = '/stats/players/kawa?season=9';
-      const expectedReturn = 3;
+      const expectedReturn = 4;
+
+      // assert
+      expect(lookupTabNumByPath(path)).toEqual(expectedReturn);
+    });
+
+    it('returns 5 for fantasy path', () => {
+      const path = '/fantasy';
+      const expectedReturn = 5;
 
       // assert
       expect(lookupTabNumByPath(path)).toEqual(expectedReturn);

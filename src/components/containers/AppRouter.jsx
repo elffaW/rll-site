@@ -12,6 +12,7 @@ import Rules from './Rules';
 import Schedule from './Schedule';
 // import PlayerStats from './PlayerStats';
 import Stats from './Stats';
+import Fantasy from './Fantasy';
 import Players from './Players';
 import Teams from './Teams';
 import Videos from './Videos';
@@ -31,14 +32,15 @@ export default function AppRouter() {
             {/* <Route path="/schedule/:weekNum" component={ScheduleDetails} /> */}
             <Route path="/schedule/:gameNum" component={Schedule} />
             <Route path="/schedule" component={Schedule} />
+            {/* PLAYER ROUTES */}
+            <Route path="/teams/:teamName" component={Teams} />
+            <Route path="/teams" component={Teams} />
+            <Route path="/players/:playerName" component={Players} />
+            <Route path="/players" component={Players} />
             {/* STATS ROUTES */}
             {/* <Route path="/stats/:playerId" component={PlayerStats} /> */}
             <Route path="/stats" component={Stats} />
-            {/* PLAYER ROUTES */}
-            <Route path="/players/:playerName" component={Players} />
-            <Route path="/players" component={Players} />
-            <Route path="/teams/:teamName" component={Teams} />
-            <Route path="/teams" component={Teams} />
+            <Route path="/fantasy" component={Fantasy} />
             {/* VIDEOS */}
             <Route path="/videos" component={Videos} />
             <Route path="/standings" component={Standings} />

@@ -8,18 +8,20 @@
 const lookupTabNumByPath = (path) => {
   const pathLoc = `/${path.split('?')[0].split('/')[1]}`;
   switch (pathLoc) {
-    case '/rules':
-      return 1;
     case '/schedule':
-      return 2;
-    case '/stats':
-      return 3;
-    case '/players':
-      return 4;
+      return 1;
     case '/teams':
+      return 2;
+    case '/players':
+      return 3;
+    case '/stats':
+      return 4;
+    case '/fantasy':
       return 5;
-    case '/videos':
+    case '/rules':
       return 6;
+    case '/videos':
+      return 7;
     default:
       return 0;
   }

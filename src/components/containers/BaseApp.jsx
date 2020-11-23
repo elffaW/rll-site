@@ -78,19 +78,14 @@ export default function BaseApp(props) {
               to="/"
             />
             <Tab
-              label="rules"
-              component={NavLink}
-              to="/rules"
-            />
-            <Tab
               label="schedule"
               component={NavLink}
               to="/schedule"
             />
             <Tab
-              label="stats"
+              label="teams"
               component={NavLink}
-              to="/stats"
+              to="/teams"
             />
             <Tab
               label="players"
@@ -98,9 +93,19 @@ export default function BaseApp(props) {
               to="/players"
             />
             <Tab
-              label="teams"
+              label="stats"
               component={NavLink}
-              to="/teams"
+              to="/stats"
+            />
+            <Tab
+              label="fantasy"
+              component={NavLink}
+              to="/fantasy"
+            />
+            <Tab
+              label="rules"
+              component={NavLink}
+              to="/rules"
             />
             <Tab
               label="videos"

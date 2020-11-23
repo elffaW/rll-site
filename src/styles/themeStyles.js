@@ -30,6 +30,12 @@ export const styles = withStyles((theme) => createStyles({
     float: 'left',
     color: 'rgba(0, 0, 0, 0.87)',
   },
+  playerName: {
+    fontVariant: 'small-caps',
+    float: 'left',
+    color: 'rgba(0, 0, 0, 0.87)',
+    paddingLeft: theme.spacing(1),
+  },
   subtitle: {
     fontVariant: 'small-caps',
     color: theme.palette.primary.light,
