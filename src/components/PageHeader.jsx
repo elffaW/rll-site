@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     paddingBottom: theme.spacing(4),
     color: theme.otherColors.text.light,
-    textShadow: '0px 0px 2px black',
+    textShadow: '0px 0px 4px black',
   },
 }));
 
