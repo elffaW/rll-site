@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import {
   Grid, CircularProgress, Typography, Button, Paper,
 } from '@material-ui/core';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import ToggleButton from '@material-ui/lab/ToggleButton';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 import api from './utils/api';
@@ -19,10 +21,10 @@ const playerFields = {
   assists: { friendly: 'A', type: 'number' },
   saves: { friendly: 'SV', type: 'number' },
   shots: { friendly: 'SH', type: 'number' },
-  numDemosInflicted: { friendly: 'DEMO', type: 'number' },
+  numDemosInflicted: { friendly: 'DEMOS', type: 'number' },
   numDemosTaken: { friendly: 'DEMOED', type: 'number' },
-  totalClears: { friendly: 'CLR', type: 'number' },
-  turnovers: { friendly: 'TURNOVER', type: 'number' },
+  totalClears: { friendly: 'CLEARS', type: 'number' },
+  turnovers: { friendly: 'TURN OVERS', type: 'number' },
   wastedUsage: { friendly: 'WASTED BOOST', type: 'number' },
 };
 
@@ -52,6 +54,7 @@ class FantasyPlayers extends Component {
       loading: true,
       sortField: 'points',
       sortDirection: false, // just a toggle
+      statsDisplay: false, // just a toggle
     };
   }
 
@@ -125,7 +128,7 @@ class FantasyPlayers extends Component {
   render() {
     const { classes, season } = this.props;
     const {
-      players, loading, sortField, sortDirection,
+      players, loading, sortField, sortDirection, statsDisplay,
     } = this.state;
 
     /**
@@ -158,35 +161,15 @@ class FantasyPlayers extends Component {
               <Typography className={classes.playerDetails}>{player.points.toFixed(0)}</Typography>
             </Grid>
             <Grid item xs={1}>
-              <Typography className={classes.playerDetails}>{`$${player.value}M`}</Typography>
+              <Typography className={classes.playerDetails}>{`$${parseFloat(player.value).toFixed(1)}M`}</Typography>
             </Grid>
-            <Grid item xs={1}>
-              <Typography className={classes.playerDetails}>{player.goals}</Typography>
-            </Grid>
-            <Grid item xs={1}>
-              <Typography className={classes.playerDetails}>{player.assists}</Typography>
-            </Grid>
-            <Grid item xs={1}>
-              <Typography className={classes.playerDetails}>{player.saves}</Typography>
-            </Grid>
-            <Grid item xs={1}>
-              <Typography className={classes.playerDetails}>{player.shots}</Typography>
-            </Grid>
-            <Grid item xs={1}>
-              <Typography className={classes.playerDetails}>{player.numDemosInflicted}</Typography>
-            </Grid>
-            <Grid item xs={1}>
-              <Typography className={classes.playerDetails}>{player.numDemosTaken}</Typography>
-            </Grid>
-            <Grid item xs={1}>
-              <Typography className={classes.playerDetails}>{player.totalClears}</Typography>
-            </Grid>
-            <Grid item xs={1}>
-              <Typography className={classes.playerDetails}>{player.turnovers}</Typography>
-            </Grid>
-            <Grid item xs={1}>
-              <Typography className={classes.playerDetails}>{player.wastedUsage.toFixed(0)}</Typography>
-            </Grid>
+            {Object.keys(fieldValues).map((field) => (
+              <Grid item xs={1}>
+                <Typography className={classes.playerDetails}>
+                  {statsDisplay ? parseFloat(player[field]).toFixed(0) : (parseFloat(player[field]) * fieldValues[field]).toFixed(0)}
+                </Typography>
+              </Grid>
+            ))}
           </Grid>
         </Grid>,
       );
@@ -203,6 +186,23 @@ class FantasyPlayers extends Component {
         ) : (
           <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
             <Paper className={classes.paper}>
+              <Typography variant="h4" style={{ float: 'left', margin: '8px 0 0 8px', textShadow: '1px 1px 1px lightgray' }}>
+                Player Fantasy Stats
+              </Typography>
+              <ToggleButtonGroup
+                id="sort-direction-toggle"
+                onChange={(event, newValue) => this.setState({ statsDisplay: newValue })}
+                value={statsDisplay}
+                exclusive
+                style={{ float: 'right', margin: 8 }}
+              >
+                <ToggleButton key="option-raw" value>
+                  Raw Totals
+                </ToggleButton>
+                <ToggleButton key="option-pts" value={false}>
+                  Fantasy Pts
+                </ToggleButton>
+              </ToggleButtonGroup>
               <Grid item xs={12}>
                 <Grid container alignItems="flex-end" justify="center">
                   {Object.keys(playerFields).map((field) => (
