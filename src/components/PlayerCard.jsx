@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import {
-  Grid, Paper, Avatar, Typography, Badge, Tooltip,
+  Grid, Paper, Avatar, Typography, Badge, Tooltip, LinearProgress,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -12,7 +12,11 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     textAlign: 'center',
     color: theme.otherColors.text.light,
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: theme.otherColors.text.dark,
+  },
+  playerGrid: {
+    zIndex: 99,
+    position: 'relative',
   },
   playerCard: {
     paddingTop: '0px !important',
@@ -67,11 +71,21 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.light,
     float: 'left',
   },
+  statsBar: {
+    width: '100%',
+    height: theme.spacing(11),
+    // opacity: '20%',
+    marginTop: -theme.spacing(13),
+    padding: theme.spacing(1),
+    margin: -theme.spacing(1),
+    borderRadius: 4,
+  },
 }));
 
 const defaultProps = {
   inTeam: false,
   showDetails: false,
+  statValue: 100,
 };
 
 /**
@@ -100,7 +114,9 @@ const defaultProps = {
  * }
  */
 function PlayerCard(props) {
-  const { player, inTeam, showDetails } = props;
+  const {
+    player, inTeam, showDetails, statValue,
+  } = props;
   const classes = useStyles();
   const playerCar = player.car ? player.car : 'MERC'; // hopefully everyone has a car, but want to avoid undefined require errors on next line...
   const logoSrc = require(`../images/CAR_${playerCar}.png`); // eslint-disable-line
@@ -151,7 +167,7 @@ function PlayerCard(props) {
   return (
     <Grid item xs={12} className={classes.playerCard}>
       <Paper className={classes.darkPaper} style={inTeam ? { maxHeight: 83.25 } : {}}>
-        <Grid container alignItems="flex-start" justify="flex-start">
+        <Grid className={classes.playerGrid} container alignItems="flex-start" justify="flex-start">
           {inTeam ? (
             <Grid item xs={2}>
               <Avatar src={logoSrc} alt={`car ${playerCar}`} className={classes.playerIcon} />
@@ -272,6 +288,7 @@ function PlayerCard(props) {
             </Grid>
           )}
         </Grid>
+        <LinearProgress variant="determinate" className={`${classes.statsBar} progress-stat-bar`} color="secondary" value={statValue} />
       </Paper>
     </Grid>
   );
@@ -282,6 +299,7 @@ PlayerCard.propTypes = {
   player: PropTypes.object.isRequired,
   inTeam: PropTypes.bool,
   showDetails: PropTypes.bool,
+  statValue: PropTypes.number,
 };
 PlayerCard.defaultProps = defaultProps;
 

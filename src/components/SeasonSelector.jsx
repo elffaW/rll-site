@@ -1,21 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Typography, Select, MenuItem, IconButton,
+  Typography, Select, MenuItem, IconButton, Grid, Button,
 } from '@material-ui/core';
+import Pagination from '@material-ui/lab/Pagination';
 import SyncIcon from '@material-ui/icons/Sync';
 import { makeStyles } from '@material-ui/core/styles';
 import { SEASONS } from './containers/BaseApp';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   seasonText: {
     fontVariant: 'small-caps',
     fontWeight: 700,
+    marginLeft: 48,
   },
   seasonSelector: {
     fontSize: '2rem',
     marginLeft: 12,
     marginTop: -6.5,
+  },
+  seasonPager: {
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -24,13 +29,40 @@ export default function SeasonSelector(props) {
     season, handleSeasonChange, forceRefresh, disabled, showAllOption,
   } = props;
   const classes = useStyles();
+
+  const changeSeason = (newVal) => {
+    const temp = { target: { value: newVal } };
+    handleSeasonChange(temp);
+  };
+
   return (
-    <Typography
-      variant="h5"
-      className={classes.seasonText}
-    >
-      Season
-      <Select
+    <Grid container direction="column" alignItems="center" justify="center">
+      <Typography
+        variant="h5"
+        className={classes.seasonText}
+      >
+        Season
+        <IconButton aria-label="reload" onClick={forceRefresh}>
+          <SyncIcon />
+        </IconButton>
+      </Typography>
+      {showAllOption && (
+        <Button variant={season === 'All' ? 'contained' : ''} color={season === 'All' ? 'secondary' : 'default'} aria-label="show-all" onClick={() => changeSeason('All')}>
+          All
+        </Button>
+      )}
+      <Pagination
+        id="season-selector"
+        count={SEASONS.length}
+        page={season}
+        color="secondary"
+        onChange={(e, val) => changeSeason(val)}
+        hideNextButton
+        hidePrevButton
+        disabled={disabled}
+        className={classes.seasonPager}
+      />
+      {/* <Select
         labelId="season-select-outlined-label"
         id="season-select-outlined"
         value={season}
@@ -44,11 +76,8 @@ export default function SeasonSelector(props) {
         {SEASONS.map((s) => (
           <MenuItem value={s}>{s}</MenuItem>
         ))}
-      </Select>
-      <IconButton aria-label="reload" onClick={forceRefresh}>
-        <SyncIcon />
-      </IconButton>
-    </Typography>
+      </Select> */}
+    </Grid>
   );
 }
 

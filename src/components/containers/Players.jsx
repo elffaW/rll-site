@@ -123,6 +123,7 @@ class Players extends Component {
       seasonPlayers: [],
       loading: true,
       sortField: 'value',
+      statField: 'value',
       sortDirection: true, // just a toggle
       season: SEASONS[SEASONS.length - 1], // default to the last season in the list
       statsView: 'total', // view for pivot table: total, avg, advanced, avgAdvanced
@@ -207,6 +208,10 @@ class Players extends Component {
     });
   }
 
+  handleStatFieldChange = (event) => {
+    this.setState({ statField: event.target.value });
+  }
+
   handleSeasonChange = (event) => {
     const { season, players } = this.state;
     const newSeason = event.target.value === 'All' ? 'All' : parseInt(event.target.value, 10);
@@ -234,7 +239,7 @@ class Players extends Component {
 
   render() {
     const {
-      players, seasonPlayers, loading, sortField, sortDirection, season, statsView,
+      players, seasonPlayers, loading, sortField, statField, sortDirection, season, statsView,
     } = this.state;
     const { classes, match } = this.props;
     const { params } = match;
@@ -968,6 +973,12 @@ class Players extends Component {
 
       curPlayer.sort((p1, p2) => p1.season - p2.season);
     }
+
+    let maxStat = 0;
+    if (playerFields[statField].type === 'number' || playerFields[statField].type === 'strnum') {
+      maxStat = Math.max(...seasonPlayers.map((p) => parseFloat(p[statField])), 0);
+    }
+
     return (
       <BaseApp>
         <PageHeader headerText="RLL Players" />
@@ -1062,6 +1073,22 @@ class Players extends Component {
                         ))}
                       </Select>
                     </FormControl>
+                    <FormControl variant="outlined" style={{ float: 'right', margin: 8 }}>
+                      <InputLabel id="stat-select-outlined-label">Graph Field</InputLabel>
+                      <Select
+                        labelId="stat-select-outlined-label"
+                        id="stat-select-outlined"
+                        value={statField}
+                        onChange={this.handleStatFieldChange}
+                        label="Graph Field"
+                      >
+                        {Object.keys(playerFields).map((key) => { // eslint-disable-line consistent-return
+                          if (playerFields[key].type === 'number' || playerFields[key].type === 'strnum') {
+                            return <MenuItem value={key}>{playerFields[key].friendly}</MenuItem>;
+                          }
+                        })}
+                      </Select>
+                    </FormControl>
                   </>
                 )}
                 <Grid container spacing={1} alignItems="center" justify="center">
@@ -1128,12 +1155,20 @@ class Players extends Component {
                           </Grid>
                           <Grid item xs={11}>
                             <Grid container spacing={2} justify="center">
-                              <PlayerCard player={player} inTeam={false} />
+                              <PlayerCard
+                                player={player}
+                                inTeam={false}
+                                statValue={maxStat ? (parseFloat(player[statField]) / maxStat) * 100 : 100}
+                              />
                             </Grid>
                           </Grid>
                         </>
                       ) : (
-                        <PlayerCard player={player} inTeam={false} />
+                        <PlayerCard
+                          player={player}
+                          inTeam={false}
+                          statValue={maxStat ? (parseFloat(player[statField]) / maxStat) * 100 : 100}
+                        />
                       )
                     ))
                   )}

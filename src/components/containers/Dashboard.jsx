@@ -8,7 +8,8 @@ import ReactPlayer from 'react-player';
 import BaseApp, { SEASONS } from './BaseApp';
 import Standings from '../Standings';
 import PlayoffSchedule from '../PlayoffSchedule';
-import GameCard from '../GameCard';
+import GameCardSingleRow from '../GameCardSingleRow';
+import GameCardCompact from '../GameCardCompact';
 import PageHeader from '../PageHeader';
 import SeasonSelector from '../SeasonSelector';
 import { styles as paperStyles } from '../../styles/themeStyles';
@@ -55,6 +56,9 @@ class Dashboard extends Component {
       const curWeekGames = remainingGames.slice(0, 12); // show next 12 games - assumes 12 games per week
 
       const allTeams = teamsData.map((team) => team.data);
+      // disable these lint issues: import/no-dynamic-require global-require
+      // eslint-disable-next-line
+      allTeams.forEach((team) => team.logo = require(`../../images/LOGO_${team.name.toUpperCase()}.png`));
       const gamesWithTeams = curWeekGames.map((game) => {
         const { ...tempGame } = game;
         tempGame.homeTeam = allTeams.find((team) => (
@@ -93,6 +97,8 @@ class Dashboard extends Component {
     const tooltipText = showTwitch ? '' : 'Click to get hyped';
     const streamHeight = showTwitch ? 800 : '';
 
+    console.log(games);
+
     return (
       <BaseApp>
         <Grid container spacing={2} justify="center">
@@ -122,22 +128,103 @@ class Dashboard extends Component {
               <Button onClick={this.getData}>Taking forever?</Button>
             </span>
           ) : (
-            games.length < 1 && season !== 1 ? <PlayoffSchedule season={season} style={{ marginTop: 16 }} />
-              : (
-                <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
+            games.length < 1 ? (
+              <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
+                <Paper className={classes.paddedPaper}>
                   <Typography
-                    variant="h5"
+                    variant="h4"
                     style={{
                       fontVariant: 'small-caps', fontWeight: 700, marginLeft: 32, marginTop: 16,
                     }}
                   >
-                    Upcoming games
+                    No upcoming games this season
                   </Typography>
-                  {games.map((game) => (
-                    <GameCard game={game} />
-                  ))}
-                </Grid>
-              )
+                </Paper>
+              </Grid>
+            ) : (
+              <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
+                <Paper className={classes.paddedPaper}>
+                  <Typography
+                    variant="h4"
+                    style={{
+                      fontVariant: 'small-caps', fontWeight: 700, marginLeft: 32, marginTop: 16,
+                    }}
+                  >
+                    {`Upcoming games ${games[0].gameTime.split(' ')[0]}`}
+                  </Typography>
+                  <Grid container direction="row" alignItems="center" justify="center">
+                    <Grid item xs={5}>
+                      <Typography
+                        variant="h5"
+                        style={{
+                          fontVariant: 'small-caps', fontWeight: 700, marginLeft: 32, marginTop: 16,
+                        }}
+                      >
+                          GONGSHOW 1
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Typography className={classes.gameSubtitle} style={{ fontSize: '1.5rem', color: 'initial' }}>
+                        {games[0].arena}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={5}>
+                      <Typography
+                        variant="h5"
+                        style={{
+                          fontVariant: 'small-caps', fontWeight: 700, marginLeft: 32, marginTop: 16,
+                        }}
+                      >
+                          GONGSHOW 2
+                      </Typography>
+                    </Grid>
+                    {games.map((game, idx) => (
+                      // <GameCardSingleRow
+                      //   gameNum={game.id}
+                      //   team1={game.homeTeam}
+                      //   team2={game.awayTeam}
+                      //   time={game.gameTime}
+                      //   arena={game.arena}
+                      //   isPlayoffs={!!(game.homeTeamScoreC && game.awayTeamScoreC)}
+                      //   homeScoreA={game.homeTeamScoreA}
+                      //   homeScoreB={game.homeTeamScoreB}
+                      //   homeScoreC={game.homeTeamScoreC}
+                      //   awayScoreA={game.awayTeamScoreA}
+                      //   awayScoreB={game.awayTeamScoreB}
+                      //   awayScoreC={game.awayTeamScoreC}
+                      // />
+                      <>
+                        <Grid item xs={5}>
+                          <Paper className={classes.darkerPaper}>
+                            <GameCardCompact
+                              gameNum={game.id}
+                              team1={game.homeTeam}
+                              team2={game.awayTeam}
+                                // time={game.gameTime}
+                                // arena={game.arena}
+                              isPlayoffs={!!(game.homeTeamScoreC && game.awayTeamScoreC)}
+                              homeScoreA={game.homeTeamScoreA}
+                              homeScoreB={game.homeTeamScoreB}
+                              homeScoreC={game.homeTeamScoreC}
+                              awayScoreA={game.awayTeamScoreA}
+                              awayScoreB={game.awayTeamScoreB}
+                              awayScoreC={game.awayTeamScoreC}
+                            />
+                          </Paper>
+                        </Grid>
+                        {!(idx % 2) && (
+                        <Grid item xs={2}>
+                          <Typography className={classes.gameSubtitle} style={{ fontSize: '1.4rem' }}>
+                            {`${game.gameTime.split(' ')[1]} ${game.gameTime.split(' ')[2]}`}
+                          </Typography>
+                        </Grid>
+                        )}
+                      </>
+                    ))}
+                  </Grid>
+                </Paper>
+              </Grid>
+            )
           )}
         </Grid>
       </BaseApp>

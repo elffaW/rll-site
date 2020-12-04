@@ -25,6 +25,17 @@ export const styles = withStyles((theme) => createStyles({
     marginBottom: 60,
     height: '100%',
   },
+  paddedPaper: {
+    margin: theme.spacing(1),
+    padding: theme.spacing(1),
+    backgroundColor: theme.palette.primary.light,
+    width: '100%',
+  },
+  darkerPaper: {
+    margin: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
+    backgroundColor: theme.palette.primary.main,
+  },
   teamName: {
     fontVariant: 'small-caps',
     float: 'left',
@@ -39,5 +50,14 @@ export const styles = withStyles((theme) => createStyles({
   subtitle: {
     fontVariant: 'small-caps',
     color: theme.palette.primary.light,
+  },
+  subtitleDark: {
+    fontVariant: 'small-caps',
+    color: theme.palette.primary.dark,
+  },
+  gameSubtitle: {
+    fontVariant: 'small-caps',
+    color: theme.otherColors.text.dark,
+    fontStyle: 'italic',
   },
 }));
