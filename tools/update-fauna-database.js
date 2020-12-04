@@ -6,6 +6,7 @@ const faunadb = require('faunadb');
 const chalk = require('chalk');
 
 const { GoogleSpreadsheet } = require('google-spreadsheet');
+require('dotenv').config();
 
 const insideNetlify = insideNetlifyBuildContext();
 const q = faunadb.query;
