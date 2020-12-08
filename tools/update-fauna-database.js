@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable no-use-before-define */
-/* bootstrap database in your FaunaDB account */
+/* update database in Fauna with latest spreadsheet data */
 const readline = require('readline');
 const faunadb = require('faunadb');
 const chalk = require('chalk');
@@ -11,7 +11,9 @@ require('dotenv').config();
 const insideNetlify = insideNetlifyBuildContext();
 const q = faunadb.query;
 
-const { SEASON_NUMBER } = process.env;
+const {
+  SEASON_NUMBER, FAUNADB_SECRET, GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_SHEETS_SHEET_ID,
+} = process.env;
 
 if (!SEASON_NUMBER) {
   console.log(chalk.yellow('Required SEASON_NUMBER environment variable not found.'));
@@ -21,7 +23,7 @@ if (!SEASON_NUMBER) {
 console.log(chalk.cyan('Updating your FaunaDB Database...\n'));
 
 // 1. Check for required enviroment variables
-if (!process.env.FAUNADB_SECRET) {
+if (!FAUNADB_SECRET) {
   console.log(chalk.yellow('Required FAUNADB_SECRET enviroment variable not found.'));
   if (insideNetlify) {
     console.log('Visit https://app.netlify.com/sites/YOUR_SITE_HERE/settings/deploys');
@@ -42,7 +44,7 @@ if (!process.env.FAUNADB_SECRET) {
         .then((data) => {
           console.log(chalk.cyan('load db'));
           // console.log(JSON.stringify(data, null, 2));
-          updateDatabase(process.env.FAUNADB_SECRET, data).then(() => {
+          updateDatabase(FAUNADB_SECRET, data).then(() => {
             console.log('Database created');
           }).catch((error) => {
             console.error(error);
@@ -55,17 +57,17 @@ if (!process.env.FAUNADB_SECRET) {
 }
 
 // Has var. Do the thing
-if (process.env.FAUNADB_SECRET) {
+if (FAUNADB_SECRET) {
   // required env vars
-  if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL) {
+  if (!GOOGLE_SERVICE_ACCOUNT_EMAIL) {
     console.log(chalk.yellow('no GOOGLE_SERVICE_ACCOUNT_EMAIL env var set'));
     process.exit(1);
   }
-  if (!process.env.GOOGLE_PRIVATE_KEY) {
+  if (!GOOGLE_PRIVATE_KEY) {
     console.log(chalk.yellow('no GOOGLE_PRIVATE_KEY env var set'));
     process.exit(1);
   }
-  if (!process.env.GOOGLE_SHEETS_SHEET_ID) {
+  if (!GOOGLE_SHEETS_SHEET_ID) {
     // spreadsheet key is the long id in the sheets URL
     console.log(chalk.yellow('no GOOGLE_SHEETS_SHEET_ID env var set'));
     process.exit(1);
@@ -132,9 +134,9 @@ If you see true in the output, the index is "active" and is ready for your queri
  */
 function getDataFromSheets() {
   return new Promise((resolve, reject) => {
-    const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-    const privateKey = process.env.GOOGLE_PRIVATE_KEY;
-    const sheetId = process.env.GOOGLE_SHEETS_SHEET_ID;
+    const email = GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    const privateKey = GOOGLE_PRIVATE_KEY;
+    const sheetId = GOOGLE_SHEETS_SHEET_ID;
 
     try {
       const doc = new GoogleSpreadsheet(sheetId);
@@ -164,13 +166,15 @@ function getDataFromSheets() {
           const statsSheet = doc.sheetsByIndex[6];
 
           getStatsFromSheets(statsSheet).then((allStats) => {
-            getPlayersFromSheets(playersSheet, rolesSheet, allStats).then((allPlayers) => {
+            getPlayersFromSheets(playersSheet, rolesSheet, allStats).then((players) => {
+              const { playersRet: allPlayers, statsRet: statsWithPlayers } = players;
               getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers).then((allTeams) => {
                 getGamesFromSheets(scheduleSheet, allTeams).then((allGames) => {
                   resolve({
                     players: allPlayers,
                     teams: allTeams,
                     games: allGames,
+                    stats: statsWithPlayers,
                   });
                 });
               });
@@ -191,6 +195,7 @@ function getStatsFromSheets(statsSheet) {
       const statsByGame = {};
       const statsByPlayer = {};
       const statsByTeam = {};
+      const statsRows = [];
       allStats.forEach((stats) => {
         const {
           GN: gameId,
@@ -258,6 +263,74 @@ function getStatsFromSheets(statsSheet) {
           'TIME NEUTRAL THIRD': playerTimeInNeutralThird,
           'TIME ATTACK THIRD': playerTimeInAttackingThird,
         } = stats;
+        statsRows.push({
+          id: `${gameId}-${playerName}-${SEASON_NUMBER}`,
+          gameId,
+          playerName,
+          season: parseInt(SEASON_NUMBER, 10),
+          teamName,
+          opposingTeam,
+          teamGoals,
+          opponentGoals,
+          playerScore,
+          playerGoals,
+          playerAssists,
+          playerSaves,
+          playerShots,
+          playerMVP,
+          playerPts,
+          statsType,
+          playerWin,
+          playerLoss,
+          teamTotScore,
+          teamAvgScore,
+          playerPercentOfTeam,
+          playerRatingVsTeam,
+          oppTotScore,
+          teamsScoreRatio,
+          playerBallTouches,
+          playerTimeHighInAir,
+          playerTimeLowInAir,
+          playerTotalAerials,
+          playerNumDemosInflicted,
+          playerNumDemosTaken,
+          playerNumTimeFirstTouch,
+          playerNumTimeAfk,
+          playerTotalClears,
+          playerTotalPasses,
+          playerTurnovers,
+          playerTakeaways,
+          playerBoostUsage,
+          playerNumSmallBoosts,
+          playerNumLargeBoosts,
+          playerWastedUsage,
+          playerAverageBoostLevel,
+          playerNumStolenBoosts,
+          playerAverageSpeed,
+          playerAverageHitDistance,
+          playerTimeAtSlowSpeed,
+          playerTimeAtBoostSpeed,
+          playerTimeAtSuperSonic,
+          playerTimeBallcam,
+          playerTimeOnWall,
+          playerTimeMostForwardPlayer,
+          playerTimeMostBackPlayer,
+          playerTimeBetweenPlayers,
+          playerTimeBehindBall,
+          playerTimeInFrontBall,
+          playerBallHitForwardDist,
+          playerBallHitBackwardDist,
+          playerTimeCloseToBall,
+          playerTotalCarries,
+          playerTotalCarryDistance,
+          playerTotalDribbles,
+          teamTimeClumped,
+          playerUsefulHits,
+          playerTimeInGame,
+          playerTimeInDefendingThird,
+          playerTimeInNeutralThird,
+          playerTimeInAttackingThird,
+        });
         if (playerName) {
           // statsType: RS, PO, SUB, BOT, COMB (combine)
           if (statsType === 'RS' || statsType === 'PO') {
@@ -412,9 +485,11 @@ function getStatsFromSheets(statsSheet) {
       statsRet.statsByPlayer = statsByPlayer;
       statsRet.statsByGame = statsByGame;
       statsRet.statsByTeam = statsByTeam;
+      statsRet.statsRows = statsRows;
       console.log(`Got ${Object.keys(statsRet.statsByPlayer).length} PLAYER stats records from Stats`);
       console.log(`Got ${Object.keys(statsRet.statsByGame).length} GAME   stats records from Stats`);
       console.log(`Got ${Object.keys(statsRet.statsByTeam).length} TEAM   stats records from Stats`);
+      console.log(`Got ${statsRet.statsRows.length} INDIV   stats records from Stats`);
       resolve(statsRet);
     }).catch((err) => {
       reject(err);
@@ -429,6 +504,8 @@ function getStatsFromSheets(statsSheet) {
   */
 function getPlayersFromSheets(playersSheet, rolesSheet, allStats) {
   return new Promise((resolve, reject) => {
+    const playersRet = [];
+    const statsRet = [];
     if (SEASON_NUMBER < 4) {
       playersSheet.getRows().then((allPlayers) => rolesSheet.getRows().then((allRoles) => {
         const playerRoles = [];
@@ -437,7 +514,6 @@ function getPlayersFromSheets(playersSheet, rolesSheet, allStats) {
           playerRoles.push({ playerName, primaryRole, secondaryRole });
         });
 
-        const playersRet = [];
         allPlayers.forEach((player) => {
           const {
             ID: id,
@@ -480,15 +556,23 @@ function getPlayersFromSheets(playersSheet, rolesSheet, allStats) {
             season: parseInt(SEASON_NUMBER, 10),
           };
           playersRet.push(playerObj);
+
+          allStats.statsRows.forEach((row) => {
+            const { ...tempRow } = row;
+            if (row.playerName.toUpperCase() === name.toUpperCase() && row.season === parseInt(SEASON_NUMBER, 10)) {
+              tempRow.player = parseInt(id, 10);
+              statsRet.push(tempRow);
+            }
+          });
         });
         console.log(`Got ${playersRet.length} players from Players`);
-        resolve(playersRet);
+        console.log(`Updated ${statsRet.length} stats with Players`);
+        resolve({ playersRet, statsRet });
       })).catch((err) => {
         reject(err);
       });
     } else { // SEASON 4 removed roles sheet
       playersSheet.getRows().then((allPlayers) => {
-        const playersRet = [];
         allPlayers.forEach((player) => {
           const {
             ID: id,
@@ -537,9 +621,18 @@ function getPlayersFromSheets(playersSheet, rolesSheet, allStats) {
             season: parseInt(SEASON_NUMBER, 10),
           };
           playersRet.push(playerObj);
+
+          allStats.statsRows.forEach((row) => {
+            const { ...tempRow } = row;
+            if (row.playerName.toUpperCase() === name.toUpperCase() && row.season === parseInt(SEASON_NUMBER, 10)) {
+              tempRow.player = parseInt(id, 10);
+              statsRet.push(tempRow);
+            }
+          });
         });
         console.log(`Got ${playersRet.length} players from Players`);
-        resolve(playersRet);
+        console.log(`Updated ${statsRet.length} stats with Players`);
+        resolve({ playersRet, statsRet });
       }).catch((err) => {
         reject(err);
       });
@@ -744,6 +837,8 @@ function updateDatabase(key, data) {
   Object.keys(data).forEach((collectionKey) => {
     console.log(chalk.cyan('Init collection', collectionKey));
     const collectionData = data[collectionKey];
+
+    console.log('collectionData exists for key', collectionKey, !!collectionData);
 
     collectionData.forEach((record) => {
       updateQueries.push(q.Update(q.Select('ref', q.Get(q.Match(q.Index(`${collectionKey}_by_season_and_id`), parseInt(SEASON_NUMBER, 10), record.id))), { data: record }));
