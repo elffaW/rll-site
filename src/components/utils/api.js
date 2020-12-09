@@ -14,6 +14,12 @@ const getTeamsBySeason = (season) => fetch(`/.netlify/functions/teams-getBySeaso
 
 const getGamesBySeason = (season) => fetch(`/.netlify/functions/games-getBySeason?season=${season}`).then((response) => response.json());
 
+const getStatsBySeasonAndPlayer = (season, player) => fetch(`/.netlify/functions/stats-getBySeasonAndPlayer?season=${season}&player=${player}`)
+  .then((response) => response.json());
+
+const getStatsByPlayerName = (player) => fetch(`/.netlify/functions/stats-getByPlayerName?player=${player}`)
+  .then((response) => response.json());
+
 export default {
   getAllPlayers,
   getAllTeams,
@@ -21,4 +27,6 @@ export default {
   getPlayersBySeason,
   getTeamsBySeason,
   getGamesBySeason,
+  getStatsBySeasonAndPlayer,
+  getStatsByPlayerName,
 };

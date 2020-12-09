@@ -20,6 +20,8 @@ import ReactPivot from 'react-pivot';
 import BaseApp, { SEASONS } from './BaseApp';
 import PageHeader from '../PageHeader';
 import PlayerCard from '../PlayerCard';
+import PlayerGameStats from '../PlayerGameStats';
+
 import SeasonSelector from '../SeasonSelector';
 
 import api from '../utils/api';
@@ -1108,35 +1110,40 @@ class Players extends Component {
                       </Grid>
                     </Grid>
                   )}
-                  {curPlayer ? curPlayer.map((player) => (
+                  {curPlayer ? (
                     <>
-                      <Grid item xs={1}>
-                        <Typography
-                          variant="h4"
-                          // style={{
-                          //   color: 'white',
-                          //   backgroundImage: `url(${rllSvg})`,
-                          //   backgroundSize: '100%',
-                          //   backgroundPosition: 'center',
-                          //   backgroundRepeat: 'no-repeat',
-                          //   padding: 24,
-                          //   marginLeft: 16,
-                          //   paddingLeft: 12,
-                          // }}
-                          className={`player-season-${player.season}`}
-                        >
-                          <span className={`player-season-${player.season}-inside`}>
-                            {player.season}
-                          </span>
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={11}>
-                        <Grid container spacing={2} justify="center">
-                          <PlayerCard player={player} inTeam={false} showDetails />
-                        </Grid>
-                      </Grid>
+                      {curPlayer.map((player) => (
+                        <>
+                          <Grid item xs={1}>
+                            <Typography
+                              variant="h4"
+                              // style={{
+                              //   color: 'white',
+                              //   backgroundImage: `url(${rllSvg})`,
+                              //   backgroundSize: '100%',
+                              //   backgroundPosition: 'center',
+                              //   backgroundRepeat: 'no-repeat',
+                              //   padding: 24,
+                              //   marginLeft: 16,
+                              //   paddingLeft: 12,
+                              // }}
+                              className={`player-season-${player.season}`}
+                            >
+                              <span className={`player-season-${player.season}-inside`}>
+                                {player.season}
+                              </span>
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={11}>
+                            <Grid container spacing={2} justify="center">
+                              <PlayerCard player={player} inTeam={false} showDetails />
+                            </Grid>
+                          </Grid>
+                        </>
+                      ))}
+                      <PlayerGameStats player={curPlayer[0].id} playerName={curPlayer[0].name} season={season} />
                     </>
-                  )) : (
+                  ) : (
                     seasonPlayers.map((player) => (
                       season === 'All' ? (
                         <>

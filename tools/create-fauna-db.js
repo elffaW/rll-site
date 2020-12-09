@@ -169,6 +169,12 @@ function createFaunaIndexes(key, collections) {
           source: q.Collection('stats'),
           terms: [{ field: ['data', 'season'] }, { field: ['data', 'player'] }],
         }));
+
+        collectionIndexQueries.push(q.Create(q.Ref('indexes'), {
+          name: 'stats_by_player_name',
+          source: q.Collection('stats'),
+          terms: [{ field: ['data', 'playerName'] }],
+        }));
       }
 
       try {
