@@ -34,6 +34,7 @@ class Standings extends Component {
 
     this.state = {
       teams: [], // teamsData.sort((a, b) => b.points - a.points), // sort with higher points at top
+      gamesByTeam: {},
       loading: true,
       sortField: 'rank',
       sortDirection: true, // just a toggle
@@ -54,16 +55,61 @@ class Standings extends Component {
   }
 
   getData = (season) => {
-    api.getTeamsBySeason(season).then((allTeams) => {
+    Promise.all([
+      api.getTeamsBySeason(season),
+      api.getGamesBySeason(season),
+    ]).then((results) => {
+      const allTeams = results[0];
+      const allGames = results[1];
       const teams = allTeams.map((team) => team.data);
+      const games = allGames.map((game) => game.data);
       teams.sort((a, b) => a.rank - b.rank); // sort with lower (better) rank at top
 
       // disable these lint issues: import/no-dynamic-require global-require
       // eslint-disable-next-line
-      teams.forEach((team) => team.logo = require(`../images/LOGO_${team.name.toUpperCase()}.png`));
+      // teams.forEach((team) => team.logo = require(`../images/LOGO_${team.name.toUpperCase()}.png`));
+
+      games.sort((a, b) => new Date(a.gameTime) - new Date(b.gameTime)); // earlier game times first
+      const completedGames = games.filter((game) => !!game.homeTeamScoreA && !!game.homeTeamScoreB);
+
+      const gamesByTeam = {};
+      teams.forEach((team) => {
+        team.logo = require(`../images/LOGO_${team.name.toUpperCase()}.png`); // eslint-disable-line
+        gamesByTeam[team.id] = [];
+        completedGames.forEach((game) => {
+          const {
+            homeTeamScoreA, homeTeamScoreB, awayTeamScoreA, awayTeamScoreB,
+          } = game;
+          const homeWinA = parseInt(homeTeamScoreA, 10) > parseInt(awayTeamScoreA, 10);
+          const homeWinB = parseInt(homeTeamScoreB, 10) > parseInt(awayTeamScoreB, 10);
+          // eslint-disable-next-line no-nested-ternary
+          let matchResult = homeWinA && homeWinB ? 'W' : homeWinA || homeWinB ? 'D' : 'L';
+          if (parseInt(game.homeTeamId, 10) === parseInt(team.id, 10) && team.season === game.season) {
+            const homeTeam = team;
+            const awayTeam = teams.find(
+              (tempTeam) => parseInt(tempTeam.id, 10) === parseInt(game.awayTeamId, 10) && team.season === game.season,
+            );
+            gamesByTeam[team.id].push({
+              homeTeam, awayTeam, matchResult, ...game,
+            });
+          } else if (parseInt(game.awayTeamId, 10) === parseInt(team.id, 10) && team.season === game.season) {
+            const homeTeam = teams.find(
+              (tempTeam) => parseInt(tempTeam.id, 10) === parseInt(game.homeTeamId, 10) && team.season === game.season,
+            );
+            const awayTeam = team;
+            // eslint-disable-next-line no-nested-ternary
+            matchResult = matchResult === 'W' ? 'L' : matchResult === 'L' ? 'W' : 'D';
+            gamesByTeam[team.id].push({
+              homeTeam, awayTeam, matchResult, ...game,
+            });
+          }
+        });
+
+        gamesByTeam[team.id] = gamesByTeam[team.id].slice(-4);
+      });
 
       this.setState({
-        teams, loading: false, sortField: 'rank', sortDirection: true,
+        teams, gamesByTeam, loading: false, sortField: 'rank', sortDirection: true,
       });
     });
   }
@@ -106,7 +152,7 @@ class Standings extends Component {
   render() {
     const { classes, season } = this.props;
     const {
-      teams, loading, sortField, sortDirection,
+      teams, gamesByTeam, loading, sortField, sortDirection,
     } = this.state;
 
     const teamRows = [];
@@ -115,49 +161,65 @@ class Standings extends Component {
       teamRows.push(
         <Grid item xs={12} style={!(i % 2) ? { backgroundColor: 'rgba(130, 0, 0, 0.3)' } : {}}>
           <Grid container alignItems="center" justify="flex-start">
-            <Grid item xs={1}>
+            <Grid item xs>
               <Typography variant="h4">
                 {team.rank}
               </Typography>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs>
               <Avatar src={team.logo} variant="square" style={{ float: 'right', paddingRight: 8 }} />
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={2}>
               <Link to={`/teams/${team.name}`} exact>
                 <Typography variant="h5" className={classes.teamName} style={{ float: 'left' }}>
                   {team.name}
                 </Typography>
               </Link>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs>
               <Typography variant="body1" className={classes.teamRecord}>
                 {team.wins}
               </Typography>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs>
               <Typography variant="body1" className={classes.teamRecord}>
                 {team.losses}
               </Typography>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs>
               <Typography className={classes.teamDesc} style={{ fontWeight: 700 }}>
                 {team.points}
               </Typography>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs>
               <Typography className={classes.teamDesc}>
                 {team.value}
               </Typography>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs>
               <Typography className={classes.teamDetails}>{team.goalsFor}</Typography>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs>
               <Typography className={classes.teamDetails}>{team.goalsAgainst}</Typography>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs>
               <Typography className={classes.teamDetails}>{team.plusMinus}</Typography>
+            </Grid>
+            <Grid item xs>
+              <Grid container direction="row" alignItems="center" justify="flex-end">
+                {gamesByTeam[team.id].map((game) => (
+                  <Grid item xs>
+                    <Avatar
+                      src={team.id === game.homeTeamId ? game.awayTeam.logo : game.homeTeam.logo}
+                      variant="circle"
+                      style={{
+                        // eslint-disable-next-line no-nested-ternary
+                        height: '1.4rem', width: '1.4rem', backgroundColor: game.matchResult === 'W' ? 'green' : game.matchResult === 'L' ? 'red' : 'blue', filter: 'saturate(50%)',
+                      }}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
             </Grid>
           </Grid>
         </Grid>,
@@ -173,65 +235,70 @@ class Standings extends Component {
             <Button onClick={() => this.getData(season)}>Taking forever?</Button>
           </>
         ) : (
-          <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
+          <Grid container alignItems="flex-start" justify="flex-start">
             <Paper className={classes.paper}>
               <Grid item xs={12}>
                 <Grid container alignItems="center" justify="flex-start">
-                  <Grid item xs={1}>
+                  <Grid item xs>
                     <Typography variant="h6" onClick={() => this.handleSortFieldChange('rank')}>
                       Rank
                       {sortField === 'rank' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
                     </Typography>
                   </Grid>
-                  <Grid item xs={1}>
+                  <Grid item xs>
                     {' '}
                   </Grid>
-                  <Grid item xs={3}>
+                  <Grid item xs={2}>
                     <Typography variant="h6" style={{ float: 'left' }} onClick={() => this.handleSortFieldChange('name')}>
                       Team
                       {sortField === 'team' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
                     </Typography>
                   </Grid>
-                  <Grid item xs={1}>
+                  <Grid item xs>
                     <Typography variant="h6" onClick={() => this.handleSortFieldChange('wins')}>
                       W
                       {sortField === 'wins' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
                     </Typography>
                   </Grid>
-                  <Grid item xs={1}>
+                  <Grid item xs>
                     <Typography variant="h6" onClick={() => this.handleSortFieldChange('losses')}>
                       L
                       {sortField === 'losses' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
                     </Typography>
                   </Grid>
-                  <Grid item xs={1}>
+                  <Grid item xs>
                     <Typography variant="h6" onClick={() => this.handleSortFieldChange('points')}>
                       PTS
                       {sortField === 'points' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
                     </Typography>
                   </Grid>
-                  <Grid item xs={1}>
+                  <Grid item xs>
                     <Typography variant="h6" onClick={() => this.handleSortFieldChange('value')}>
                       Value
                       {sortField === 'value' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
                     </Typography>
                   </Grid>
-                  <Grid item xs={1}>
+                  <Grid item xs>
                     <Typography variant="h6" onClick={() => this.handleSortFieldChange('goalsFor')}>
                       GF
                       {sortField === 'goalsFor' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
                     </Typography>
                   </Grid>
-                  <Grid item xs={1}>
+                  <Grid item xs>
                     <Typography variant="h6" onClick={() => this.handleSortFieldChange('goalsAgainst')}>
                       GA
                       {sortField === 'goalsAgainst' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
                     </Typography>
                   </Grid>
-                  <Grid item xs={1}>
+                  <Grid item xs>
                     <Typography variant="h6" onClick={() => this.handleSortFieldChange('plusMinus')}>
                       +/-
                       {sortField === 'plusMinus' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs>
+                    <Typography variant="h6">
+                      Form
                     </Typography>
                   </Grid>
                 </Grid>
