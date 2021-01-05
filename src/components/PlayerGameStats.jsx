@@ -54,7 +54,7 @@ function PlayerGameStats(props) {
   }, [player, season]);
 
   const dimensions = [
-    { value: 'gameId', title: 'Game #' },
+    { value: 'id', title: 'Indiv Game' },
     { value: 'teamName', title: 'Team' },
     { value: 'season', title: 'Season' },
     { value: 'opposingTeam', title: 'Opponent' },
@@ -85,10 +85,10 @@ function PlayerGameStats(props) {
     memo.scoreTotal = (memo.scoreTotal || 0) + parseFloat(row.playerScore);
     memo.scoreAvg = (memo.scoreTotal || 0) / (memo.count || 1);
     // from advanced but added to regular
-    memo.numDemosInflicted = (memo.numDemosInflicted || 0) + parseInt(row.playerNumDemosInflicted, 10);
-    memo.numDemosTaken = (memo.numDemosTaken || 0) + parseInt(row.playerNumDemosTaken, 10);
-    memo.totalClears = (memo.totalClears || 0) + parseInt(row.playerTotalClears, 10);
-    memo.totalPasses = (memo.totalPasses || 0) + parseInt(row.playerTotalPasses, 10);
+    memo.numDemosInflicted = (memo.numDemosInflicted || 0) + parseInt(row.playerNumDemosInflicted || 0, 10);
+    memo.numDemosTaken = (memo.numDemosTaken || 0) + parseInt(row.playerNumDemosTaken || 0, 10);
+    memo.totalClears = (memo.totalClears || 0) + parseInt(row.playerTotalClears || 0, 10);
+    memo.totalPasses = (memo.totalPasses || 0) + parseInt(row.playerTotalPasses || 0, 10);
     memo.numDemosInflictedAvg = (memo.numDemosInflicted || 0) / (memo.count || 1);
     memo.numDemosTakenAvg = (memo.numDemosTaken || 0) / (memo.count || 1);
     memo.totalClearsAvg = (memo.totalClears || 0) / (memo.count || 1);
@@ -96,43 +96,43 @@ function PlayerGameStats(props) {
     // advanced stats
     memo.scorePercentOfTeam = (memo.scorePercentOfTeam || 0) + parseFloat(row.playerPercentOfTeam);
     // memo.scoreRatingVsTeam = (memo.scoreRatingVsTeam || 0) + parseFloat(row.scoreRatingVsTeam);
-    memo.ballTouches = (memo.ballTouches || 0) + parseInt(row.playerBallTouches, 10);
-    memo.timeHighInAir = (memo.timeHighInAir || 0) + parseFloat(row.playerTimeHighInAir);
-    memo.timeLowInAir = (memo.timeLowInAir || 0) + parseFloat(row.playerTimeLowInAir);
-    memo.totalAerials = (memo.totalAerials || 0) + parseInt(row.playerTotalAerials, 10);
-    memo.turnovers = (memo.turnovers || 0) + parseInt(row.playerTurnovers, 10);
-    memo.takeaways = (memo.takeaways || 0) + parseInt(row.playerTakeaways, 10);
-    memo.numKickoffFirstTouch = (memo.numKickoffFirstTouch || 0) + parseInt(row.playerNumTimeFirstTouch, 10);
-    memo.numKickoffAfk = (memo.numKickoffAfk || 0) + parseInt(row.playerNumTimeAfk, 10);
-    memo.boostUsage = (memo.boostUsage || 0) + parseFloat(row.playerBoostUsage);
-    memo.numSmallBoosts = (memo.numSmallBoosts || 0) + parseInt(row.playerNumSmallBoosts, 10);
-    memo.numLargeBoosts = (memo.numLargeBoosts || 0) + parseInt(row.playerNumLargeBoosts, 10);
-    memo.wastedUsage = (memo.wastedUsage || 0) + parseFloat(row.playerWastedUsage);
-    memo.averageBoostLevel = (memo.averageBoostLevel || 0) + parseFloat(row.playerAverageBoostLevel);
-    memo.numStolenBoosts = (memo.numStolenBoosts || 0) + parseInt(row.playerNumStolenBoosts, 10);
-    memo.averageSpeed = (memo.averageSpeed || 0) + parseFloat(row.playerAverageSpeed);
-    memo.averageHitDistance = (memo.averageHitDistance || 0) + parseFloat(row.playerAverageHitDistance);
-    memo.timeAtSlowSpeed = (memo.timeAtSlowSpeed || 0) + parseFloat(row.playerTimeAtSlowSpeed);
-    memo.timeAtBoostSpeed = (memo.timeAtBoostSpeed || 0) + parseFloat(row.playerTimeAtBoostSpeed);
-    memo.timeAtSuperSonic = (memo.timeAtSuperSonic || 0) + parseFloat(row.playerTimeAtSuperSonic);
-    memo.timeBallcam = (memo.timeBallcam || 0) + parseFloat(row.playerTimeBallcam);
-    memo.timeOnWall = (memo.timeOnWall || 0) + parseFloat(row.playerTimeOnWall);
-    memo.timeMostForwardPlayer = (memo.timeMostForwardPlayer || 0) + parseFloat(row.playerTimeMostForwardPlayer);
-    memo.timeMostBackPlayer = (memo.timeMostBackPlayer || 0) + parseFloat(row.playerTimeMostBackPlayer);
-    memo.timeBetweenPlayers = (memo.timeBetweenPlayers || 0) + parseFloat(row.playerTimeBetweenPlayers);
-    memo.timeBehindBall = (memo.timeBehindBall || 0) + parseFloat(row.playerTimeBehindBall);
-    memo.timeInFrontBall = (memo.timeInFrontBall || 0) + parseFloat(row.playerTimeInFrontBall);
-    memo.ballHitForwardDist = (memo.ballHitForwardDist || 0) + parseFloat(row.playerBallHitForwardDist);
-    memo.ballHitBackwardDist = (memo.ballHitBackwardDist || 0) + parseFloat(row.playerBallHitBackwardDist);
-    memo.timeCloseToBall = (memo.timeCloseToBall || 0) + parseFloat(row.playerTimeCloseToBall);
-    memo.totalCarries = (memo.totalCarries || 0) + parseInt(row.playerTotalCarries, 10);
-    memo.totalCarryDistance = (memo.totalCarryDistance || 0) + parseFloat(row.playerTotalCarryDistance);
-    memo.totalDribbles = (memo.totalDribbles || 0) + parseInt(row.playerTotalDribbles, 10);
-    memo.usefulHits = (memo.usefulHits || 0) + parseInt(row.playerUsefulHits, 10);
-    memo.timeInGame = (memo.timeInGame || 0) + parseFloat(row.playerTimeInGame);
-    memo.timeInDefendingThird = (memo.timeInDefendingThird || 0) + parseFloat(row.playerTimeInDefendingThird);
-    memo.timeInNeutralThird = (memo.timeInNeutralThird || 0) + parseFloat(row.playerTimeInNeutralThird);
-    memo.timeInAttackingThird = (memo.timeInAttackingThird || 0) + parseFloat(row.playerTimeInAttackingThird);
+    memo.ballTouches = (memo.ballTouches || 0) + parseInt(row.playerBallTouches || 0, 10);
+    memo.timeHighInAir = (memo.timeHighInAir || 0) + parseFloat(row.playerTimeHighInAir || 0);
+    memo.timeLowInAir = (memo.timeLowInAir || 0) + parseFloat(row.playerTimeLowInAir || 0);
+    memo.totalAerials = (memo.totalAerials || 0) + parseInt(row.playerTotalAerials || 0, 10);
+    memo.turnovers = (memo.turnovers || 0) + parseInt(row.playerTurnovers || 0, 10);
+    memo.takeaways = (memo.takeaways || 0) + parseInt(row.playerTakeaways || 0, 10);
+    memo.numKickoffFirstTouch = (memo.numKickoffFirstTouch || 0) + parseInt(row.playerNumTimeFirstTouch || 0, 10);
+    memo.numKickoffAfk = (memo.numKickoffAfk || 0) + parseInt(row.playerNumTimeAfk || 0, 10);
+    memo.boostUsage = (memo.boostUsage || 0) + parseFloat(row.playerBoostUsage || 0);
+    memo.numSmallBoosts = (memo.numSmallBoosts || 0) + parseInt(row.playerNumSmallBoosts || 0, 10);
+    memo.numLargeBoosts = (memo.numLargeBoosts || 0) + parseInt(row.playerNumLargeBoosts || 0, 10);
+    memo.wastedUsage = (memo.wastedUsage || 0) + parseFloat(row.playerWastedUsage || 0);
+    memo.averageBoostLevel = (memo.averageBoostLevel || 0) + parseFloat(row.playerAverageBoostLevel || 0);
+    memo.numStolenBoosts = (memo.numStolenBoosts || 0) + parseInt(row.playerNumStolenBoosts || 0, 10);
+    memo.averageSpeed = (memo.averageSpeed || 0) + parseFloat(row.playerAverageSpeed || 0);
+    memo.averageHitDistance = (memo.averageHitDistance || 0) + parseFloat(row.playerAverageHitDistance || 0);
+    memo.timeAtSlowSpeed = (memo.timeAtSlowSpeed || 0) + parseFloat(row.playerTimeAtSlowSpeed || 0);
+    memo.timeAtBoostSpeed = (memo.timeAtBoostSpeed || 0) + parseFloat(row.playerTimeAtBoostSpeed || 0);
+    memo.timeAtSuperSonic = (memo.timeAtSuperSonic || 0) + parseFloat(row.playerTimeAtSuperSonic || 0);
+    memo.timeBallcam = (memo.timeBallcam || 0) + parseFloat(row.playerTimeBallcam || 0);
+    memo.timeOnWall = (memo.timeOnWall || 0) + parseFloat(row.playerTimeOnWall || 0);
+    memo.timeMostForwardPlayer = (memo.timeMostForwardPlayer || 0) + parseFloat(row.playerTimeMostForwardPlayer || 0);
+    memo.timeMostBackPlayer = (memo.timeMostBackPlayer || 0) + parseFloat(row.playerTimeMostBackPlayer || 0);
+    memo.timeBetweenPlayers = (memo.timeBetweenPlayers || 0) + parseFloat(row.playerTimeBetweenPlayers || 0);
+    memo.timeBehindBall = (memo.timeBehindBall || 0) + parseFloat(row.playerTimeBehindBall || 0);
+    memo.timeInFrontBall = (memo.timeInFrontBall || 0) + parseFloat(row.playerTimeInFrontBall || 0);
+    memo.ballHitForwardDist = (memo.ballHitForwardDist || 0) + parseFloat(row.playerBallHitForwardDist || 0);
+    memo.ballHitBackwardDist = (memo.ballHitBackwardDist || 0) + parseFloat(row.playerBallHitBackwardDist || 0);
+    memo.timeCloseToBall = (memo.timeCloseToBall || 0) + parseFloat(row.playerTimeCloseToBall || 0);
+    memo.totalCarries = (memo.totalCarries || 0) + parseInt(row.playerTotalCarries || 0, 10);
+    memo.totalCarryDistance = (memo.totalCarryDistance || 0) + parseFloat(row.playerTotalCarryDistance || 0);
+    memo.totalDribbles = (memo.totalDribbles || 0) + parseInt(row.playerTotalDribbles || 0, 10);
+    memo.usefulHits = (memo.usefulHits || 0) + parseInt(row.playerUsefulHits || 0, 10);
+    memo.timeInGame = (memo.timeInGame || 0) + parseFloat(row.playerTimeInGame || 0);
+    memo.timeInDefendingThird = (memo.timeInDefendingThird || 0) + parseFloat(row.playerTimeInDefendingThird || 0);
+    memo.timeInNeutralThird = (memo.timeInNeutralThird || 0) + parseFloat(row.playerTimeInNeutralThird || 0);
+    memo.timeInAttackingThird = (memo.timeInAttackingThird || 0) + parseFloat(row.playerTimeInAttackingThird || 0);
     // advanced AVERAGE stats
     memo.scorePercentOfTeamAvg = (memo.scorePercentOfTeam || 0) / (memo.count || 1);
     // memo.scoreRatingVsTeamAvg = (memo.scoreRatingVsTeam || 0) / (memo.count || 1);
@@ -328,12 +328,12 @@ function PlayerGameStats(props) {
     }, {
       title: 'Avg Wins',
       value: 'winsAvg',
-      template: (val) => val.toFixed(0),
+      template: (val) => val.toFixed(2),
       sortBy: (row) => (Number.isNaN(row.winsAvg) ? 0 : row.winsAvg),
     }, {
       title: 'Avg Losses',
       value: 'lossesAvg',
-      template: (val) => val.toFixed(0),
+      template: (val) => val.toFixed(2),
       sortBy: (row) => (Number.isNaN(row.lossesAvg) ? 0 : row.lossesAvg),
     }, {
       title: 'Avg +/- PG',
@@ -732,76 +732,76 @@ function PlayerGameStats(props) {
       sortBy: (row) => (Number.isNaN(row.timeInAttackingThirdAvg) ? 0 : row.timeInAttackingThirdAvg),
     }];
   }
-  const test = {
-    id: '24-KAWA-4',
-    gameId: '24',
-    playerName: 'KAWA',
-    season: 4,
-    teamName: 'PILGRIMS',
-    opposingTeam: 'DEATH',
-    teamGoals: '3',
-    opponentGoals: '2',
-    playerScore: '784',
-    playerGoals: '2',
-    playerAssists: '0',
-    playerSaves: '4',
-    playerShots: '4',
-    playerMVP: '1',
-    playerPts: '2',
-    statsType: 'RS',
-    playerWin: '1',
-    playerLoss: '0',
-    teamTotScore: '1086',
-    teamAvgScore: '362',
-    playerPercentOfTeam: '0.722',
-    playerRatingVsTeam: '2.166',
-    oppTotScore: '773',
-    teamsScoreRatio: '1.40',
-    playerBallTouches: '39',
-    playerTimeHighInAir: '8.378723405',
-    playerTimeLowInAir: '95.78887697',
-    playerTotalAerials: '5',
-    playerNumDemosInflicted: '0',
-    playerNumDemosTaken: '0',
-    playerNumTimeFirstTouch: '2',
-    playerNumTimeAfk: '0',
-    playerTotalClears: '5',
-    playerTotalPasses: '5',
-    playerTurnovers: '7',
-    playerTakeaways: '9',
-    playerBoostUsage: '1402.981279',
-    playerNumSmallBoosts: '37',
-    playerNumLargeBoosts: '12',
-    playerWastedUsage: '173.7304459',
-    playerAverageBoostLevel: '57.27769944',
-    playerNumStolenBoosts: '1',
-    playerAverageSpeed: '13734.35087',
-    playerAverageHitDistance: '2206.803431',
-    playerTimeAtSlowSpeed: '42.0918569',
-    playerTimeAtBoostSpeed: '158.5401624',
-    playerTimeAtSuperSonic: '20.72620018',
-    playerTimeBallcam: '296.1933834',
-    playerTimeOnWall: '89.45294631',
-    playerTimeMostForwardPlayer: '101.9907026',
-    playerTimeMostBackPlayer: '151.4602135',
-    playerTimeBetweenPlayers: '81.59805408',
-    playerTimeBehindBall: '267.3567598',
-    playerTimeInFrontBall: '67.69221039',
-    playerBallHitForwardDist: '64690.34073',
-    playerBallHitBackwardDist: '5768.830078',
-    playerTimeCloseToBall: '27.44542667',
-    playerTotalCarries: '0',
-    playerTotalCarryDistance: '0',
-    playerTotalDribbles: '11',
-    teamTimeClumped: '61.15270206',
-    playerUsefulHits: '20',
-    playerTimeInGame: '335.0489702',
-    playerTimeInDefendingThird: '175.580246',
-    playerTimeInNeutralThird: '103.9997229',
-    playerTimeInAttackingThird: '55.46900126',
-    playerId: 1,
-    player: 1,
-  };
+  // const test = {
+  //   id: '24-KAWA-4',
+  //   gameId: '24',
+  //   playerName: 'KAWA',
+  //   season: 4,
+  //   teamName: 'PILGRIMS',
+  //   opposingTeam: 'DEATH',
+  //   teamGoals: '3',
+  //   opponentGoals: '2',
+  //   playerScore: '784',
+  //   playerGoals: '2',
+  //   playerAssists: '0',
+  //   playerSaves: '4',
+  //   playerShots: '4',
+  //   playerMVP: '1',
+  //   playerPts: '2',
+  //   statsType: 'RS',
+  //   playerWin: '1',
+  //   playerLoss: '0',
+  //   teamTotScore: '1086',
+  //   teamAvgScore: '362',
+  //   playerPercentOfTeam: '0.722',
+  //   playerRatingVsTeam: '2.166',
+  //   oppTotScore: '773',
+  //   teamsScoreRatio: '1.40',
+  //   playerBallTouches: '39',
+  //   playerTimeHighInAir: '8.378723405',
+  //   playerTimeLowInAir: '95.78887697',
+  //   playerTotalAerials: '5',
+  //   playerNumDemosInflicted: '0',
+  //   playerNumDemosTaken: '0',
+  //   playerNumTimeFirstTouch: '2',
+  //   playerNumTimeAfk: '0',
+  //   playerTotalClears: '5',
+  //   playerTotalPasses: '5',
+  //   playerTurnovers: '7',
+  //   playerTakeaways: '9',
+  //   playerBoostUsage: '1402.981279',
+  //   playerNumSmallBoosts: '37',
+  //   playerNumLargeBoosts: '12',
+  //   playerWastedUsage: '173.7304459',
+  //   playerAverageBoostLevel: '57.27769944',
+  //   playerNumStolenBoosts: '1',
+  //   playerAverageSpeed: '13734.35087',
+  //   playerAverageHitDistance: '2206.803431',
+  //   playerTimeAtSlowSpeed: '42.0918569',
+  //   playerTimeAtBoostSpeed: '158.5401624',
+  //   playerTimeAtSuperSonic: '20.72620018',
+  //   playerTimeBallcam: '296.1933834',
+  //   playerTimeOnWall: '89.45294631',
+  //   playerTimeMostForwardPlayer: '101.9907026',
+  //   playerTimeMostBackPlayer: '151.4602135',
+  //   playerTimeBetweenPlayers: '81.59805408',
+  //   playerTimeBehindBall: '267.3567598',
+  //   playerTimeInFrontBall: '67.69221039',
+  //   playerBallHitForwardDist: '64690.34073',
+  //   playerBallHitBackwardDist: '5768.830078',
+  //   playerTimeCloseToBall: '27.44542667',
+  //   playerTotalCarries: '0',
+  //   playerTotalCarryDistance: '0',
+  //   playerTotalDribbles: '11',
+  //   teamTimeClumped: '61.15270206',
+  //   playerUsefulHits: '20',
+  //   playerTimeInGame: '335.0489702',
+  //   playerTimeInDefendingThird: '175.580246',
+  //   playerTimeInNeutralThird: '103.9997229',
+  //   playerTimeInAttackingThird: '55.46900126',
+  //   playerId: 1,
+  //   player: 1,
+  // };
 
   const handleStatsType = (newValue) => {
     if (newValue !== statsView) {
