@@ -529,8 +529,18 @@ function getPlayersFromSheets(playersSheet, rolesSheet, allStats) {
           } = player;
           const { primaryRole, secondaryRole } = playerRoles.find((role) => role.playerName === name.toUpperCase());
           const {
-            score, goals, assists, saves, shots, numMVP, points, gamesPlayed, ...otherStats
+            score,
+            goals,
+            assists,
+            saves,
+            shots,
+            numMVP,
+            points,
+            gamesPlayed,
+            name: capsName, // we don't use this, but without it `otherStats` will overwrite the name we want
+            ...otherStats
           } = allStats.statsByPlayer[name.toUpperCase()];
+          console.log(name);
           const playerObj = {
             id: parseInt(id, 10),
             name,
@@ -668,10 +678,17 @@ function getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers) {
         } = team;
         if (teamName) {
           if (playerAName && playerBName && playerCName) {
-            console.log(playerAName, playerBName, playerCName);
-            const playerA = parseInt(allPlayers.find((player) => player.name === playerAName).id, 10);
-            const playerB = parseInt(allPlayers.find((player) => player.name === playerBName).id, 10);
-            const playerC = parseInt(allPlayers.find((player) => player.name === playerCName).id, 10);
+            console.log(teamName, ': ', playerAName, playerBName, playerCName);
+
+            const playerA = parseInt(allPlayers.find(
+              (player) => player.name.toUpperCase() === playerAName.toUpperCase(),
+            ).id, 10);
+            const playerB = parseInt(allPlayers.find(
+              (player) => player.name.toUpperCase() === playerBName.toUpperCase(),
+            ).id, 10);
+            const playerC = parseInt(allPlayers.find(
+              (player) => player.name.toUpperCase() === playerCName.toUpperCase(),
+            ).id, 10);
             const teamMembers = [playerA, playerB, playerC];
             const roster = {
               id: parseInt(teamId, 10),
@@ -681,8 +698,12 @@ function getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers) {
             teamRosters.push(roster);
             // console.log(roster);
           } else if (playerAName && playerBName) {
-            const playerA = parseInt(allPlayers.find((player) => player.name === playerAName).id, 10);
-            const playerB = parseInt(allPlayers.find((player) => player.name === playerBName).id, 10);
+            const playerA = parseInt(allPlayers.find(
+              (player) => player.name.toUpperCase() === playerAName.toUpperCase(),
+            ).id, 10);
+            const playerB = parseInt(allPlayers.find(
+              (player) => player.name.toUpperCase() === playerBName.toUpperCase(),
+            ).id, 10);
             const teamMembers = [playerA, playerB];
             const roster = {
               id: parseInt(teamId, 10),
