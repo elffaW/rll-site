@@ -10,7 +10,7 @@ export async function handler(event, context) {
   console.log('Function `stats-getByPlayerName` invoked');
   const { player } = event.queryStringParameters;
 
-  return client.query(q.Paginate(q.Match(q.Index('stats_by_player_name'), player.toUpperCase())))
+  return client.query(q.Paginate(q.Match(q.Index('stats_by_player_name'), player.toUpperCase()), { size: 5000 }))
     .then((response) => {
       const allRefs = response.data;
       const getAll = allRefs.map((ref) => q.Get(ref));
