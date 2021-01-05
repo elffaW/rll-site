@@ -7,6 +7,7 @@ import {
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import { withTheme } from '@material-ui/core/styles';
 
 import api from './utils/api';
 import { styles as paperStyles } from '../styles/themeStyles';
@@ -126,7 +127,7 @@ class FantasyPlayers extends Component {
   }
 
   render() {
-    const { classes, season } = this.props;
+    const { classes, season, theme } = this.props;
     const {
       players, loading, sortField, sortDirection, statsDisplay,
     } = this.state;
@@ -148,7 +149,7 @@ class FantasyPlayers extends Component {
     for (let i = 0; i < players.length; i++) {
       const player = players[i];
       playerRows.push(
-        <Grid item xs={12} style={!(i % 2) ? { backgroundColor: 'rgba(130, 0, 0, 0.3)' } : {}}>
+        <Grid item xs={12} style={!(i % 2) ? { backgroundColor: theme.palette.secondary.light } : {}}>
           <Grid container alignItems="center" justify="center">
             <Grid item xs={1}>
               <Link to={`/players/${player.name}`} exact>
@@ -248,7 +249,9 @@ FantasyPlayers.propTypes = {
   // eslint-disable-next-line react/no-unused-prop-types
   classes: PropTypes.string,
   season: PropTypes.number,
+  // eslint-disable-next-line react/forbid-prop-types
+  theme: PropTypes.object.isRequired,
 };
 FantasyPlayers.defaultProps = defaultProps;
 
-export default paperStyles(FantasyPlayers);
+export default withTheme(paperStyles(FantasyPlayers));

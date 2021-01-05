@@ -5,6 +5,7 @@ import {
   Grid, CircularProgress, Typography, Button, Paper, Avatar,
 } from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import { withTheme } from '@material-ui/core/styles';
 
 import api from './utils/api';
 import { styles as paperStyles } from '../styles/themeStyles';
@@ -150,7 +151,7 @@ class Standings extends Component {
   }
 
   render() {
-    const { classes, season } = this.props;
+    const { classes, season, theme } = this.props;
     const {
       teams, gamesByTeam, loading, sortField, sortDirection,
     } = this.state;
@@ -159,7 +160,7 @@ class Standings extends Component {
     for (let i = 0; i < teams.length; i++) {
       const team = teams[i];
       teamRows.push(
-        <Grid item xs={12} style={!(i % 2) ? { backgroundColor: 'rgba(130, 0, 0, 0.3)' } : {}}>
+        <Grid item xs={12} style={!(i % 2) ? { backgroundColor: theme.palette.secondary.light } : {}}>
           <Grid container alignItems="center" justify="flex-start">
             <Grid item xs>
               <Typography variant="h4">
@@ -316,7 +317,9 @@ Standings.propTypes = {
   // eslint-disable-next-line react/no-unused-prop-types
   classes: PropTypes.string,
   season: PropTypes.number,
+  // eslint-disable-next-line react/forbid-prop-types
+  theme: PropTypes.object.isRequired,
 };
 Standings.defaultProps = defaultProps;
 
-export default paperStyles(Standings);
+export default withTheme(paperStyles(Standings));
