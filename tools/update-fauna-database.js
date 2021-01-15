@@ -105,7 +105,7 @@ If you see true in the output, the index is "active" and is ready for your queri
       console.log(chalk.cyan('load db'));
       // console.log(JSON.stringify(data, null, 2));
       updateDatabase(process.env.FAUNADB_SECRET, data).then(() => {
-        console.log('Database created');
+        console.log('Database updated');
       }).catch((error) => {
         console.error(error);
       });
@@ -157,13 +157,25 @@ function getDataFromSheets() {
            * 8: ROLES*
            *
            * ROLES sheet removed season 4
+           *
+           * Lots of changes in Season 5
+           * - teams of 2
+           * - Standings simplified
+           * - Schedule replaced by multiple other sheets (ScheduleRows important one)
            */
-          const playersSheet = doc.sheetsByIndex[4];
-          const rolesSheet = doc.sheetsByIndex[8];
-          const rostersSheet = doc.sheetsByIndex[5];
-          const standingsSheet = doc.sheetsByIndex[0];
-          const scheduleSheet = doc.sheetsByIndex[2];
-          const statsSheet = doc.sheetsByIndex[6];
+          // const playersSheet = doc.sheetsByIndex[4];
+          // const rolesSheet = doc.sheetsByIndex[8];
+          // const rostersSheet = doc.sheetsByIndex[5];
+          // const standingsSheet = doc.sheetsByIndex[0];
+          // const scheduleSheet = doc.sheetsByIndex[2];
+          // const statsSheet = doc.sheetsByIndex[6];
+
+          const playersSheet = doc.sheetsByTitle.Players;
+          const rolesSheet = doc.sheetsByTitle.Roles;
+          const rostersSheet = doc.sheetsByTitle.Roster;
+          const standingsSheet = doc.sheetsByTitle.Standings;
+          const scheduleSheet = doc.sheetsByTitle.ScheduleRows;
+          const statsSheet = doc.sheetsByTitle.Stats;
 
           getStatsFromSheets(statsSheet).then((allStats) => {
             getPlayersFromSheets(playersSheet, rolesSheet, allStats).then((players) => {
@@ -584,61 +596,63 @@ function getPlayersFromSheets(playersSheet, rolesSheet, allStats) {
     } else { // SEASON 4 removed roles sheet
       playersSheet.getRows().then((allPlayers) => {
         allPlayers.forEach((player) => {
-          const {
-            ID: id,
-            Name: name,
-            'Rocket League Name': rlName,
-            'Team Assignment': team,
-            Car: car,
-            'Signing Value': signingValue,
-            'Current Value': value,
-            System: system,
-            Country: country,
-            Position: position,
-          } = player;
-          const {
-            score = 0,
-            goals = 0,
-            assists = 0,
-            saves = 0,
-            shots = 0,
-            numMVP = 0,
-            points = 0,
-            gamesPlayed = 0,
-            name: capsName, // we don't use this, but without it `otherStats` will overwrite the name we want
-            ...otherStats
-          } = allStats.statsByPlayer[name.toUpperCase()] || {};
-          const playerObj = {
-            id: parseInt(id, 10),
-            name,
-            rlName,
-            team,
-            car,
-            signingValue,
-            score,
-            goals,
-            assists,
-            saves,
-            shots,
-            numMVP,
-            points,
-            gamesPlayed,
-            ...otherStats,
-            value,
-            system,
-            country,
-            position,
-            season: parseInt(SEASON_NUMBER, 10),
-          };
-          playersRet.push(playerObj);
+          if (player.ID && player.Name) {
+            const {
+              ID: id,
+              Name: name,
+              'Rocket League Name': rlName,
+              'Team Assignment': team,
+              Car: car,
+              'Signing Value': signingValue,
+              'Current Value': value,
+              System: system,
+              Country: country,
+              Position: position,
+            } = player;
+            const {
+              score = 0,
+              goals = 0,
+              assists = 0,
+              saves = 0,
+              shots = 0,
+              numMVP = 0,
+              points = 0,
+              gamesPlayed = 0,
+              name: capsName, // we don't use this, but without it `otherStats` will overwrite the name we want
+              ...otherStats
+            } = allStats.statsByPlayer[name.toUpperCase()] || {};
+            const playerObj = {
+              id: parseInt(id, 10),
+              name,
+              rlName,
+              team,
+              car,
+              signingValue,
+              score,
+              goals,
+              assists,
+              saves,
+              shots,
+              numMVP,
+              points,
+              gamesPlayed,
+              ...otherStats,
+              value,
+              system,
+              country,
+              position,
+              season: parseInt(SEASON_NUMBER, 10),
+            };
+            playersRet.push(playerObj);
 
-          allStats.statsRows.forEach((row) => {
-            const { ...tempRow } = row;
-            if (row.playerName.toUpperCase() === name.toUpperCase() && row.season === parseInt(SEASON_NUMBER, 10)) {
-              tempRow.player = parseInt(id, 10);
-              statsRet.push(tempRow);
-            }
-          });
+            allStats.statsRows.forEach((row) => {
+              const { ...tempRow } = row;
+              if (row.playerName.toUpperCase() === name.toUpperCase() && row.season === parseInt(SEASON_NUMBER, 10)) {
+                tempRow.player = parseInt(id, 10);
+                statsRet.push(tempRow);
+              }
+            });
+          }
         });
         console.log(`Got ${playersRet.length} players from Players`);
         console.log(`Updated ${statsRet.length} stats with Players`);
@@ -698,17 +712,24 @@ function getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers) {
             teamRosters.push(roster);
             // console.log(roster);
           } else if (playerAName && playerBName) {
-            const playerA = parseInt(allPlayers.find(
+            console.log('\t', teamName, ':\t ', playerAName, playerBName);
+
+            const playerAFull = allPlayers.find(
               (player) => player.name.toUpperCase() === playerAName.toUpperCase(),
-            ).id, 10);
-            const playerB = parseInt(allPlayers.find(
+            );
+            const playerA = parseInt(playerAFull.id, 10);
+            const playerAValue = parseFloat(playerAFull.value);
+            const playerBFull = allPlayers.find(
               (player) => player.name.toUpperCase() === playerBName.toUpperCase(),
-            ).id, 10);
+            );
+            const playerB = parseInt(playerBFull.id, 10);
+            const playerBValue = parseFloat(playerBFull.value);
             const teamMembers = [playerA, playerB];
             const roster = {
               id: parseInt(teamId, 10),
               name: teamName,
               members: teamMembers,
+              totalValue: (playerAValue + playerBValue).toFixed(1),
             };
             teamRosters.push(roster);
           }
@@ -719,27 +740,65 @@ function getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers) {
       for (let i = 0, allLen = allStandings.length; i < allLen; i++) {
         const rankedTeam = allStandings[i];
         const {
-          Rank: teamRank, TEAM: rankedName, PTS: teamPts, GF: goalsFor, GA: goalsAgainst, '+/-': plusMinus, W: wins, L: losses, VALUE: teamValue,
+          Rank,
+          RANK: teamRank,
+          TEAM: rankedName,
+          PTS: teamPts,
+          DONG: teamDong,
+          'CURRENT DIVISION ID': curDivision = 1,
+          GF: goalsFor,
+          GA: goalsAgainst,
+          '+/-': plusMinus,
+          W: wins = 0,
+          WINS = 0,
+          L: losses = 0,
+          VALUE: teamValue = 0,
+          SOs: shutouts,
+          'SHUT OUTS': teamShutouts,
         } = rankedTeam;
         if (rankedName && teamRank) {
-          const { id, members } = teamRosters.find((team) => team.name === rankedName);
+          const { id, members, totalValue } = teamRosters.find((team) => team.name === rankedName);
+
+          // do some stupid fixing in case of different header names (from one season to another)
+          let finalPts = teamPts;
+          if (!teamPts) {
+            finalPts = teamDong;
+          }
+          let finalRank = teamRank;
+          if (!teamRank) {
+            finalRank = Rank;
+          }
+          let finalWins = wins;
+          if (!wins) {
+            finalWins = WINS;
+          }
+          let finalShutouts = shutouts;
+          if (!wins) {
+            finalShutouts = teamShutouts;
+          }
+          let finalValue = teamValue;
+          if (teamValue <= 0) {
+            finalValue = totalValue;
+          }
 
           const teamObj = {
             id,
             name: rankedName,
+            curDivision,
             members,
-            rank: teamRank,
-            wins,
-            losses,
+            rank: finalRank,
+            wins: finalWins,
+            losses: losses || 0,
             plusMinus,
             goalsFor,
-            goalsAgainst,
-            points: teamPts,
-            value: teamValue,
+            goalsAgainst: goalsAgainst || 0,
+            points: finalPts,
+            value: finalValue,
+            shutouts: finalShutouts,
             season: parseInt(SEASON_NUMBER, 10),
           };
 
-          // console.log(chalk.cyan(JSON.stringify(teamObj)));
+          console.log(chalk.cyan(JSON.stringify(teamObj)));
 
           teamsRet.push(teamObj);
         }
@@ -766,76 +825,128 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
         let curArena = 'Salty Shores';
         let curGameweek = 1;
         const curSeason = parseInt(SEASON_NUMBER, 10);
-        for (let i = 0, allLen = allGames.length; i < allLen; i++) {
-          const gameRowA = allGames[i];
-          const gameRowB = allGames[i + 1];
-          const gameRowC = allGames[i + 2];
-          const gameRowD = allGames[i + 3];
+        // starting Season 5 we added the ScheduleRows sheet, which made the Schedule more DB-like
+        if (curSeason > 4) {
+          for (let i = 0, allLen = allGames.length; i < allLen; i++) {
+            const curGame = allGames[i];
 
-          if (!gameRowA.Date) {
-            continue; // eslint-disable-line
-          }
-          if (gameRowA.Date.startsWith('Gameweek')) {
-            // eslint-disable-next-line prefer-destructuring
-            curGameweek = gameRowA.Date.split(' ')[1];
-            continue; // eslint-disable-line
-          }
-          if (gameRowA.Arena) {
-            curArena = gameRowA.Arena;
-          }
-
-          const {
-            Date: dateA, 'Time (CT)': timeA, 'Match #': matchNum, Team: teamIdA, G1: game1ScoreA, G2: game2ScoreA,
-          } = gameRowA;
-          const {
-            Team: teamIdB, G1: game1ScoreB, G2: game2ScoreB,
-          } = gameRowB;
-          const dateTime = `${dateA} ${timeA} -0500`;
-          const homeTeam = allTeams.find((team) => team.id === parseInt(teamIdA, 10));
-          const awayTeam = allTeams.find((team) => team.id === parseInt(teamIdB, 10));
-          const homeTeamId = parseInt(homeTeam.id, 10);
-          const awayTeamId = parseInt(awayTeam.id, 10);
-          const game1Obj = {
-            id: parseInt(matchNum, 10),
-            gameTime: dateTime,
-            gameWeek: curGameweek,
-            arena: curArena,
-            homeTeamId,
-            homeTeamScoreA: game1ScoreA,
-            homeTeamScoreB: game2ScoreA,
-            awayTeamId,
-            awayTeamScoreA: game1ScoreB,
-            awayTeamScoreB: game2ScoreB,
-            season: parseInt(SEASON_NUMBER, 10),
-          };
-          gamesRet.push(game1Obj);
-
-          // after season 2 we did 2 games at a time so the schedule sheet changed
-          if (curSeason > 2 && !gameRowC['Time (CT)']) {
             const {
-              'Match #': matchNum2, Team: teamIdA2, G1: game1ScoreA2, G2: game2ScoreA2,
-            } = gameRowC;
+              DATE: gameDate,
+              'TIME CST': gameTime,
+              TYPE: type,
+              ARENA: arena,
+              GAMEWEEK: gameWeek,
+              MATCH: matchNum,
+              GAME: gameNum,
+              ROOM: streamRoom,
+              LEAGUE: curDivision,
+              TM_A: teamNameA,
+              TM_A_ID: teamIdA,
+              TM_A_RNK: teamRankA,
+              TM_A_SCR: teamScoreA,
+              TM_B_ID: teamIdB,
+              TM_B_RNK: teamRankB,
+              TM_B: teamNameB,
+              TM_B_SCR: teamScoreB,
+            } = curGame;
+
+            const dateTime = `${gameDate} ${gameTime} -0500`;
+
+            // for S5 we switch from match-based records to game-based records with matchNum linked
+            const gameObj = {
+              id: parseInt(gameNum, 10),
+              gameTime: dateTime,
+              type,
+              arena,
+              gameWeek,
+              matchNum,
+              gameNum,
+              streamRoom,
+              curDivision,
+              teamNameA,
+              teamIdA,
+              teamRankA,
+              teamScoreA,
+              teamIdB,
+              teamRankB,
+              teamNameB,
+              teamScoreB,
+              season: curSeason,
+            };
+            gamesRet.push(gameObj);
+          }
+        } else {
+          for (let i = 0, allLen = allGames.length; i < allLen; i++) {
+            const gameRowA = allGames[i];
+            const gameRowB = allGames[i + 1];
+            const gameRowC = allGames[i + 2];
+            const gameRowD = allGames[i + 3];
+
+            if (!gameRowA.Date) {
+              continue; // eslint-disable-line
+            }
+            if (gameRowA.Date.startsWith('Gameweek')) {
+              // eslint-disable-next-line prefer-destructuring
+              curGameweek = gameRowA.Date.split(' ')[1];
+              continue; // eslint-disable-line
+            }
+            if (gameRowA.Arena) {
+              curArena = gameRowA.Arena;
+            }
+
             const {
-              Team: teamIdB2, G1: game1ScoreB2, G2: game2ScoreB2,
-            } = gameRowD;
-            const homeTeam2 = allTeams.find((team) => team.id === parseInt(teamIdA2, 10));
-            const awayTeam2 = allTeams.find((team) => team.id === parseInt(teamIdB2, 10));
-            const homeTeamId2 = parseInt(homeTeam2.id, 10);
-            const awayTeamId2 = parseInt(awayTeam2.id, 10);
-            const game2Obj = {
-              id: parseInt(matchNum2, 10),
+              Date: dateA, 'Time (CT)': timeA, 'Match #': matchNum, Team: teamIdA, G1: game1ScoreA, G2: game2ScoreA,
+            } = gameRowA;
+            const {
+              Team: teamIdB, G1: game1ScoreB, G2: game2ScoreB,
+            } = gameRowB;
+            const dateTime = `${dateA} ${timeA} -0500`;
+            const homeTeam = allTeams.find((team) => team.id === parseInt(teamIdA, 10));
+            const awayTeam = allTeams.find((team) => team.id === parseInt(teamIdB, 10));
+            const homeTeamId = parseInt(homeTeam.id, 10);
+            const awayTeamId = parseInt(awayTeam.id, 10);
+            const game1Obj = {
+              id: parseInt(matchNum, 10),
               gameTime: dateTime,
               gameWeek: curGameweek,
               arena: curArena,
-              homeTeamId: homeTeamId2,
-              homeTeamScoreA: game1ScoreA2,
-              homeTeamScoreB: game2ScoreA2,
-              awayTeamId: awayTeamId2,
-              awayTeamScoreA: game1ScoreB2,
-              awayTeamScoreB: game2ScoreB2,
+              homeTeamId,
+              homeTeamScoreA: game1ScoreA,
+              homeTeamScoreB: game2ScoreA,
+              awayTeamId,
+              awayTeamScoreA: game1ScoreB,
+              awayTeamScoreB: game2ScoreB,
               season: parseInt(SEASON_NUMBER, 10),
             };
-            gamesRet.push(game2Obj);
+            gamesRet.push(game1Obj);
+
+            // after season 2 we did 2 games at a time so the schedule sheet changed
+            if (curSeason > 2 && !gameRowC['Time (CT)']) {
+              const {
+                'Match #': matchNum2, Team: teamIdA2, G1: game1ScoreA2, G2: game2ScoreA2,
+              } = gameRowC;
+              const {
+                Team: teamIdB2, G1: game1ScoreB2, G2: game2ScoreB2,
+              } = gameRowD;
+              const homeTeam2 = allTeams.find((team) => team.id === parseInt(teamIdA2, 10));
+              const awayTeam2 = allTeams.find((team) => team.id === parseInt(teamIdB2, 10));
+              const homeTeamId2 = parseInt(homeTeam2.id, 10);
+              const awayTeamId2 = parseInt(awayTeam2.id, 10);
+              const game2Obj = {
+                id: parseInt(matchNum2, 10),
+                gameTime: dateTime,
+                gameWeek: curGameweek,
+                arena: curArena,
+                homeTeamId: homeTeamId2,
+                homeTeamScoreA: game1ScoreA2,
+                homeTeamScoreB: game2ScoreA2,
+                awayTeamId: awayTeamId2,
+                awayTeamScoreA: game1ScoreB2,
+                awayTeamScoreB: game2ScoreB2,
+                season: parseInt(SEASON_NUMBER, 10),
+              };
+              gamesRet.push(game2Obj);
+            }
           }
         }
         console.log(`Got ${gamesRet.length} games from Schedule`);
@@ -866,6 +977,8 @@ function updateDatabase(key, data) {
       insertQueries.push(q.Create(q.Collection(collectionKey), { data: record }));
     });
   });
+
+  console.log('number of insert queries: ', insertQueries.length);
 
   return client.query(updateQueries)
     .then(() => {
