@@ -752,6 +752,7 @@ function getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers) {
           W: wins = 0,
           WINS = 0,
           L: losses = 0,
+          LOSSES = 0,
           VALUE: teamValue = 0,
           SOs: shutouts,
           'SHUT OUTS': teamShutouts,
@@ -772,6 +773,10 @@ function getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers) {
           if (!wins) {
             finalWins = WINS;
           }
+          let finalLosses = losses;
+          if (!losses) {
+            finalLosses = LOSSES;
+          }
           let finalShutouts = shutouts;
           if (!wins) {
             finalShutouts = teamShutouts;
@@ -788,7 +793,7 @@ function getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers) {
             members,
             rank: finalRank,
             wins: finalWins,
-            losses: losses || 0,
+            losses: finalLosses || 0,
             plusMinus,
             goalsFor,
             goalsAgainst: goalsAgainst || 0,
@@ -798,7 +803,7 @@ function getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers) {
             season: parseInt(SEASON_NUMBER, 10),
           };
 
-          console.log(chalk.cyan(JSON.stringify(teamObj)));
+          // console.log(chalk.cyan(JSON.stringify(teamObj)));
 
           teamsRet.push(teamObj);
         }
@@ -852,7 +857,7 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
 
             const dateTime = `${gameDate} ${gameTime} -0500`;
 
-            // for S5 we switch from match-based records to game-based records with matchNum linked
+            // for S5 we switch from match-based records to game-based records with matchNum specified to link
             const gameObj = {
               id: parseInt(gameNum, 10),
               gameTime: dateTime,
@@ -863,14 +868,14 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
               gameNum,
               streamRoom,
               curDivision,
-              teamNameA,
-              teamIdA,
-              teamRankA,
-              teamScoreA,
-              teamIdB,
-              teamRankB,
-              teamNameB,
-              teamScoreB,
+              homeTeamName: teamNameA,
+              homeTeamId: parseInt(teamIdA, 10),
+              homeTeamRank: teamRankA,
+              homeTeamScore: teamScoreA,
+              awayTeamId: parseInt(teamIdB, 10),
+              awayTeamRank: teamRankB,
+              awayTeamName: teamNameB,
+              awayTeamScore: teamScoreB,
               season: curSeason,
             };
             gamesRet.push(gameObj);
