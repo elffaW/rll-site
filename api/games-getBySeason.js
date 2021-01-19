@@ -11,7 +11,7 @@ export async function handler(event, context) {
   const { season } = event.queryStringParameters;
   const seasonNum = parseInt(season, 10);
 
-  return client.query(q.Paginate(q.Match(q.Index('games_by_season'), seasonNum), { size: 200 }))
+  return client.query(q.Paginate(q.Match(q.Index('games_by_season'), seasonNum), { size: 500 }))
     .then((response) => {
       const allRefs = response.data;
       const getAll = allRefs.map((ref) => q.Get(ref));
