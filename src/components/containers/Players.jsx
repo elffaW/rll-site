@@ -295,10 +295,10 @@ class Players extends Component {
       memo.valueTotal = (memo.valueTotal || 0) + parseFloat(row.value);
       memo.valueAvg = (memo.valueTotal || 0) / (memo.count || 1);
       // from advanced but added to regular
-      memo.numDemosInflicted = (memo.numDemosInflicted || 0) + parseInt(row.numDemosInflicted, 10);
-      memo.numDemosTaken = (memo.numDemosTaken || 0) + parseInt(row.numDemosTaken, 10);
-      memo.totalClears = (memo.totalClears || 0) + parseInt(row.totalClears, 10);
-      memo.totalPasses = (memo.totalPasses || 0) + parseInt(row.totalPasses, 10);
+      memo.numDemosInflicted = (memo.numDemosInflicted || 0) + parseInt(row.numDemosInflicted || 0, 10);
+      memo.numDemosTaken = (memo.numDemosTaken || 0) + parseInt(row.numDemosTaken || 0, 10);
+      memo.totalClears = (memo.totalClears || 0) + parseInt(row.totalClears || 0, 10);
+      memo.totalPasses = (memo.totalPasses || 0) + parseInt(row.totalPasses || 0, 10);
       memo.numDemosInflictedAvg = (memo.numDemosInflicted || 0) / (memo.gamesPlayedTotal || 1);
       memo.numDemosTakenAvg = (memo.numDemosTaken || 0) / (memo.gamesPlayedTotal || 1);
       memo.totalClearsAvg = (memo.totalClears || 0) / (memo.gamesPlayedTotal || 1);
@@ -306,43 +306,43 @@ class Players extends Component {
       // advanced stats
       // memo.scorePercentOfTeam = (memo.scorePercentOfTeam || 0) + parseFloat(row.scorePercentOfTeam);
       // memo.scoreRatingVsTeam = (memo.scoreRatingVsTeam || 0) + parseFloat(row.scoreRatingVsTeam);
-      memo.ballTouches = (memo.ballTouches || 0) + parseInt(row.ballTouches, 10);
-      memo.timeHighInAir = (memo.timeHighInAir || 0) + parseFloat(row.timeHighInAir);
-      memo.timeLowInAir = (memo.timeLowInAir || 0) + parseFloat(row.timeLowInAir);
-      memo.totalAerials = (memo.totalAerials || 0) + parseInt(row.totalAerials, 10);
-      memo.turnovers = (memo.turnovers || 0) + parseInt(row.turnovers, 10);
-      memo.takeaways = (memo.takeaways || 0) + parseInt(row.takeaways, 10);
-      memo.numKickoffFirstTouch = (memo.numKickoffFirstTouch || 0) + parseInt(row.numKickoffFirstTouch, 10);
-      memo.numKickoffAfk = (memo.numKickoffAfk || 0) + parseInt(row.numKickoffAfk, 10);
-      memo.boostUsage = (memo.boostUsage || 0) + parseFloat(row.boostUsage);
-      memo.numSmallBoosts = (memo.numSmallBoosts || 0) + parseInt(row.numSmallBoosts, 10);
-      memo.numLargeBoosts = (memo.numLargeBoosts || 0) + parseInt(row.numLargeBoosts, 10);
-      memo.wastedUsage = (memo.wastedUsage || 0) + parseFloat(row.wastedUsage);
-      memo.averageBoostLevel = (memo.averageBoostLevel || 0) + parseFloat(row.averageBoostLevel);
-      memo.numStolenBoosts = (memo.numStolenBoosts || 0) + parseInt(row.numStolenBoosts, 10);
-      memo.averageSpeed = (memo.averageSpeed || 0) + parseFloat(row.averageSpeed);
-      memo.averageHitDistance = (memo.averageHitDistance || 0) + parseFloat(row.averageHitDistance);
-      memo.timeAtSlowSpeed = (memo.timeAtSlowSpeed || 0) + parseFloat(row.timeAtSlowSpeed);
-      memo.timeAtBoostSpeed = (memo.timeAtBoostSpeed || 0) + parseFloat(row.timeAtBoostSpeed);
-      memo.timeAtSuperSonic = (memo.timeAtSuperSonic || 0) + parseFloat(row.timeAtSuperSonic);
-      memo.timeBallcam = (memo.timeBallcam || 0) + parseFloat(row.timeBallcam);
-      memo.timeOnWall = (memo.timeOnWall || 0) + parseFloat(row.timeOnWall);
-      memo.timeMostForwardPlayer = (memo.timeMostForwardPlayer || 0) + parseFloat(row.timeMostForwardPlayer);
-      memo.timeMostBackPlayer = (memo.timeMostBackPlayer || 0) + parseFloat(row.timeMostBackPlayer);
-      memo.timeBetweenPlayers = (memo.timeBetweenPlayers || 0) + parseFloat(row.timeBetweenPlayers);
-      memo.timeBehindBall = (memo.timeBehindBall || 0) + parseFloat(row.timeBehindBall);
-      memo.timeInFrontBall = (memo.timeInFrontBall || 0) + parseFloat(row.timeInFrontBall);
-      memo.ballHitForwardDist = (memo.ballHitForwardDist || 0) + parseFloat(row.ballHitForwardDist);
-      memo.ballHitBackwardDist = (memo.ballHitBackwardDist || 0) + parseFloat(row.ballHitBackwardDist);
-      memo.timeCloseToBall = (memo.timeCloseToBall || 0) + parseFloat(row.timeCloseToBall);
-      memo.totalCarries = (memo.totalCarries || 0) + parseInt(row.totalCarries, 10);
-      memo.totalCarryDistance = (memo.totalCarryDistance || 0) + parseFloat(row.totalCarryDistance);
-      memo.totalDribbles = (memo.totalDribbles || 0) + parseInt(row.totalDribbles, 10);
-      memo.usefulHits = (memo.usefulHits || 0) + parseInt(row.usefulHits, 10);
-      memo.timeInGame = (memo.timeInGame || 0) + parseFloat(row.timeInGame);
-      memo.timeInDefendingThird = (memo.timeInDefendingThird || 0) + parseFloat(row.timeInDefendingThird);
-      memo.timeInNeutralThird = (memo.timeInNeutralThird || 0) + parseFloat(row.timeInNeutralThird);
-      memo.timeInAttackingThird = (memo.timeInAttackingThird || 0) + parseFloat(row.timeInAttackingThird);
+      memo.ballTouches = (memo.ballTouches || 0) + parseInt(row.ballTouches || 0, 10);
+      memo.timeHighInAir = (memo.timeHighInAir || 0) + parseFloat(row.timeHighInAir || 0);
+      memo.timeLowInAir = (memo.timeLowInAir || 0) + parseFloat(row.timeLowInAir || 0);
+      memo.totalAerials = (memo.totalAerials || 0) + parseInt(row.totalAerials || 0, 10);
+      memo.turnovers = (memo.turnovers || 0) + parseInt(row.turnovers || 0, 10);
+      memo.takeaways = (memo.takeaways || 0) + parseInt(row.takeaways || 0, 10);
+      memo.numKickoffFirstTouch = (memo.numKickoffFirstTouch || 0) + parseInt(row.numKickoffFirstTouch || 0, 10);
+      memo.numKickoffAfk = (memo.numKickoffAfk || 0) + parseInt(row.numKickoffAfk || 0, 10);
+      memo.boostUsage = (memo.boostUsage || 0) + parseFloat(row.boostUsage || 0);
+      memo.numSmallBoosts = (memo.numSmallBoosts || 0) + parseInt(row.numSmallBoosts || 0, 10);
+      memo.numLargeBoosts = (memo.numLargeBoosts || 0) + parseInt(row.numLargeBoosts || 0, 10);
+      memo.wastedUsage = (memo.wastedUsage || 0) + parseFloat(row.wastedUsage || 0);
+      memo.averageBoostLevel = (memo.averageBoostLevel || 0) + parseFloat(row.averageBoostLevel || 0);
+      memo.numStolenBoosts = (memo.numStolenBoosts || 0) + parseInt(row.numStolenBoosts || 0, 10);
+      memo.averageSpeed = (memo.averageSpeed || 0) + parseFloat(row.averageSpeed || 0);
+      memo.averageHitDistance = (memo.averageHitDistance || 0) + parseFloat(row.averageHitDistance || 0);
+      memo.timeAtSlowSpeed = (memo.timeAtSlowSpeed || 0) + parseFloat(row.timeAtSlowSpeed || 0);
+      memo.timeAtBoostSpeed = (memo.timeAtBoostSpeed || 0) + parseFloat(row.timeAtBoostSpeed || 0);
+      memo.timeAtSuperSonic = (memo.timeAtSuperSonic || 0) + parseFloat(row.timeAtSuperSonic || 0);
+      memo.timeBallcam = (memo.timeBallcam || 0) + parseFloat(row.timeBallcam || 0);
+      memo.timeOnWall = (memo.timeOnWall || 0) + parseFloat(row.timeOnWall || 0);
+      // memo.timeMostForwardPlayer = (memo.timeMostForwardPlayer || 0) + parseFloat(row.timeMostForwardPlayer || 0);
+      // memo.timeMostBackPlayer = (memo.timeMostBackPlayer || 0) + parseFloat(row.timeMostBackPlayer || 0);
+      // memo.timeBetweenPlayers = (memo.timeBetweenPlayers || 0) + parseFloat(row.timeBetweenPlayers || 0);
+      memo.timeBehindBall = (memo.timeBehindBall || 0) + parseFloat(row.timeBehindBall || 0);
+      memo.timeInFrontBall = (memo.timeInFrontBall || 0) + parseFloat(row.timeInFrontBall || 0);
+      memo.ballHitForwardDist = (memo.ballHitForwardDist || 0) + parseFloat(row.ballHitForwardDist || 0);
+      memo.ballHitBackwardDist = (memo.ballHitBackwardDist || 0) + parseFloat(row.ballHitBackwardDist || 0);
+      memo.timeCloseToBall = (memo.timeCloseToBall || 0) + parseFloat(row.timeCloseToBall || 0);
+      memo.totalCarries = (memo.totalCarries || 0) + parseInt(row.totalCarries || 0, 10);
+      memo.totalCarryDistance = (memo.totalCarryDistance || 0) + parseFloat(row.totalCarryDistance || 0);
+      memo.totalDribbles = (memo.totalDribbles || 0) + parseInt(row.totalDribbles || 0, 10);
+      memo.usefulHits = (memo.usefulHits || 0) + parseInt(row.usefulHits || 0, 10);
+      memo.timeInGame = (memo.timeInGame || 0) + parseFloat(row.timeInGame || 0);
+      memo.timeInDefendingThird = (memo.timeInDefendingThird || 0) + parseFloat(row.timeInDefendingThird || 0);
+      memo.timeInNeutralThird = (memo.timeInNeutralThird || 0) + parseFloat(row.timeInNeutralThird || 0);
+      memo.timeInAttackingThird = (memo.timeInAttackingThird || 0) + parseFloat(row.timeInAttackingThird || 0);
       // advanced AVERAGE stats
       // memo.scorePercentOfTeamAvg = (memo.scorePercentOfTeam || 0) / (memo.gamesPlayedTotal || 1);
       // memo.scoreRatingVsTeamAvg = (memo.scoreRatingVsTeam || 0) / (memo.gamesPlayedTotal || 1);
@@ -367,9 +367,9 @@ class Players extends Component {
       memo.timeAtSuperSonicAvg = (memo.timeAtSuperSonic || 0) / (memo.gamesPlayedTotal || 1);
       memo.timeBallcamAvg = (memo.timeBallcam || 0) / (memo.gamesPlayedTotal || 1);
       memo.timeOnWallAvg = (memo.timeOnWall || 0) / (memo.gamesPlayedTotal || 1);
-      memo.timeMostForwardPlayerAvg = (memo.timeMostForwardPlayer || 0) / (memo.gamesPlayedTotal || 1);
-      memo.timeMostBackPlayerAvg = (memo.timeMostBackPlayer || 0) / (memo.gamesPlayedTotal || 1);
-      memo.timeBetweenPlayersAvg = (memo.timeBetweenPlayers || 0) / (memo.gamesPlayedTotal || 1);
+      // memo.timeMostForwardPlayerAvg = (memo.timeMostForwardPlayer || 0) / (memo.gamesPlayedTotal || 1);
+      // memo.timeMostBackPlayerAvg = (memo.timeMostBackPlayer || 0) / (memo.gamesPlayedTotal || 1);
+      // memo.timeBetweenPlayersAvg = (memo.timeBetweenPlayers || 0) / (memo.gamesPlayedTotal || 1);
       memo.timeBehindBallAvg = (memo.timeBehindBall || 0) / (memo.gamesPlayedTotal || 1);
       memo.timeInFrontBallAvg = (memo.timeInFrontBall || 0) / (memo.gamesPlayedTotal || 1);
       memo.ballHitForwardDistAvg = (memo.ballHitForwardDist || 0) / (memo.gamesPlayedTotal || 1);
@@ -814,21 +814,21 @@ class Players extends Component {
         template: (val) => val.toFixed(0),
         sortBy: (row) => (Number.isNaN(row.timeOnWall) ? 0 : row.timeOnWall),
       }, {
-        title: 'Time Most Forward',
-        value: 'timeMostForwardPlayer',
-        template: (val) => val.toFixed(0),
-        sortBy: (row) => (Number.isNaN(row.timeMostForwardPlayer) ? 0 : row.timeMostForwardPlayer),
-      }, {
-        title: 'Time Most Back',
-        value: 'timeMostBackPlayer',
-        template: (val) => val.toFixed(0),
-        sortBy: (row) => (Number.isNaN(row.timeMostBackPlayer) ? 0 : row.timeMostBackPlayer),
-      }, {
-        title: 'Time Between',
-        value: 'timeBetweenPlayers',
-        template: (val) => val.toFixed(0),
-        sortBy: (row) => (Number.isNaN(row.timeBetweenPlayers) ? 0 : row.timeBetweenPlayers),
-      }, {
+      //   title: 'Time Most Forward',
+      //   value: 'timeMostForwardPlayer',
+      //   template: (val) => val.toFixed(0),
+      //   sortBy: (row) => (Number.isNaN(row.timeMostForwardPlayer) ? 0 : row.timeMostForwardPlayer),
+      // }, {
+      //   title: 'Time Most Back',
+      //   value: 'timeMostBackPlayer',
+      //   template: (val) => val.toFixed(0),
+      //   sortBy: (row) => (Number.isNaN(row.timeMostBackPlayer) ? 0 : row.timeMostBackPlayer),
+      // }, {
+      //   title: 'Time Between',
+      //   value: 'timeBetweenPlayers',
+      //   template: (val) => val.toFixed(0),
+      //   sortBy: (row) => (Number.isNaN(row.timeBetweenPlayers) ? 0 : row.timeBetweenPlayers),
+      // }, {
         title: 'Time Behind Ball',
         value: 'timeBehindBall',
         template: (val) => val.toFixed(0),
@@ -901,21 +901,21 @@ class Players extends Component {
         template: (val) => val.toFixed(1),
         sortBy: (row) => (Number.isNaN(row.timeOnWallAvg) ? 0 : row.timeOnWallAvg),
       }, {
-        title: 'Time Most Forward PG',
-        value: 'timeMostForwardPlayerAvg',
-        template: (val) => val.toFixed(1),
-        sortBy: (row) => (Number.isNaN(row.timeMostForwardPlayerAvg) ? 0 : row.timeMostForwardPlayerAvg),
-      }, {
-        title: 'Time Most Back PG',
-        value: 'timeMostBackPlayerAvg',
-        template: (val) => val.toFixed(1),
-        sortBy: (row) => (Number.isNaN(row.timeMostBackPlayerAvg) ? 0 : row.timeMostBackPlayerAvg),
-      }, {
-        title: 'Time Between PG',
-        value: 'timeBetweenPlayersAvg',
-        template: (val) => val.toFixed(1),
-        sortBy: (row) => (Number.isNaN(row.timeBetweenPlayersAvg) ? 0 : row.timeBetweenPlayersAvg),
-      }, {
+      //   title: 'Time Most Forward PG',
+      //   value: 'timeMostForwardPlayerAvg',
+      //   template: (val) => val.toFixed(1),
+      //   sortBy: (row) => (Number.isNaN(row.timeMostForwardPlayerAvg) ? 0 : row.timeMostForwardPlayerAvg),
+      // }, {
+      //   title: 'Time Most Back PG',
+      //   value: 'timeMostBackPlayerAvg',
+      //   template: (val) => val.toFixed(1),
+      //   sortBy: (row) => (Number.isNaN(row.timeMostBackPlayerAvg) ? 0 : row.timeMostBackPlayerAvg),
+      // }, {
+      //   title: 'Time Between PG',
+      //   value: 'timeBetweenPlayersAvg',
+      //   template: (val) => val.toFixed(1),
+      //   sortBy: (row) => (Number.isNaN(row.timeBetweenPlayersAvg) ? 0 : row.timeBetweenPlayersAvg),
+      // }, {
         title: 'Time Behind Ball PG',
         value: 'timeBehindBallAvg',
         template: (val) => val.toFixed(1),

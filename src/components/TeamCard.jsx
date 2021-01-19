@@ -23,8 +23,8 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   teamIcon: {
-    width: theme.spacing(12),
-    height: theme.spacing(12),
+    width: theme.spacing(10),
+    height: theme.spacing(10),
   },
   teamName: {
     fontVariant: 'small-caps',
@@ -87,8 +87,47 @@ function TeamCard(props) {
     team, inGame, showDetails, winner, totalTeams, gameweeks, winlossdraw,
   } = props;
   const classes = useStyles();
+
+  // for promotion/relegation style season where future games may not know specific teams yet
+  if (!team || !team.name) {
+    const upperLowerSplit = 5;
+    let logoSrc = require(`../images/RLL_logo.png`); // eslint-disable-line
+    if (team.rank > upperLowerSplit) {
+      logoSrc = require(`../images/RLL_logo_lower.png`); // eslint-disable-line
+    }
+    return (
+      <Grid item xs={12}>
+        <Paper className={showDetails ? classes.paper : classes.mainPaper}>
+          <Grid container alignItems="center" justify="flex-start">
+            <Grid item xs={inGame ? 2 : 1}>
+              <Typography variant="h2" className={`${classes.teamDesc} ${classes.teamRank}`}>
+                {team.rank}
+              </Typography>
+            </Grid>
+            <Grid item xs={inGame ? 2 : 1}>
+              <Avatar src={logoSrc} variant="square" className={classes.teamIcon} />
+            </Grid>
+            <Grid item xs={inGame ? 8 : 4}>
+              <Grid container alignItems="flex-end" justify="flex-start" direction="row">
+                <Grid item>
+                  <Link to={showDetails ? '/teams' : `/teams/${team.name}`} exact>
+                    <Typography
+                      variant={showDetails ? 'h2' : 'h4'}
+                      className={`${classes.teamName} ${showDetails ? classes.bigName : ''}`}
+                    >
+                      TBD
+                    </Typography>
+                  </Link>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Paper>
+      </Grid>
+    );
+  }
   const defaultLogo = 'DINOBOTS';
-  const logoSrc = require(`../images/LOGO_${team.name.toUpperCase() || defaultLogo}.png`); // eslint-disable-line
+  const logoSrc = require(`../images/LOGO_${team?.name?.toUpperCase?.() || defaultLogo}.png`); // eslint-disable-line
 
   const players = team.members;
   // let rankSuffix = 'th';
@@ -186,6 +225,9 @@ function TeamCard(props) {
     teamValue += players.map((p) => parseFloat(p.value)).reduce((accum, cur) => accum + cur).toFixed(2);
     teamValue += 'M';
   }
+  if (teamValue.indexOf('$') < 0) {
+    teamValue = `$${teamValue}M`;
+  }
 
   const totalValue = players.map((p) => parseFloat(p.value)).reduce((accum, cur) => accum + cur);
   const p1 = players[0];
@@ -210,7 +252,7 @@ function TeamCard(props) {
     <Grid item xs={12}>
       <Paper className={showDetails ? classes.paper : classes.mainPaper} style={winner ? { boxShadow: 'inset 0 0 0.75rem gold' } : null}>
         <Grid container alignItems="center" justify="flex-start">
-          <Grid item xs={1}>
+          <Grid item xs={inGame ? 2 : 1}>
             <Typography variant="h2" className={`${classes.teamDesc} ${classes.teamRank} ${rankClass}`}>
               {team.rank}
             </Typography>
@@ -218,12 +260,12 @@ function TeamCard(props) {
           <Grid item xs={inGame ? 2 : 1}>
             <Avatar src={logoSrc} variant="square" className={classes.teamIcon} />
           </Grid>
-          <Grid item xs={inGame ? 9 : 4}>
+          <Grid item xs={inGame ? 8 : 4}>
             <Grid container alignItems="flex-end" justify="flex-start" direction="row">
               <Grid item>
                 <Link to={showDetails ? '/teams' : `/teams/${team.name}`} exact>
                   <Typography
-                    variant={showDetails ? 'h2' : 'h3'}
+                    variant={showDetails ? 'h2' : 'h4'}
                     className={`${classes.teamName} ${showDetails ? classes.bigName : ''}`}
                     style={team.name.length > 14 ? { letterSpacing: `calc(0.01vw - ${team.name.length / 5}px)` } : null}
                   >

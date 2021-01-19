@@ -30,6 +30,20 @@ class Stats extends Component {
           <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
             <Grid item xs={12} style={{ height: 'calc(100vh - 200px)' }}>
               <Paper className={classes.statsPaper}>
+                <Typography variant="h3" style={{ padding: '8px 0 8px 0', textShadow: '1px 1px 1px black' }}>Season 5 Stats</Typography>
+                <iframe
+                  title="rll-stats-season-5"
+                  height="100%"
+                  width="99%"
+                  src="https://public.flourish.studio/story/725885/embed"
+                >
+                  {/* <div class="flourish-embed" data-src="story/725885"><script src="https://public.flourish.studio/resources/embed.js"></script></div> */}
+                </iframe>
+              </Paper>
+            </Grid>
+            <Grid item xs={12}><br /></Grid>
+            <Grid item xs={12} style={{ height: 'calc(100vh - 200px)' }}>
+              <Paper className={classes.statsPaper}>
                 <Typography variant="h3" style={{ padding: '8px 0 8px 0', textShadow: '1px 1px 1px black' }}>Season 4 Stats</Typography>
                 <iframe
                   title="rll-stats-season-4"

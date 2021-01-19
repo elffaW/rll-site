@@ -8,15 +8,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import { timezoneLookup } from './utils/dateUtils';
 
 const useStyles = makeStyles((theme) => ({
-  darkPaper: {
-    textAlign: 'center',
-    color: theme.otherColors.text.light,
-    backgroundColor: theme.palette.primary.dark,
-  },
   teamName: {
     fontVariant: 'small-caps',
     float: 'left',
-    color: 'rgba(0, 0, 0, 0.87)',
+    color: 'whitesmoke',
+    textShadow: '0 0 3px black',
   },
   subtitle: {
     fontVariant: 'small-caps',
@@ -39,6 +35,8 @@ function GameCardCompact(props) {
     team2,
     time,
     arena,
+    matchResult,
+    matchComplete,
     isPlayoffs,
     homeScoreA,
     homeScoreB,
@@ -50,6 +48,7 @@ function GameCardCompact(props) {
     awayScoreC,
     awayScoreD,
     awayScoreE,
+    upcomingOverview,
   } = props;
   const classes = useStyles();
 
@@ -60,13 +59,15 @@ function GameCardCompact(props) {
   }
   const gameLocation = arena;
 
-  let gamesPlayed = 2;
+  let gamesPlayed = 1;
   if (parseInt(homeScoreE, 10) || parseInt(awayScoreE, 10)) {
     gamesPlayed = 5;
   } else if (parseInt(homeScoreD, 10) || parseInt(awayScoreD, 10)) {
     gamesPlayed = 4;
   } else if (parseInt(homeScoreC, 10) || parseInt(awayScoreC, 10)) {
     gamesPlayed = 3;
+  } else if (parseInt(homeScoreB, 10) || parseInt(awayScoreB, 10)) {
+    gamesPlayed = 2;
   }
   const gameCellSize = Math.floor(12 / gamesPlayed);
 
@@ -77,50 +78,57 @@ function GameCardCompact(props) {
                     || parseInt(awayScoreB, 10)
                     || parseInt(homeScoreC, 10)
                     || parseInt(awayScoreC, 10));
+  let homeWinnerOverall = false;
+  let awayWinnerOverall = false;
   let homeWinnerA = false;
   let homeWinnerB = false;
   let homeWinnerC = false;
   let homeWinnerD = false;
   let homeWinnerE = false;
-  let homeWinnerOverall = false;
-  let awayWinnerOverall = false;
-  if (hasScores) {
+  if (!upcomingOverview) {
     homeWinnerA = parseInt(homeScoreA, 10) > parseInt(awayScoreA, 10);
     homeWinnerB = parseInt(homeScoreB, 10) > parseInt(awayScoreB, 10);
     homeWinnerC = parseInt(homeScoreC, 10) > parseInt(awayScoreC, 10);
     homeWinnerD = parseInt(homeScoreD, 10) > parseInt(awayScoreD, 10);
     homeWinnerE = parseInt(homeScoreE, 10) > parseInt(awayScoreE, 10);
 
-    let homeWins = homeWinnerA ? 1 : 0;
-    homeWins += homeWinnerB ? 1 : 0;
-    homeWins += homeWinnerC ? 1 : 0;
-    homeWins += homeWinnerD ? 1 : 0;
-    homeWins += homeWinnerE ? 1 : 0;
+    if (!!matchResult && matchComplete) {
+      homeWinnerOverall = (matchResult === 'W');
+      awayWinnerOverall = (matchResult === 'L');
+    } else if (hasScores) {
+      let homeWins = homeWinnerA ? 1 : 0;
+      homeWins += homeWinnerB ? 1 : 0;
+      homeWins += homeWinnerC ? 1 : 0;
+      homeWins += homeWinnerD ? 1 : 0;
+      homeWins += homeWinnerE ? 1 : 0;
 
-    let awayWins = !homeWinnerA ? 1 : 0;
-    awayWins += !homeWinnerB ? 1 : 0;
-    awayWins += !homeWinnerC ? 1 : 0;
-    awayWins += !homeWinnerD ? 1 : 0;
-    awayWins += !homeWinnerE ? 1 : 0;
+      let awayWins = !homeWinnerA ? 1 : 0;
+      awayWins += !homeWinnerB ? 1 : 0;
+      awayWins += !homeWinnerC ? 1 : 0;
+      awayWins += !homeWinnerD ? 1 : 0;
+      awayWins += !homeWinnerE ? 1 : 0;
 
-    // console.log('homeWins', homeWins);
-    // console.log('awayWins', awayWins);
+      // console.log('homeWins', homeWins);
+      // console.log('awayWins', awayWins);
 
-    homeWinnerOverall = isPlayoffs
-      ? (homeWins > Math.floor(gamesPlayed / 2))
-      : homeWinnerA && homeWinnerB;
-    awayWinnerOverall = isPlayoffs
-      ? (awayWins > Math.floor(gamesPlayed / 2))
-      : !homeWinnerA && !homeWinnerB;
+      homeWinnerOverall = isPlayoffs
+        ? (homeWins > Math.floor(gamesPlayed / 2))
+        : homeWinnerA && homeWinnerB;
+      awayWinnerOverall = isPlayoffs
+        ? (awayWins > Math.floor(gamesPlayed / 2))
+        : !homeWinnerA && !homeWinnerB;
+    }
   }
 
   const homeStyle = {};
   const awayStyle = {};
   if (homeWinnerOverall) {
-    homeStyle.color = '#8e8e8e';
+    homeStyle.color = 'whitesmoke';
+    awayStyle.color = '#8e8e8e';
     if (isPlayoffs) awayStyle.textDecoration = 'line-through';
   } else if (awayWinnerOverall) {
-    awayStyle.color = '#8e8e8e';
+    homeStyle.color = '#8e8e8e';
+    awayStyle.color = 'whitesmoke';
     if (isPlayoffs) homeStyle.textDecoration = 'line-through';
   }
 
@@ -131,16 +139,18 @@ function GameCardCompact(props) {
     awayStyle.letterSpacing = `calc(0.05vw - ${team2.name.length / 8}px)`;
   }
 
+  // const divisionLogo = division === '1'
+  //   ? require('../images/RLL_logo.png')
+  //   : require('../images/RLL_logo_lower.png');
 
   return (
     <Grid container alignItems="center" justify="flex-start">
-      <Grid item xs={2}>
+      <Grid item xs={upcomingOverview ? 2 : 1}>
         <Grid container spacing={0} direction="column" alignItems="flex-start" justify="flex-start">
           <Grid item xs>
             <Typography variant="h4">
               <Grid container spacing={0} direction="row" alignItems="flex-start" justify="space-around">
                 {team1.rank}
-                <Avatar src={team1.logo} variant="square" />
               </Grid>
             </Typography>
           </Grid>
@@ -148,16 +158,17 @@ function GameCardCompact(props) {
             <Typography variant="h4">
               <Grid container spacing={0} direction="row" alignItems="flex-start" justify="space-around">
                 {team2.rank}
-                <Avatar src={team2.logo} variant="square" />
               </Grid>
             </Typography>
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={gamesPlayed > 3 ? 6 : 7}>
+      {/* eslint-disable-next-line no-nested-ternary */}
+      <Grid item xs={upcomingOverview ? 10 : gamesPlayed > 3 ? 7 : 8}>
         <Grid container spacing={0} direction="column" alignItems="flex-start" justify="flex-start">
           <Grid item xs>
-            <Grid container spacing={0} direction="row" alignItems="flex-start" justify="space-around">
+            <Grid container spacing={0} direction="row" alignItems="center" justify="space-between">
+              <Avatar src={team1.logo} variant="square" />
               <Link to={`/teams/${team1.name}`} exact>
                 <Typography variant="h5" className={classes.teamName} style={homeStyle}>
                   {team1.name}
@@ -169,7 +180,8 @@ function GameCardCompact(props) {
             </Grid>
           </Grid>
           <Grid item xs>
-            <Grid container spacing={0} direction="row" alignItems="flex-start" justify="space-around">
+            <Grid container spacing={0} direction="row" alignItems="center" justify="space-between">
+              <Avatar src={team2.logo} variant="square" />
               <Link to={`/teams/${team2.name}`} exact>
                 <Typography variant="h5" className={classes.teamName} style={awayStyle}>
                   {team2.name}
@@ -183,37 +195,39 @@ function GameCardCompact(props) {
         </Grid>
       </Grid>
 
-      {hasScores && (
+      {hasScores && !upcomingOverview && (
         <Grid item xs={gamesPlayed > 3 ? 4 : 3}>
           <Grid container spacing={0} direction="column" alignItems="flex-start" justify="flex-start">
             <Grid container justify="space-between">
               <Grid item xs={gameCellSize}>
-                <Typography variant="h5" className={classes.teamName} style={homeWinnerA ? { color: '#8e8e8e' } : null}>
+                <Typography variant="h5" className={classes.teamName} style={{ color: homeWinnerA ? 'whitesmoke' : '#8e8e8e' }}>
                   {homeScoreA}
                 </Typography>
               </Grid>
-              <Grid item xs={gameCellSize}>
-                <Typography variant="h5" className={classes.teamName} style={homeWinnerB ? { color: '#8e8e8e' } : null}>
-                  {homeScoreB}
-                </Typography>
-              </Grid>
+              {(!!parseInt(homeScoreB, 10) || !!parseInt(awayScoreB, 10)) && (
+                <Grid item xs={gameCellSize}>
+                  <Typography variant="h5" className={classes.teamName} style={{ color: homeWinnerB ? 'whitesmoke' : '#8e8e8e' }}>
+                    {homeScoreB}
+                  </Typography>
+                </Grid>
+              )}
               {(isPlayoffs && (!!parseInt(homeScoreC, 10) || !!parseInt(awayScoreC, 10))) && (
                 <Grid item xs={gameCellSize}>
-                  <Typography variant="h5" className={classes.teamName} style={homeWinnerC ? { color: '#8e8e8e' } : null}>
+                  <Typography variant="h5" className={classes.teamName} style={{ color: homeWinnerC ? 'whitesmoke' : '#8e8e8e' }}>
                     {homeScoreC}
                   </Typography>
                 </Grid>
               )}
               {(isPlayoffs && (!!parseInt(homeScoreD, 10) || !!parseInt(awayScoreD, 10))) && (
                 <Grid item xs={gameCellSize}>
-                  <Typography variant="h5" className={classes.teamName} style={homeWinnerD ? { color: '#8e8e8e' } : null}>
+                  <Typography variant="h5" className={classes.teamName} style={{ color: homeWinnerD ? 'whitesmoke' : '#8e8e8e' }}>
                     {homeScoreD}
                   </Typography>
                 </Grid>
               )}
               {(isPlayoffs && (!!parseInt(homeScoreE, 10) || !!parseInt(awayScoreE, 10))) && (
                 <Grid item xs={gameCellSize}>
-                  <Typography variant="h5" className={classes.teamName} style={homeWinnerE ? { color: '#8e8e8e' } : null}>
+                  <Typography variant="h5" className={classes.teamName} style={{ color: homeWinnerE ? 'whitesmoke' : '#8e8e8e' }}>
                     {homeScoreE}
                   </Typography>
                 </Grid>
@@ -221,32 +235,34 @@ function GameCardCompact(props) {
             </Grid>
             <Grid container justify="space-between">
               <Grid item xs={gameCellSize}>
-                <Typography variant="h5" className={classes.teamName} style={!homeWinnerA ? { color: '#8e8e8e' } : null}>
+                <Typography variant="h5" className={classes.teamName} style={{ color: !homeWinnerA ? 'whitesmoke' : '#8e8e8e' }}>
                   {awayScoreA}
                 </Typography>
               </Grid>
-              <Grid item xs={gameCellSize}>
-                <Typography variant="h5" className={classes.teamName} style={!homeWinnerB ? { color: '#8e8e8e' } : null}>
-                  {awayScoreB}
-                </Typography>
-              </Grid>
+              {(!!parseInt(homeScoreB, 10) || !!parseInt(awayScoreB, 10)) && (
+                <Grid item xs={gameCellSize}>
+                  <Typography variant="h5" className={classes.teamName} style={{ color: !homeWinnerB ? 'whitesmoke' : '#8e8e8e' }}>
+                    {awayScoreB}
+                  </Typography>
+                </Grid>
+              )}
               {(isPlayoffs && (!!parseInt(homeScoreC, 10) || !!parseInt(awayScoreC, 10))) && (
                 <Grid item xs={gameCellSize}>
-                  <Typography variant="h5" className={classes.teamName} style={!homeWinnerC ? { color: '#8e8e8e' } : null}>
+                  <Typography variant="h5" className={classes.teamName} style={{ color: !homeWinnerC ? 'whitesmoke' : '#8e8e8e' }}>
                     {awayScoreC}
                   </Typography>
                 </Grid>
               )}
               {(isPlayoffs && (!!parseInt(homeScoreD, 10) || !!parseInt(awayScoreD, 10))) && (
                 <Grid item xs={gameCellSize}>
-                  <Typography variant="h5" className={classes.teamName} style={!homeWinnerD ? { color: '#8e8e8e' } : null}>
+                  <Typography variant="h5" className={classes.teamName} style={{ color: !homeWinnerD ? 'whitesmoke' : '#8e8e8e' }}>
                     {awayScoreD}
                   </Typography>
                 </Grid>
               )}
               {(isPlayoffs && (!!parseInt(homeScoreE, 10) || !!parseInt(awayScoreE, 10))) && (
                 <Grid item xs={gameCellSize}>
-                  <Typography variant="h5" className={classes.teamName} style={!homeWinnerE ? { color: '#8e8e8e' } : null}>
+                  <Typography variant="h5" className={classes.teamName} style={{ color: !homeWinnerE ? 'whitesmoke' : '#8e8e8e' }}>
                     {awayScoreE}
                   </Typography>
                 </Grid>
@@ -273,6 +289,8 @@ GameCardCompact.propTypes = {
   team2: PropTypes.object.isRequired,
   time: PropTypes.string,
   arena: PropTypes.string,
+  matchResult: PropTypes.string,
+  matchComplete: PropTypes.bool,
   isPlayoffs: PropTypes.bool,
   homeScoreA: PropTypes.string,
   homeScoreB: PropTypes.string,
@@ -284,10 +302,13 @@ GameCardCompact.propTypes = {
   awayScoreC: PropTypes.string,
   awayScoreD: PropTypes.string,
   awayScoreE: PropTypes.string,
+  upcomingOverview: PropTypes.bool,
 };
 GameCardCompact.defaultProps = {
   time: '',
   arena: '',
+  matchResult: '-',
+  matchComplete: false,
   isPlayoffs: false,
   homeScoreA: '0',
   homeScoreB: '0',
@@ -299,6 +320,7 @@ GameCardCompact.defaultProps = {
   awayScoreC: '0',
   awayScoreD: '0',
   awayScoreE: '0',
+  upcomingOverview: false,
 };
 
 export default GameCardCompact;

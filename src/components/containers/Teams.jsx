@@ -10,6 +10,7 @@ import PageHeader from '../PageHeader';
 import GameCardCompact from '../GameCardCompact';
 import SeasonSelector from '../SeasonSelector';
 import api from '../utils/api';
+import { convertGamesToMatches } from '../utils/dataUtils';
 import { styles as paperStyles } from '../../styles/themeStyles';
 
 const defaultProps = {
@@ -71,7 +72,8 @@ class Teams extends Component {
             return tempTeam;
           });
 
-          const games = allGames.map((game) => game.data);
+          const gamesTemp = allGames.map((game) => game.data);
+          const games = convertGamesToMatches(gamesTemp);
           games.sort((a, b) => new Date(a.gameTime) - new Date(b.gameTime)); // earlier game times first
           const gamesByTeam = {};
           seasonTeams.forEach((team) => {
@@ -123,7 +125,8 @@ class Teams extends Component {
           return tempTeam;
         });
 
-        const games = allGames.map((game) => game.data);
+        const gamesTemp = allGames.map((game) => game.data);
+        const games = convertGamesToMatches(gamesTemp);
         games.sort((a, b) => new Date(a.gameTime) - new Date(b.gameTime)); // earlier game times first
         const gamesByTeam = {};
         teams.forEach((team) => {
@@ -132,10 +135,12 @@ class Teams extends Component {
           games.forEach((game) => {
             if (parseInt(game.homeTeamId, 10) === parseInt(team.id, 10) && team.season === game.season) {
               const homeTeam = team;
-              const awayTeam = teams.find((tempTeam) => parseInt(tempTeam.id, 10) === parseInt(game.awayTeamId, 10) && team.season === game.season);
+              const awayTeam = teams.find((tempTeam) => (
+                parseInt(tempTeam.id, 10) === parseInt(game.awayTeamId, 10) && team.season === game.season));
               gamesByTeam[team.id].push({ homeTeam, awayTeam, ...game });
             } else if (parseInt(game.awayTeamId, 10) === parseInt(team.id, 10) && team.season === game.season) {
-              const homeTeam = teams.find((tempTeam) => parseInt(tempTeam.id, 10) === parseInt(game.homeTeamId, 10) && team.season === game.season);
+              const homeTeam = teams.find((tempTeam) => (
+                parseInt(tempTeam.id, 10) === parseInt(game.homeTeamId, 10) && team.season === game.season));
               const awayTeam = team;
               gamesByTeam[team.id].push({ homeTeam, awayTeam, ...game });
             }
@@ -178,6 +183,22 @@ class Teams extends Component {
     if (!loading && teams && teams.length > 0) {
       teams.map((team) => {
         winlossdraw[team.id] = gamesByTeam[team.id].map((game) => {
+          if (game.homeTeamScoreA === undefined) {
+            // const isPlayoffs = game.type === 'PO';
+            if (team.id === game.homeTeamId) {
+              if (game.matchComplete) {
+                return `${game.gameWeek}:${game.awayTeamName.toUpperCase()}:${game.matchResult}`;
+              }
+              return `${game.gameWeek}:${game.awayTeamName.toUpperCase()}:-`;
+            } // else
+            if (game.matchComplete) {
+              // eslint-disable-next-line no-nested-ternary
+              const awayResult = game.matchResult === 'W' ? 'L' : game.matchResult === 'L' ? 'W' : 'D';
+              return `${game.gameWeek}:${game.homeTeamName.toUpperCase()}:${awayResult}`;
+            }
+            return `${game.gameWeek}:${game.homeTeamName.toUpperCase()}:-`;
+          }
+
           const homeScoreA = game.homeTeamScoreA;
           const homeScoreB = game.homeTeamScoreB;
           const homeScoreC = game.homeTeamScoreC;
@@ -282,26 +303,46 @@ class Teams extends Component {
                 />
                 {gamesByTeam[curTeam.id].map((game) => (
                   <Grid item xs={6} xl={4}>
-                    <Paper className={classes.darkPaper}>
+                    <Paper className={classes.darkGrayPaper}>
                       <GameCardCompact
                         team1={game.homeTeam}
                         team2={game.awayTeam}
                         time={game.gameTime}
                         arena={game.arena}
-                        isPlayoffs={!!(game.homeTeamScoreC && game.awayTeamScoreC)}
-                        homeScoreA={game.homeTeamScoreA}
-                        homeScoreB={game.homeTeamScoreB}
-                        homeScoreC={game.homeTeamScoreC}
-                        awayScoreA={game.awayTeamScoreA}
-                        awayScoreB={game.awayTeamScoreB}
-                        awayScoreC={game.awayTeamScoreC}
+                        matchResult={game.matchResult}
+                        matchComplete={game.matchComplete}
+                        isPlayoffs={
+                          game.homeTeamScoreA !== undefined ? !!(game.homeTeamScoreC && game.awayTeamScoreC) : game.type === 'PO'
+                        }
+                        homeScoreA={
+                          game.homeTeamScoreA !== undefined ? game.homeTeamScoreA : game.games[0]?.homeTeamScore
+                        }
+                        homeScoreB={
+                          game.homeTeamScoreB !== undefined ? game.homeTeamScoreB : game.games[1]?.homeTeamScore
+                        }
+                        homeScoreC={
+                          game.homeTeamScoreC !== undefined ? game.homeTeamScoreC : game.games[2]?.homeTeamScore
+                        }
+                        awayScoreA={
+                          game.awayTeamScoreA !== undefined ? game.awayTeamScoreA : game.games[0]?.awayTeamScore
+                        }
+                        awayScoreB={
+                          game.awayTeamScoreB !== undefined ? game.awayTeamScoreB : game.games[1]?.awayTeamScore
+                        }
+                        awayScoreC={
+                          game.awayTeamScoreC !== undefined ? game.awayTeamScoreC : game.games[2]?.awayTeamScore
+                        }
                       />
                     </Paper>
                   </Grid>
                 ))}
               </>
             ) : (teams.map((team) => (
-              <TeamCard team={team} gameweeks={gameweeks} winlossdraw={winlossdraw[team.id]} />
+              <TeamCard
+                team={team}
+                gameweeks={gameweeks}
+                winlossdraw={winlossdraw[team.id]}
+              />
             )))}
           </Grid>
         )}

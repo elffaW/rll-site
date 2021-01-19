@@ -11,6 +11,7 @@ import api from './utils/api';
 import { styles as paperStyles } from '../styles/themeStyles';
 
 import { SEASONS } from './containers/BaseApp';
+import { convertGamesToMatches } from './utils/dataUtils';
 
 const teamFields = {
   rank: { friendly: 'Rank', type: 'number' },
@@ -64,49 +65,92 @@ class Standings extends Component {
       const allGames = results[1];
       const teams = allTeams.map((team) => team.data);
       const games = allGames.map((game) => game.data);
-      teams.sort((a, b) => a.rank - b.rank); // sort with lower (better) rank at top
 
-      // disable these lint issues: import/no-dynamic-require global-require
-      // eslint-disable-next-line
-      // teams.forEach((team) => team.logo = require(`../images/LOGO_${team.name.toUpperCase()}.png`));
+      teams.sort((a, b) => a.rank - b.rank); // sort with lower (better) rank at top
 
       games.sort((a, b) => new Date(a.gameTime) - new Date(b.gameTime)); // earlier game times first
       const completedGames = games.filter((game) => !!game.homeTeamScoreA && !!game.homeTeamScoreB);
+      let completedMatches = [];
+      if (completedGames.length < 1) {
+        completedMatches = convertGamesToMatches(games)?.filter((match) => match.matchComplete);
+      }
 
       const gamesByTeam = {};
       teams.forEach((team) => {
         team.logo = require(`../images/LOGO_${team.name.toUpperCase()}.png`); // eslint-disable-line
         gamesByTeam[team.id] = [];
-        completedGames.forEach((game) => {
-          const {
-            homeTeamScoreA, homeTeamScoreB, awayTeamScoreA, awayTeamScoreB,
-          } = game;
-          const homeWinA = parseInt(homeTeamScoreA, 10) > parseInt(awayTeamScoreA, 10);
-          const homeWinB = parseInt(homeTeamScoreB, 10) > parseInt(awayTeamScoreB, 10);
-          // eslint-disable-next-line no-nested-ternary
-          let matchResult = homeWinA && homeWinB ? 'W' : homeWinA || homeWinB ? 'D' : 'L';
-          if (parseInt(game.homeTeamId, 10) === parseInt(team.id, 10) && team.season === game.season) {
-            const homeTeam = team;
-            const awayTeam = teams.find(
-              (tempTeam) => parseInt(tempTeam.id, 10) === parseInt(game.awayTeamId, 10) && team.season === game.season,
-            );
-            gamesByTeam[team.id].push({
-              homeTeam, awayTeam, matchResult, ...game,
-            });
-          } else if (parseInt(game.awayTeamId, 10) === parseInt(team.id, 10) && team.season === game.season) {
-            const homeTeam = teams.find(
-              (tempTeam) => parseInt(tempTeam.id, 10) === parseInt(game.homeTeamId, 10) && team.season === game.season,
-            );
-            const awayTeam = team;
+        if (completedGames.length > 0) {
+          // S4 and earlier
+          completedGames.forEach((game) => {
+            const {
+              homeTeamScoreA, homeTeamScoreB, awayTeamScoreA, awayTeamScoreB,
+            } = game;
+            const homeWinA = parseInt(homeTeamScoreA, 10) > parseInt(awayTeamScoreA, 10);
+            const homeWinB = parseInt(homeTeamScoreB, 10) > parseInt(awayTeamScoreB, 10);
             // eslint-disable-next-line no-nested-ternary
-            matchResult = matchResult === 'W' ? 'L' : matchResult === 'L' ? 'W' : 'D';
-            gamesByTeam[team.id].push({
-              homeTeam, awayTeam, matchResult, ...game,
-            });
-          }
-        });
+            const matchResult = homeWinA && homeWinB ? 'W' : homeWinA || homeWinB ? 'D' : 'L';
+            if (parseInt(game.homeTeamId, 10) === parseInt(team.id, 10) && team.season === game.season) {
+              const homeTeam = team;
+              const awayTeam = teams.find(
+                (tempTeam) => (
+                  parseInt(tempTeam.id, 10) === parseInt(game.awayTeamId, 10) && team.season === game.season
+                ),
+              );
+              gamesByTeam[team.id].push({
+                homeTeam, awayTeam, matchResult, ...game,
+              });
+            } else if (parseInt(game.awayTeamId, 10) === parseInt(team.id, 10) && team.season === game.season) {
+              const homeTeam = teams.find(
+                (tempTeam) => (
+                  parseInt(tempTeam.id, 10) === parseInt(game.homeTeamId, 10) && team.season === game.season
+                ),
+              );
+              const awayTeam = team;
+              // eslint-disable-next-line no-nested-ternary
+              // matchResult = matchResult === 'W' ? 'L' : matchResult === 'L' ? 'W' : 'D';
+              gamesByTeam[team.id].push({
+                homeTeam, awayTeam, matchResult, ...game,
+              });
+            }
+          });
+        } else if (completedMatches.length > 0) {
+          // S5 and later
+          completedMatches.forEach((match) => {
+            const {
+              matchComplete, matchResult, homeTeamId, awayTeamId, season: matchSeason,
+            } = match;
+            // shouldn't be here if matchComplete is false, but might as well check...
+            if (matchComplete && team.season === matchSeason) {
+              if (parseInt(homeTeamId, 10) === parseInt(team.id, 10)) {
+                const homeTeam = team;
+                const awayTeam = teams.find(
+                  (tempTeam) => parseInt(tempTeam.id, 10) === parseInt(awayTeamId, 10) && team.season === matchSeason,
+                );
+                gamesByTeam[team.id].push({
+                  homeTeam, awayTeam, ...match, matchResult,
+                });
+              } else if (parseInt(awayTeamId, 10) === parseInt(team.id, 10)) {
+                const homeTeam = teams.find(
+                  (tempTeam) => parseInt(tempTeam.id, 10) === parseInt(homeTeamId, 10) && team.season === matchSeason,
+                );
+                const awayTeam = team;
+                // eslint-disable-next-line no-nested-ternary
+                // const awayResult = matchResult === 'W' ? 'L' : matchResult === 'L' ? 'W' : 'D';
+                gamesByTeam[team.id].push({
+                  homeTeam, awayTeam, ...match, matchResult, // : awayResult,
+                });
+                // if (team.id === 3) {
+                //   console.log('matchResult', matchResult, 'awayResult', awayResult);
+                // }
+              }
+            }
+          });
+        }
 
         gamesByTeam[team.id] = gamesByTeam[team.id].slice(-4);
+        // if (team.id === 3) {
+        //   console.log(gamesByTeam[team.id]);
+        // }
       });
 
       this.setState({
@@ -208,18 +252,28 @@ class Standings extends Component {
             </Grid>
             <Grid item xs>
               <Grid container direction="row" alignItems="center" justify="flex-end">
-                {gamesByTeam[team.id].map((game) => (
-                  <Grid item xs>
-                    <Avatar
-                      src={team.id === game.homeTeamId ? game.awayTeam.logo : game.homeTeam.logo}
-                      variant="circle"
-                      style={{
-                        // eslint-disable-next-line no-nested-ternary
-                        height: '1.4rem', width: '1.4rem', backgroundColor: game.matchResult === 'W' ? 'green' : game.matchResult === 'L' ? 'red' : 'blue', filter: 'saturate(50%)',
-                      }}
-                    />
-                  </Grid>
-                ))}
+                {gamesByTeam[team.id].map((game) => {
+                  let bgColor = 'blue';
+                  if (team.id === game.homeTeamId) {
+                    // eslint-disable-next-line no-nested-ternary
+                    bgColor = game.matchResult === 'W' ? 'green' : game.matchResult === 'L' ? 'red' : 'blue';
+                  } else {
+                    // eslint-disable-next-line no-nested-ternary
+                    bgColor = game.matchResult === 'W' ? 'red' : game.matchResult === 'L' ? 'green' : 'blue';
+                  }
+                  return (
+                    <Grid item xs>
+                      <Avatar
+                        src={team.id === game.homeTeamId ? game.awayTeam.logo : game.homeTeam.logo}
+                        variant="circle"
+                        style={{
+                          // eslint-disable-next-line no-nested-ternary
+                          height: '1.4rem', width: '1.4rem', backgroundColor: bgColor, filter: 'saturate(50%)',
+                        }}
+                      />
+                    </Grid>
+                  );
+                })}
               </Grid>
             </Grid>
           </Grid>
@@ -269,7 +323,7 @@ class Standings extends Component {
                   </Grid>
                   <Grid item xs>
                     <Typography variant="h6" onClick={() => this.handleSortFieldChange('points')}>
-                      PTS
+                      {season === 5 ? 'DONG' : 'PTS'}
                       {sortField === 'points' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
                     </Typography>
                   </Grid>

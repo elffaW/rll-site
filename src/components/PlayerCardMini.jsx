@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(7),
     paddingRight: theme.spacing(1),
     paddingLeft: theme.spacing(1),
-  }
+  },
 }));
 
 export default function PlayerCardMini(props) {
@@ -54,7 +54,7 @@ export default function PlayerCardMini(props) {
   const playerCar = player.car ? player.car : 'MERC'; // hopefully everyone has a car, but want to avoid undefined require errors on next line...
   const logoSrc = require(`../images/CAR_${playerCar}.png`); // eslint-disable-line
   const playerValue = player.value ? parseFloat(player.value).toFixed(1) : '??';
-  const scorePerGame = (parseInt(player.score, 10) / parseInt(player.gamesPlayed, 10)).toFixed(0);
+  // const scorePerGame = (parseInt(player.score, 10) / parseInt(player.gamesPlayed, 10)).toFixed(0);
 
   return (
     <Grid item>
