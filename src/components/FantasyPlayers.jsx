@@ -23,22 +23,28 @@ const playerFields = {
   saves: { friendly: 'SV', type: 'number' },
   shots: { friendly: 'SH', type: 'number' },
   numDemosInflicted: { friendly: 'DEMOS', type: 'number' },
-  numDemosTaken: { friendly: 'DEMOED', type: 'number' },
   totalClears: { friendly: 'CLEARS', type: 'number' },
-  turnovers: { friendly: 'TURN OVERS', type: 'number' },
-  wastedUsage: { friendly: 'WASTED BOOST', type: 'number' },
+  numKickoffFirstTouch: { friendly: '1ST TOUCH', type: 'number' },
+  totalAerials: { friendly: 'AIR HITS', type: 'number' },
+  totalDribbles: { friendly: 'DRIBBLES', type: 'number' },
+  numKickoffAfk: { friendly: 'AFKs', type: 'number' },
+  // numPromoted: { friendly: 'PROMOTED', type: 'number' },
+  // numRelegated: { friendly: 'RELEGATED', type: 'number' },
 };
 
 const fieldValues = {
   goals: 5,
   assists: 4,
   saves: 3,
-  shots: 2,
-  numDemosInflicted: 2,
-  numDemosTaken: -1,
+  shots: 1,
+  numDemosInflicted: 3,
   totalClears: 1,
-  turnovers: -1,
-  wastedUsage: -0.01,
+  numKickoffFirstTouch: 2,
+  totalAerials: 3,
+  totalDribbles: 2,
+  numKickoffAfk: -10,
+  // numPromoted: 20,
+  // numRelegated: -20,
 };
 
 const defaultProps = {
@@ -140,10 +146,10 @@ class FantasyPlayers extends Component {
         saves
         shots
         numDemosInflicted
-        numDemosTaken
+        numKickoffFirstTouch
         totalClears
-        turnovers
-        wastedUsage
+        numKickoffAfk
+        totalDribbles
      */
     const playerRows = [];
     for (let i = 0; i < players.length; i++) {
