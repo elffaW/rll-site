@@ -91,7 +91,7 @@ const convertGamesToMatches = (games) => {
     const match = matches[matchId];
     const firstGame = match[0];
     const {
-      id, gameNum, matchNum, homeTeamScore: tempHome, awayTeamScore: tempAway, ...otherGameInfo
+      id, gameNum, matchNum, homeTeamScore: tempHome, awayTeamScore: tempAway, playerStats, ...otherGameInfo
     } = firstGame;
     let numHomeWins = 0;
     let numCompleteGames = 0;
@@ -107,6 +107,7 @@ const convertGamesToMatches = (games) => {
         awayTeamScore,
         homeWin,
         gameComplete,
+        playerStats,
       };
     });
     const numGames = matchGames.length;

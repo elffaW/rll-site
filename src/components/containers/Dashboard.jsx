@@ -17,8 +17,6 @@ import { convertGamesToMatches } from '../utils/dataUtils';
 // import { timezoneLookup } from '../utils/dateUtils';
 import api from '../utils/api';
 
-import div1 from '../../images/RLL_logo.png';
-import div2 from '../../images/RLL_logo_lower.png';
 import networkPromo from '../../videos/NetworkPromo_S1.mp4';
 
 export const CURRENT_GAME_WEEK = '5';
@@ -244,7 +242,7 @@ class Dashboard extends Component {
                               >
                                 <GameCardCompact
                                   upcomingOverview
-                                  gameNum={game1.id}
+                                  matchId={game1.matchNum}
                                   team1={game1.homeTeam}
                                   team2={game1.awayTeam}
                                   division={game1.curDivision}
@@ -266,7 +264,7 @@ class Dashboard extends Component {
                               <Paper className={`${classes.darkerPaper} game-with-division-${game2.curDivision}`}>
                                 <GameCardCompact
                                   upcomingOverview
-                                  gameNum={game2.id}
+                                  matchId={game2.matchNum}
                                   team1={game2.homeTeam}
                                   team2={game2.awayTeam}
                                   division={game2.curDivision}
@@ -288,7 +286,7 @@ class Dashboard extends Component {
                               <Paper className={`${classes.darkerPaper} game-with-division-${game3.curDivision}`}>
                                 <GameCardCompact
                                   upcomingOverview
-                                  gameNum={game3.id}
+                                  matchId={game3.matchNum}
                                   team1={game3.homeTeam}
                                   team2={game3.awayTeam}
                                   division={game3.curDivision}

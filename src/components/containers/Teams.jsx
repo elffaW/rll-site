@@ -303,12 +303,14 @@ class Teams extends Component {
                 />
                 {gamesByTeam[curTeam.id].map((game) => (
                   <Grid item xs={6} xl={4}>
-                    <Paper className={classes.darkGrayPaper}>
+                    <Paper className={`${classes.darkGrayPaper} game-with-division-${game.curDivision}`}>
                       <GameCardCompact
                         team1={game.homeTeam}
                         team2={game.awayTeam}
+                        matchId={game.matchNum}
                         time={game.gameTime}
                         arena={game.arena}
+                        division={game.curDivision}
                         matchResult={game.matchResult}
                         matchComplete={game.matchComplete}
                         isPlayoffs={
@@ -318,19 +320,19 @@ class Teams extends Component {
                           game.homeTeamScoreA !== undefined ? game.homeTeamScoreA : game.games[0]?.homeTeamScore
                         }
                         homeScoreB={
-                          game.homeTeamScoreB !== undefined ? game.homeTeamScoreB : game.games[1]?.homeTeamScore
+                          game.homeTeamScoreA !== undefined ? game.homeTeamScoreB : game.games[1]?.homeTeamScore
                         }
                         homeScoreC={
-                          game.homeTeamScoreC !== undefined ? game.homeTeamScoreC : game.games[2]?.homeTeamScore
+                          game.homeTeamScoreA !== undefined ? game.homeTeamScoreC : game.games[2]?.homeTeamScore
                         }
                         awayScoreA={
-                          game.awayTeamScoreA !== undefined ? game.awayTeamScoreA : game.games[0]?.awayTeamScore
+                          game.homeTeamScoreA !== undefined ? game.awayTeamScoreA : game.games[0]?.awayTeamScore
                         }
                         awayScoreB={
-                          game.awayTeamScoreB !== undefined ? game.awayTeamScoreB : game.games[1]?.awayTeamScore
+                          game.homeTeamScoreA !== undefined ? game.awayTeamScoreB : game.games[1]?.awayTeamScore
                         }
                         awayScoreC={
-                          game.awayTeamScoreC !== undefined ? game.awayTeamScoreC : game.games[2]?.awayTeamScore
+                          game.homeTeamScoreA !== undefined ? game.awayTeamScoreC : game.games[2]?.awayTeamScore
                         }
                       />
                     </Paper>

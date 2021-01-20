@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import {
   Grid, Paper, Typography,
 } from '@material-ui/core';
@@ -201,10 +202,20 @@ function GameCard(props) {
           ) : ''}
           <Grid item xs={2}>
             {gameComplete ? <Typography variant="h5" className={classes.completeStamp}>COMPLETE</Typography> : ''}
-            <Typography variant="h4" className={classes.gameName} style={gameComplete ? { color: '#d0d0d0' } : null}>{`Match ${game.id}`}</Typography>
-            <Typography variant="h6" className={classes.gameDesc} style={gameComplete ? { color: '#a0a0a0' } : null}>{gameTime}</Typography>
-            <Typography variant="subtitle1" className={classes.gameStreamRoom} style={gameComplete ? { color: '#d0d0d0' } : null}>{game.streamRoom}</Typography>
-            <Typography variant="subtitle1" className={classes.gameArena} style={gameComplete ? { color: '#a0a0a0' } : null}>{game.arena}</Typography>
+            <Link to={!showDetails ? `/schedule/${game.id}` : '/schedule/'} exact>
+              <Typography variant="h4" className={classes.gameName} style={gameComplete ? { color: '#d0d0d0' } : null}>
+                {`Match ${game.id}`}
+              </Typography>
+            </Link>
+            <Typography variant="h6" className={classes.gameDesc} style={gameComplete ? { color: '#a0a0a0' } : null}>
+              {gameTime}
+            </Typography>
+            <Typography variant="subtitle1" className={classes.gameStreamRoom} style={gameComplete ? { color: '#d0d0d0' } : null}>
+              {game.streamRoom}
+            </Typography>
+            <Typography variant="subtitle1" className={classes.gameArena} style={gameComplete ? { color: '#a0a0a0' } : null}>
+              {game.arena}
+            </Typography>
           </Grid>
           {gameComplete ? (
             <Grid item xs={1}>

@@ -8,6 +8,7 @@ const baseTheme = createMuiTheme({
       light: '#8e8e8e',
       dark: '#8e0000', // red (same as secondary.dark)
       darker: '#404040', // dark gray
+      darkest: '#202020', // darker gray
     },
     // red
     secondary: {
@@ -30,6 +31,7 @@ const baseTheme = createMuiTheme({
   },
   otherColors: {
     text: {
+      lighter: 'whitesmoke',
       light: '#d0d0d0',
       dark: '#202020',
     },

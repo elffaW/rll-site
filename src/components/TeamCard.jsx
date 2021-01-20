@@ -23,8 +23,8 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   teamIcon: {
-    width: theme.spacing(10),
-    height: theme.spacing(10),
+    width: `min(100%, ${theme.spacing(10)}px)`,
+    height: `min(100%, ${theme.spacing(10)}px)`,
   },
   teamName: {
     fontVariant: 'small-caps',

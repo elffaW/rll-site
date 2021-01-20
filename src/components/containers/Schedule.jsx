@@ -19,6 +19,7 @@ import GameCard from '../GameCard';
 import PageHeader from '../PageHeader';
 import PlayoffSchedule from '../PlayoffSchedule';
 import SeasonSelector from '../SeasonSelector';
+import MatchStats from '../MatchStats';
 import api from '../utils/api';
 import { convertGamesToMatches } from '../utils/dataUtils';
 import { styles as paperStyles } from '../../styles/themeStyles';
@@ -50,10 +51,23 @@ class Schedule extends Component {
     const { season } = this.state;
     const seasonQuery = newSeason || season;
 
-    Promise.all([api.getGamesBySeason(seasonQuery), api.getTeamsBySeason(seasonQuery)]).then((results) => {
+    Promise.all([
+      api.getGamesBySeason(seasonQuery),
+      api.getTeamsBySeason(seasonQuery),
+      api.getStatsBySeason(seasonQuery),
+    ]).then((results) => {
       const allGames = results[0];
       const teamsData = results[1];
-      const gamesTemp = allGames.map((game) => game.data);
+      const statsData = results[2];
+      const stats = statsData.map((stat) => stat.data);
+      const gamesData = allGames.map((game) => game.data);
+      // associate game stats records with the games
+      const gamesTemp = gamesData.map((game) => {
+        const { ...tempGame } = game;
+        tempGame.playerStats = stats.filter((stat) => parseInt(stat.gameId, 10) === parseInt(game.gameNum, 10));
+        return tempGame;
+      });
+      // convert games to matches if needed
       const games = convertGamesToMatches(gamesTemp);
       games.sort((a, b) => new Date(a.gameTime) - new Date(b.gameTime)); // earlier game times first
       games.sort((a, b) => (a.id - b.id)); // sort by game ID
@@ -162,7 +176,7 @@ class Schedule extends Component {
       if (curGame) {
         gameCards.push(
           <Grid item xs={12}>
-            <Paper className={classes.paper}>
+            <Paper className={classes.darkestPaper}>
               <Grid container alignItems="center" justify="space-around">
                 <GameCard game={curGame} showDetails />
                 <MatchStats match={curGame} />
@@ -213,11 +227,7 @@ class Schedule extends Component {
         i++; // eslint-disable-line
       }
     }
-    /*
-      {games.map((game) => (
-        <GameCard game={game} />
-      ))}
-    */
+
     return (
       <BaseApp>
         <PageHeader headerText="RLL Schedule" />

@@ -2,6 +2,10 @@ body {
   background-color: #616161;
 }
 
+a {
+  text-decoration: none;
+}
+
 .MuiAvatar-img {
   filter: drop-shadow(0 0 0.15rem black);
 }
@@ -22,11 +26,6 @@ div.MuiDrawer-root > .MuiDrawer-paper {
 }
 
 .game-with-division-1 {
-  // background-image: url("/RLL_logo.png");
-  // background-position: calc(100% + 40px);
-  // background-size: contain;
-  // background-repeat: no-repeat;
-  // background-color: #616161;
   position: relative;
   overflow: hidden;
   z-index: 2;
@@ -42,11 +41,7 @@ div.MuiDrawer-root > .MuiDrawer-paper {
   z-index: -1;
 }
 .game-with-division-2 {
-  // background-image: url("/RLL_logo_lower.png");
-  // background-position: calc(100% + 40px);
-  // background-size: contain;
-  // background-repeat: no-repeat;
-  background-color: rgb(99, 109, 99) !important;
+  // background-color: rgb(99, 109, 99) !important;
   position: relative;
   overflow: hidden;
   z-index: 2;
@@ -61,14 +56,6 @@ div.MuiDrawer-root > .MuiDrawer-paper {
   filter: contrast(40%) opacity(50%);
   z-index: -1;
 }
-// .game-with-division-2::before {
-//   content: "";
-//   position: absolute;
-//   background-image: url("/RLL_logo_lower.png");
-//   background-size: cover;
-//   background-position: left;
-//   filter: invert(38%) sepia(0%) saturate(0%) hue-rotate(152deg) brightness(94%) contrast(87%);
-// }
 
 // player season colorings
 h4.player-season-1 {

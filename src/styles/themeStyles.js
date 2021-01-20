@@ -25,6 +25,17 @@ export const styles = withStyles((theme) => createStyles({
     marginTop: 0,
     paddingLeft: theme.spacing(1),
   },
+  darkestPaper: {
+    textAlign: 'center',
+    color: theme.otherColors.text.lighter,
+    backgroundColor: theme.palette.primary.darkest,
+    marginLeft: -theme.spacing(2),
+    paddingTop: 0,
+    paddingRight: theme.spacing(2),
+    paddingBottom: theme.spacing(1),
+    paddingLeft: theme.spacing(2),
+    width: '100%',
+  },
   statsPaper: {
     textAlign: 'center',
     color: theme.otherColors.text.light,
