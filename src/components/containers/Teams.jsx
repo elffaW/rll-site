@@ -187,16 +187,16 @@ class Teams extends Component {
             // const isPlayoffs = game.type === 'PO';
             if (team.id === game.homeTeamId) {
               if (game.matchComplete) {
-                return `${game.gameWeek}:${game.awayTeamName.toUpperCase()}:${game.matchResult}`;
+                return `${game.gameWeek}:${game.awayTeamName.toUpperCase()}:${game.id}:${game.matchResult}`;
               }
-              return `${game.gameWeek}:${game.awayTeamName.toUpperCase()}:-`;
+              return `${game.gameWeek}:${game.awayTeamName.toUpperCase()}:${game.id}:-`;
             } // else
             if (game.matchComplete) {
               // eslint-disable-next-line no-nested-ternary
               const awayResult = game.matchResult === 'W' ? 'L' : game.matchResult === 'L' ? 'W' : 'D';
-              return `${game.gameWeek}:${game.homeTeamName.toUpperCase()}:${awayResult}`;
+              return `${game.gameWeek}:${game.homeTeamName.toUpperCase()}:${game.id}:${awayResult}`;
             }
-            return `${game.gameWeek}:${game.homeTeamName.toUpperCase()}:-`;
+            return `${game.gameWeek}:${game.homeTeamName.toUpperCase()}:${game.id}:-`;
           }
 
           const homeScoreA = game.homeTeamScoreA;
@@ -233,26 +233,26 @@ class Teams extends Component {
           }
           if (team.id === game.homeTeamId) {
             if (homeWinnerOverall) {
-              return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:W`;
+              return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:${game.id}:W`;
             }
             if (awayWinnerOverall) {
-              return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:L`;
+              return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:${game.id}:L`;
             }
             if (!hasScores) {
-              return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:-`;
+              return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:${game.id}:-`;
             }
-            return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:D`;
+            return `${game.gameWeek}:${game.awayTeam.name.toUpperCase()}:${game.id}:D`;
           } // else {
           if (homeWinnerOverall) {
-            return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:L`;
+            return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:${game.id}:L`;
           }
           if (awayWinnerOverall) {
-            return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:W`;
+            return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:${game.id}:W`;
           }
           if (!hasScores) {
-            return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:-`;
+            return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:${game.id}:-`;
           }
-          return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:D`;
+          return `${game.gameWeek}:${game.homeTeam.name.toUpperCase()}:${game.id}:D`;
           // }
         });
       });

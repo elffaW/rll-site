@@ -172,7 +172,8 @@ function TeamCard(props) {
       const curWeekOppObj = curWeekResults.map((wld) => {
         const oppTeam = wld.split(':')[1];
         const oppLogoSrc = require(`../images/LOGO_${oppTeam || defaultLogo}.png`); // eslint-disable-line
-        const result = wld.split(':')[2];
+        const gameId = wld.split(':')[2];
+        const result = wld.slice(-1);
 
         let oppLogoStyle = { backgroundColor: 'gray', filter: 'saturate(50%)' };
         if (result === 'W') {
@@ -187,6 +188,7 @@ function TeamCard(props) {
           name: oppTeam,
           logo: oppLogoSrc,
           style: oppLogoStyle,
+          gameId,
           result,
         };
       });
@@ -203,7 +205,7 @@ function TeamCard(props) {
             {showDetails && <Typography variant="h4" style={{ color: '#383838' }}>{curWeek}</Typography>}
             <Grid container direction="row" justify="space-around" alignItems="center">
               {curWeekOppObj.map((opp) => (
-                <Link to={`/teams/${opp.name}`} exact>
+                <Link to={`/schedule/${opp.gameId}`} exact>
                   <Tooltip title={`${opp.result} (${opp.name})`}>
                     <Avatar src={opp.logo} variant="circle" style={opp.style} />
                   </Tooltip>
@@ -252,18 +254,21 @@ function TeamCard(props) {
     <Grid item xs={12}>
       <Paper className={showDetails ? classes.paper : classes.mainPaper} style={winner ? { boxShadow: 'inset 0 0 0.75rem gold' } : null}>
         <Grid container alignItems="center" justify="flex-start">
-          <Grid item xs={inGame ? 2 : 1}>
+          {/* <Grid item xs={inGame ? 2 : 1}>
             <Typography variant="h2" className={`${classes.teamDesc} ${classes.teamRank} ${rankClass}`}>
               {team.rank}
             </Typography>
-          </Grid>
+          </Grid> */}
           <Grid item xs={inGame ? 2 : 1}>
             <Avatar src={logoSrc} variant="square" className={classes.teamIcon} />
           </Grid>
-          <Grid item xs={inGame ? 8 : 4}>
+          <Grid item xs={inGame ? 10 : 5}>
             <Grid container alignItems="flex-end" justify="flex-start" direction="row">
               <Grid item>
                 <Link to={showDetails ? '/teams' : `/teams/${team.name}`} exact>
+                  <Typography variant="h6" className={classes.teamName}>
+                    {team.rank}
+                  </Typography>
                   <Typography
                     variant={showDetails ? 'h2' : 'h4'}
                     className={`${classes.teamName} ${showDetails ? classes.bigName : ''}`}
