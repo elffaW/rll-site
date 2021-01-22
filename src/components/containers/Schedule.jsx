@@ -39,6 +39,7 @@ class Schedule extends Component {
       games: [],
       loading: true,
       season: SEASONS[SEASONS.length - 1], // default to the last season in the list
+      expanded: false,
     };
   }
 
@@ -155,9 +156,15 @@ class Schedule extends Component {
     );
   }
 
+  handleAccordionExpansion = (accordionIndex) => (event, isExpanded) => {
+    this.setState({ expanded: isExpanded ? accordionIndex : false });
+  }
+
   render() {
     const { classes, match } = this.props;
-    const { games, loading, season } = this.state;
+    const {
+      games, loading, season, expanded,
+    } = this.state;
     const { params } = match;
     const { gameNum } = params;
 
@@ -198,7 +205,11 @@ class Schedule extends Component {
         } else {
           gameCards.push(
             <Grid item xs={12}>
-              <Accordion className={classes.paper}>
+              <Accordion
+                className={classes.paper}
+                expanded={expanded === i}
+                onChange={this.handleAccordionExpansion(i)}
+              >
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls={`gameweek-${i}-content`}
