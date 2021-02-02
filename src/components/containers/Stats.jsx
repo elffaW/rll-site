@@ -7,6 +7,7 @@ import {
 import BaseApp from './BaseApp';
 import PageHeader from '../PageHeader';
 import { styles as paperStyles } from '../../styles/themeStyles';
+import PlayerGameStats from '../PlayerGameStats';
 
 const defaultProps = {
   classes: '',
@@ -28,6 +29,10 @@ class Stats extends Component {
         <PageHeader headerText="RLL Stats" />
         <Paper className={classes.paper}>
           <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
+            <Grid item xs={12}>
+              <Typography variant="h3" style={{ padding: '8px 0 8px 0', textShadow: '1px 1px 1px black' }}>Player Stats</Typography>
+              <PlayerGameStats player={-1} playerName="ALL_PLAYERS" season={-1} />
+            </Grid>
             <Grid item xs={12} style={{ height: 'calc(100vh - 200px)' }}>
               <Paper className={classes.statsPaper}>
                 <Typography variant="h3" style={{ padding: '8px 0 8px 0', textShadow: '1px 1px 1px black' }}>Season 5 Stats</Typography>

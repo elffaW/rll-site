@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import {
-  Grid, Paper, Avatar, Typography, Badge, Tooltip, LinearProgress,
+  Grid, Paper, CircularProgress,
 } from '@material-ui/core';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
@@ -28,29 +27,31 @@ function PlayerGameStats(props) {
   const classes = useStyles();
   const [playerStats, setPlayerStats] = useState([]);
   const [statsView, setStatsView] = useState('total');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // if (season === 'All') {
-    api.getStatsByPlayerName(playerName).then((allStats) => {
-      const stats = allStats.map((stat) => stat.data);
-      // console.log('got player stats for player and season', player, season);
-      // console.log(stats);
-      setPlayerStats(stats);
-    }).catch((e) => {
-      console.log('error with stats API request');
-      console.log(e);
-    });
-    // } else {
-    //   api.getStatsBySeasonAndPlayer(season, player).then((allStats) => {
-    //     const stats = allStats.map((stat) => stat.data);
-    //     // console.log('got player stats for player and season', player, season);
-    //     // console.log(stats);
-    //     setPlayerStats(stats);
-    //   }).catch((e) => {
-    //     console.log('error with stats API request');
-    //     console.log(e);
-    //   });
-    // }
+    if (playerName === 'ALL_PLAYERS') {
+      api.getAllStats().then((allStats) => {
+        const stats = allStats.map((stat) => stat.data);
+        // console.log(stats.length, 'STATS GAMES RETRIEVED');
+        setPlayerStats(stats);
+        setLoading(false);
+      }).catch((e) => {
+        console.log('error with stats API request');
+        console.log(e);
+      });
+    } else {
+      api.getStatsByPlayerName(playerName).then((allStats) => {
+        const stats = allStats.map((stat) => stat.data);
+        // console.log('got player stats for player and season', player, season);
+        // console.log(stats);
+        setPlayerStats(stats);
+        setLoading(false);
+      }).catch((e) => {
+        console.log('error with stats API request');
+        console.log(e);
+      });
+    }
   }, [player, season]);
 
   const dimensions = [
@@ -61,6 +62,11 @@ function PlayerGameStats(props) {
     { value: 'statsType', title: 'Match Type' },
     // { value: 'gameWeek', title: 'Gameweek' },
   ];
+  if (playerName === 'ALL_PLAYERS') {
+    dimensions.push({
+      value: 'playerName', title: 'Player',
+    });
+  }
   const reduce = (row, memo) => {
     /* eslint-disable no-param-reassign */
     memo.count = (memo.count || 0) + 1;
@@ -849,6 +855,7 @@ function PlayerGameStats(props) {
           compact
           csvDownloadFileName={`${playerName || player}Stats.csv`}
         />
+        {loading && <CircularProgress color="secondary" />}
       </Paper>
       {/* <Grid container className={classes.statsHeader} spacing={1} alignItems="flex-start" justify="flex-start">
           <Grid item xs>Matchup</Grid>
