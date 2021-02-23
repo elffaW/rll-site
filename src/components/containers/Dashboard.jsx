@@ -161,14 +161,14 @@ class Dashboard extends Component {
                   <Typography
                     variant="h4"
                     style={{
-                      fontVariant: 'small-caps', fontWeight: 700, marginLeft: 32, marginTop: 16,
+                      fontVariant: 'small-caps', marginLeft: 32, marginTop: 16,
                     }}
                   >
                     {`Upcoming games ${games[0].gameTime.split(' ')[0]}`}
                   </Typography>
                   <Grid container direction="row" alignItems="center" justify="center">
                     <Grid item xs={3}>
-                      <Typography className={classes.gameSubtitle} style={{ fontSize: '1.5rem', color: 'initial' }}>
+                      <Typography variant="h5" className={classes.gameSubtitle} style={{ fontSize: '1.5rem', color: 'initial' }}>
                         {games[0].arena}
                       </Typography>
                     </Grid>
@@ -226,7 +226,7 @@ class Dashboard extends Component {
                         // />
                         <>
                           <Grid item xs={3}>
-                            <Typography className={classes.gameSubtitle} style={{ fontSize: '1.4rem' }}>
+                            <Typography variant="h6" className={classes.gameSubtitle} style={{ fontSize: '1.4rem' }}>
                               {`${gameTime.split(' ')[1]} ${gameTime.split(' ')[2]}`}
                             </Typography>
                           </Grid>

@@ -232,7 +232,7 @@ class Standings extends Component {
               </Typography>
             </Grid>
             <Grid item xs>
-              <Typography className={classes.teamDesc} style={{ fontWeight: 700 }}>
+              <Typography variant="h6" className={classes.teamDesc}>
                 {team.points}
               </Typography>
             </Grid>
@@ -293,7 +293,7 @@ class Standings extends Component {
           <Grid container alignItems="flex-start" justify="flex-start">
             <Paper className={classes.paper}>
               <Grid item xs={12}>
-                <Grid container alignItems="center" justify="flex-start">
+                <Grid container alignItems="center" justify="flex-start" style={{ fontVariant: 'small-caps' }}>
                   <Grid item xs>
                     <Typography variant="h6" onClick={() => this.handleSortFieldChange('rank')}>
                       Rank
