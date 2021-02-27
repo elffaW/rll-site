@@ -198,7 +198,7 @@ class Schedule extends Component {
       const maxWeeks = 6;
       let i = 1;
       let noMoreGames = false;
-      while (i < maxWeeks && !noMoreGames) {
+      while (i <= maxWeeks && !noMoreGames) {
         const curWeekGames = games.filter((game) => parseInt(game.gameWeek, 10) === i); // eslint-disable-line
         if (curWeekGames.length < 1) {
           noMoreGames = true;

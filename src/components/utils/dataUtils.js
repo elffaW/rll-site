@@ -95,6 +95,7 @@ const convertGamesToMatches = (games) => {
     } = firstGame;
     let numHomeWins = 0;
     let numCompleteGames = 0;
+    match.sort((a, b) => a.gameNum - b.gameNum);
     const matchGames = match.map((game) => {
       const { homeTeamScore, awayTeamScore, playerStats } = game;
       const gameComplete = !!homeTeamScore && !!awayTeamScore;

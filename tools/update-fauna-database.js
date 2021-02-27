@@ -346,7 +346,7 @@ function getStatsFromSheets(statsSheet) {
           playerTimeInAttackingThird,
         });
         if (playerName) {
-          // statsType: RS, PO, SUB, BOT, COMB (combine)
+          // statsType: RS, PO, SUB, BOT, COMB (combine), SN (Seed Night)
           if (statsType === 'RS' || statsType === 'PO') {
             if (!statsByPlayer[playerName]) {
               statsByPlayer[playerName] = {
