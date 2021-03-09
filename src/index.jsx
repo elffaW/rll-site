@@ -2,7 +2,9 @@ import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { ThemeProvider } from '@material-ui/core/styles';
+import { Provider } from 'react-redux';
 
+import store from './store/store';
 import baseTheme from './baseTheme';
 import Root from './components/Root';
 
@@ -17,7 +19,9 @@ require('./favicon.ico'); // Tell webpack to load favicon.ico
 render(
   <AppContainer>
     <ThemeProvider theme={baseTheme}>
-      <Root />
+      <Provider store={store}>
+        <Root />
+      </Provider>
     </ThemeProvider>
   </AppContainer>,
   document.getElementById('app'),

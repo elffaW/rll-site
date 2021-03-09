@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   AppBar, Avatar, Box, Container, Tab, Tabs, Toolbar,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { NavLink, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { updateSeason, fetchSeasons, selectAllSeasons } from '../slices/seasonSlice';
 import NotFound from './NotFound';
 import { lookupTabNumByPath } from '../utils/tabHelper';
 
@@ -52,8 +54,8 @@ const defaultProps = {
   children: <NotFound />,
 };
 
-export default function BaseApp(props) {
-  const { children } = props;
+export default function BaseApp({ children }) {
+  const dispatch = useDispatch();
 
   const location = useLocation();
   const pathNum = lookupTabNumByPath(location.pathname);
@@ -61,9 +63,21 @@ export default function BaseApp(props) {
   const [tabValue, setTab] = React.useState(pathNum);
   const classes = useStyles();
 
+  const seasons = useSelector(selectAllSeasons);
+  const seasonStatus = useSelector((state) => state.seasons.status);
+  const seasonsError = useSelector((state) => state.seasons.error);
+
+  useEffect(() => {
+    if (seasonStatus === 'idle') {
+      dispatch(fetchSeasons());
+    }
+  }, [seasonStatus, dispatch]);
+
   const handleTabChange = (event, newTab) => {
     setTab(newTab);
   };
+
+  console.log('BaseApp seasons', seasons);
 
   return (
     <div>
@@ -115,9 +129,16 @@ export default function BaseApp(props) {
           </Tabs>
         </Toolbar>
       </AppBar>
+      {seasonsError && (
+        <p>{seasonsError}</p>
+      )}
       <Box id="main-content" bgcolor="primary.main" className={classes.mainContent}>
         <Container className={classes.contentContainer} maxWidth={false}>
-          {children}
+          {seasonStatus === 'loading' ? (
+            <p>Loading...</p>
+          ) : (
+            <>{children}</>
+          )}
         </Container>
       </Box>
     </div>

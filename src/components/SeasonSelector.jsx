@@ -3,10 +3,17 @@ import PropTypes from 'prop-types';
 import {
   Typography, Select, MenuItem, IconButton, Grid, Button,
 } from '@material-ui/core';
+import { useDispatch, useSelector } from 'react-redux';
 import Pagination from '@material-ui/lab/Pagination';
 import SyncIcon from '@material-ui/icons/Sync';
 import { makeStyles } from '@material-ui/core/styles';
 import { SEASONS } from './containers/BaseApp';
+import {
+  selectCurrentSeason,
+  selectSeasonById,
+  selectAllSeasons,
+  updateSeason,
+} from './slices/seasonSlice';
 
 const useStyles = makeStyles((theme) => ({
   seasonText: {
@@ -25,14 +32,25 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SeasonSelector(props) {
+  const dispatch = useDispatch();
   const {
     season, handleSeasonChange, forceRefresh, disabled, showAllOption,
   } = props;
   const classes = useStyles();
 
+  const seasonValue = useSelector(selectCurrentSeason);
+  const allSeasons = useSelector(selectAllSeasons);
+  console.log(seasonValue);
+  console.log(allSeasons);
+
   const changeSeason = (newVal) => {
     const temp = { target: { value: newVal } };
     handleSeasonChange(temp);
+    console.log(temp);
+    console.log('get new season');
+    const newSeason = useSelector((state) => state.seasons.seasons.find((s) => s.id === temp));
+    console.log(newSeason);
+    dispatch(updateSeason(newSeason));
   };
 
   return (
@@ -53,8 +71,8 @@ export default function SeasonSelector(props) {
       )}
       <Pagination
         id="season-selector"
-        count={SEASONS.length}
-        page={season}
+        count={allSeasons.length}
+        page={seasonValue ? seasonValue.id : 1}
         color="secondary"
         onChange={(e, val) => changeSeason(val)}
         hideNextButton
