@@ -31,6 +31,8 @@ const getStatsBySeasonAndGame = (season, game) => fetch(`/.netlify/functions/sta
 const getStatsByPlayerName = (player) => fetch(`/.netlify/functions/stats-getByPlayerName?player=${player}`)
   .then((response) => response.json());
 
+const getAllSeasons = () => fetch('/.netlify/functions/seasons-getAll').then((response) => response.json());
+
 export default {
   getAllPlayers,
   getAllTeams,
@@ -44,4 +46,5 @@ export default {
   getStatsBySeasonAndPlayer,
   getStatsBySeasonAndGame,
   getStatsByPlayerName,
+  getAllSeasons,
 };

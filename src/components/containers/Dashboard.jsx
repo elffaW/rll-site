@@ -19,7 +19,6 @@ import api from '../utils/api';
 
 import networkPromo from '../../videos/NetworkPromo_S1.mp4';
 
-export const CURRENT_GAME_WEEK = '5';
 const defaultProps = {
   classes: '',
 };
@@ -50,7 +49,6 @@ class Dashboard extends Component {
       const allGames = results[0];
       const teamsData = results[1];
       const gamesTemp = allGames.map((game) => game.data);
-      // const curWeekGames = games.filter((game) => game.gameWeek === CURRENT_GAME_WEEK);
       if (gamesTemp.length > 0) {
         // ugly because we're still supporting old match-based games format in addition to S5 game-based game format
         const games = convertGamesToMatches(gamesTemp);

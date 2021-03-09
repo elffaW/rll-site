@@ -323,7 +323,7 @@ class Standings extends Component {
                   </Grid>
                   <Grid item xs>
                     <Typography variant="h6" onClick={() => this.handleSortFieldChange('points')}>
-                      {season === 5 ? 'DONG' : 'PTS'}
+                      PTS
                       {sortField === 'points' && (<ArrowDropDownIcon style={sortDirection ? null : { transform: 'scaleY(-1)' }} />)}
                     </Typography>
                   </Grid>

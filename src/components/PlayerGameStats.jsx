@@ -22,6 +22,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const seasonToTeamSizeMap = {
+  1: 2,
+  2: 3,
+  3: 3,
+  4: 3,
+  5: 2,
+};
+
 function PlayerGameStats(props) {
   const { player, playerName, season } = props;
   const classes = useStyles();
@@ -32,24 +40,35 @@ function PlayerGameStats(props) {
   useEffect(() => {
     if (playerName === 'ALL_PLAYERS') {
       api.getAllStats().then((allStats) => {
-        const stats = allStats.map((stat) => stat.data);
-        // console.log(stats.length, 'STATS GAMES RETRIEVED');
+        const statsTemp = allStats.map((stat) => stat.data);
+        const stats = statsTemp.map((stat) => {
+          const { ...tempStat } = stat;
+          tempStat.teamSize = seasonToTeamSizeMap[stat.season] || 3;
+          return tempStat;
+        });
+        console.log(stats);
+        console.log(stats.length, 'STATS GAMES RETRIEVED');
         setPlayerStats(stats);
         setLoading(false);
       }).catch((e) => {
-        console.log('error with stats API request');
-        console.log(e);
+        console.error('error with stats API request');
+        console.error(e);
       });
     } else {
       api.getStatsByPlayerName(playerName).then((allStats) => {
-        const stats = allStats.map((stat) => stat.data);
+        const statsTemp = allStats.map((stat) => stat.data);
+        const stats = statsTemp.map((stat) => {
+          const { ...tempStat } = stat;
+          tempStat.teamSize = seasonToTeamSizeMap[stat.season] || 3;
+          return tempStat;
+        });
         // console.log('got player stats for player and season', player, season);
         // console.log(stats);
         setPlayerStats(stats);
         setLoading(false);
       }).catch((e) => {
-        console.log('error with stats API request');
-        console.log(e);
+        console.error('error with stats by player API request');
+        console.error(e);
       });
     }
   }, [player, season]);
@@ -61,6 +80,8 @@ function PlayerGameStats(props) {
     { value: 'opposingTeam', title: 'Opponent' },
     { value: 'statsType', title: 'Match Type' },
     // { value: 'gameWeek', title: 'Gameweek' },
+    { value: (row) => (row.playerWin === '1' ? 'W' : 'L'), title: 'Win or Loss' },
+    { value: 'teamSize', title: 'Team Size' },
   ];
   if (playerName === 'ALL_PLAYERS') {
     dimensions.push({
@@ -90,15 +111,19 @@ function PlayerGameStats(props) {
     memo.numMVPAvg = (memo.numMVPTotal || 0) / (memo.count || 1);
     memo.scoreTotal = (memo.scoreTotal || 0) + parseFloat(row.playerScore);
     memo.scoreAvg = (memo.scoreTotal || 0) / (memo.count || 1);
+    // try to calculate better averages for advanced stats by only counting games where adv stats were recorded
+    memo.advancedCount = (memo.advancedCount || 0) + +(row.playerTimeInDefendingThird !== undefined);
+    memo.semiadvancedCount = (memo.semiadvancedCount || 0) + +(row.playerBallTouches !== undefined);
+    memo.boostAdvancedCount = (memo.boostAdvancedCount || 0) + +(row.playerBoostUsage !== undefined);
     // from advanced but added to regular
     memo.numDemosInflicted = (memo.numDemosInflicted || 0) + parseInt(row.playerNumDemosInflicted || 0, 10);
     memo.numDemosTaken = (memo.numDemosTaken || 0) + parseInt(row.playerNumDemosTaken || 0, 10);
     memo.totalClears = (memo.totalClears || 0) + parseInt(row.playerTotalClears || 0, 10);
     memo.totalPasses = (memo.totalPasses || 0) + parseInt(row.playerTotalPasses || 0, 10);
-    memo.numDemosInflictedAvg = (memo.numDemosInflicted || 0) / (memo.count || 1);
-    memo.numDemosTakenAvg = (memo.numDemosTaken || 0) / (memo.count || 1);
-    memo.totalClearsAvg = (memo.totalClears || 0) / (memo.count || 1);
-    memo.totalPassesAvg = (memo.totalPasses || 0) / (memo.count || 1);
+    memo.numDemosInflictedAvg = (memo.numDemosInflicted || 0) / (memo.advancedCount || 1);
+    memo.numDemosTakenAvg = (memo.numDemosTaken || 0) / (memo.advancedCount || 1);
+    memo.totalClearsAvg = (memo.totalClears || 0) / (memo.advancedCount || 1);
+    memo.totalPassesAvg = (memo.totalPasses || 0) / (memo.advancedCount || 1);
     // advanced stats
     memo.scorePercentOfTeam = (memo.scorePercentOfTeam || 0) + parseFloat(row.playerPercentOfTeam);
     // memo.scoreRatingVsTeam = (memo.scoreRatingVsTeam || 0) + parseFloat(row.scoreRatingVsTeam);
@@ -142,43 +167,43 @@ function PlayerGameStats(props) {
     // advanced AVERAGE stats
     memo.scorePercentOfTeamAvg = (memo.scorePercentOfTeam || 0) / (memo.count || 1);
     // memo.scoreRatingVsTeamAvg = (memo.scoreRatingVsTeam || 0) / (memo.count || 1);
-    memo.ballTouchesAvg = (memo.ballTouches || 0) / (memo.count || 1);
-    memo.timeHighInAirAvg = (memo.timeHighInAir || 0) / (memo.count || 1);
-    memo.timeLowInAirAvg = (memo.timeLowInAir || 0) / (memo.count || 1);
-    memo.totalAerialsAvg = (memo.totalAerials || 0) / (memo.count || 1);
-    memo.turnoversAvg = (memo.turnovers || 0) / (memo.count || 1);
-    memo.takeawaysAvg = (memo.takeaways || 0) / (memo.count || 1);
-    memo.numKickoffFirstTouchAvg = (memo.numKickoffFirstTouch || 0) / (memo.count || 1);
-    memo.numKickoffAfkAvg = (memo.numKickoffAfk || 0) / (memo.count || 1);
-    memo.boostUsageAvg = (memo.boostUsage || 0) / (memo.count || 1);
-    memo.numSmallBoostsAvg = (memo.numSmallBoosts || 0) / (memo.count || 1);
-    memo.numLargeBoostsAvg = (memo.numLargeBoosts || 0) / (memo.count || 1);
-    memo.wastedUsageAvg = (memo.wastedUsage || 0) / (memo.count || 1);
-    memo.averageBoostLevelAvg = (memo.averageBoostLevel || 0) / (memo.count || 1);
-    memo.numStolenBoostsAvg = (memo.numStolenBoosts || 0) / (memo.count || 1);
-    memo.averageSpeedAvg = (memo.averageSpeed || 0) / (memo.count || 1);
-    memo.averageHitDistanceAvg = (memo.averageHitDistance || 0) / (memo.count || 1);
-    memo.timeAtSlowSpeedAvg = (memo.timeAtSlowSpeed || 0) / (memo.count || 1);
-    memo.timeAtBoostSpeedAvg = (memo.timeAtBoostSpeed || 0) / (memo.count || 1);
-    memo.timeAtSuperSonicAvg = (memo.timeAtSuperSonic || 0) / (memo.count || 1);
-    memo.timeBallcamAvg = (memo.timeBallcam || 0) / (memo.count || 1);
-    memo.timeOnWallAvg = (memo.timeOnWall || 0) / (memo.count || 1);
-    memo.timeMostForwardPlayerAvg = (memo.timeMostForwardPlayer || 0) / (memo.count || 1);
-    memo.timeMostBackPlayerAvg = (memo.timeMostBackPlayer || 0) / (memo.count || 1);
-    memo.timeBetweenPlayersAvg = (memo.timeBetweenPlayers || 0) / (memo.count || 1);
-    memo.timeBehindBallAvg = (memo.timeBehindBall || 0) / (memo.count || 1);
-    memo.timeInFrontBallAvg = (memo.timeInFrontBall || 0) / (memo.count || 1);
-    memo.ballHitForwardDistAvg = (memo.ballHitForwardDist || 0) / (memo.count || 1);
-    memo.ballHitBackwardDistAvg = (memo.ballHitBackwardDist || 0) / (memo.count || 1);
-    memo.timeCloseToBallAvg = (memo.timeCloseToBall || 0) / (memo.count || 1);
-    memo.totalCarriesAvg = (memo.totalCarries || 0) / (memo.count || 1);
-    memo.totalCarryDistanceAvg = (memo.totalCarryDistance || 0) / (memo.count || 1);
-    memo.totalDribblesAvg = (memo.totalDribbles || 0) / (memo.count || 1);
-    memo.usefulHitsAvg = (memo.usefulHits || 0) / (memo.count || 1);
-    memo.timeInGameAvg = (memo.timeInGame || 0) / (memo.count || 1);
-    memo.timeInDefendingThirdAvg = (memo.timeInDefendingThird || 0) / (memo.count || 1);
-    memo.timeInNeutralThirdAvg = (memo.timeInNeutralThird || 0) / (memo.count || 1);
-    memo.timeInAttackingThirdAvg = (memo.timeInAttackingThird || 0) / (memo.count || 1);
+    memo.ballTouchesAvg = (memo.ballTouches || 0) / (memo.semiadvancedCount || 1);
+    memo.timeHighInAirAvg = (memo.timeHighInAir || 0) / (memo.advancedCount || 1);
+    memo.timeLowInAirAvg = (memo.timeLowInAir || 0) / (memo.advancedCount || 1);
+    memo.totalAerialsAvg = (memo.totalAerials || 0) / (memo.advancedCount || 1);
+    memo.turnoversAvg = (memo.turnovers || 0) / (memo.advancedCount || 1);
+    memo.takeawaysAvg = (memo.takeaways || 0) / (memo.advancedCount || 1);
+    memo.numKickoffFirstTouchAvg = (memo.numKickoffFirstTouch || 0) / (memo.advancedCount || 1);
+    memo.numKickoffAfkAvg = (memo.numKickoffAfk || 0) / (memo.advancedCount || 1);
+    memo.boostUsageAvg = (memo.boostUsage || 0) / (memo.boostAdvancedCount || 1);
+    memo.numSmallBoostsAvg = (memo.numSmallBoosts || 0) / (memo.boostAdvancedCount || 1);
+    memo.numLargeBoostsAvg = (memo.numLargeBoosts || 0) / (memo.boostAdvancedCount || 1);
+    memo.wastedUsageAvg = (memo.wastedUsage || 0) / (memo.boostAdvancedCount || 1);
+    memo.averageBoostLevelAvg = (memo.averageBoostLevel || 0) / (memo.boostAdvancedCount || 1);
+    memo.numStolenBoostsAvg = (memo.numStolenBoosts || 0) / (memo.boostAdvancedCount || 1);
+    memo.averageSpeedAvg = (memo.averageSpeed || 0) / (memo.advancedCount || 1);
+    memo.averageHitDistanceAvg = (memo.averageHitDistance || 0) / (memo.advancedCount || 1);
+    memo.timeAtSlowSpeedAvg = (memo.timeAtSlowSpeed || 0) / (memo.advancedCount || 1);
+    memo.timeAtBoostSpeedAvg = (memo.timeAtBoostSpeed || 0) / (memo.advancedCount || 1);
+    memo.timeAtSuperSonicAvg = (memo.timeAtSuperSonic || 0) / (memo.advancedCount || 1);
+    memo.timeBallcamAvg = (memo.timeBallcam || 0) / (memo.advancedCount || 1);
+    memo.timeOnWallAvg = (memo.timeOnWall || 0) / (memo.advancedCount || 1);
+    memo.timeMostForwardPlayerAvg = (memo.timeMostForwardPlayer || 0) / (memo.advancedCount || 1);
+    memo.timeMostBackPlayerAvg = (memo.timeMostBackPlayer || 0) / (memo.advancedCount || 1);
+    memo.timeBetweenPlayersAvg = (memo.timeBetweenPlayers || 0) / (memo.advancedCount || 1);
+    memo.timeBehindBallAvg = (memo.timeBehindBall || 0) / (memo.advancedCount || 1);
+    memo.timeInFrontBallAvg = (memo.timeInFrontBall || 0) / (memo.advancedCount || 1);
+    memo.ballHitForwardDistAvg = (memo.ballHitForwardDist || 0) / (memo.advancedCount || 1);
+    memo.ballHitBackwardDistAvg = (memo.ballHitBackwardDist || 0) / (memo.advancedCount || 1);
+    memo.timeCloseToBallAvg = (memo.timeCloseToBall || 0) / (memo.advancedCount || 1);
+    memo.totalCarriesAvg = (memo.totalCarries || 0) / (memo.advancedCount || 1);
+    memo.totalCarryDistanceAvg = (memo.totalCarryDistance || 0) / (memo.advancedCount || 1);
+    memo.totalDribblesAvg = (memo.totalDribbles || 0) / (memo.advancedCount || 1);
+    memo.usefulHitsAvg = (memo.usefulHits || 0) / (memo.advancedCount || 1);
+    memo.timeInGameAvg = (memo.timeInGame || 0) / (memo.advancedCount || 1);
+    memo.timeInDefendingThirdAvg = (memo.timeInDefendingThird || 0) / (memo.advancedCount || 1);
+    memo.timeInNeutralThirdAvg = (memo.timeInNeutralThird || 0) / (memo.advancedCount || 1);
+    memo.timeInAttackingThirdAvg = (memo.timeInAttackingThird || 0) / (memo.advancedCount || 1);
     /* eslint-enable no-param-reassign */
     return memo;
   };

@@ -69,18 +69,16 @@ const getOptions = (showLegend, xLimit) => ({
         scaleInstance.width = 100;
       },
     }],
-    yAxes: [
-      {
-        stacked: true,
-        gridLines: {
-          display: false,
-        },
-        afterFit: (scaleInstance) => {
-          // eslint-disable-next-line no-param-reassign
-          scaleInstance.width = 50;
-        },
+    yAxes: [{
+      stacked: true,
+      gridLines: {
+        display: false,
       },
-    ],
+      afterFit: (scaleInstance) => {
+        // eslint-disable-next-line no-param-reassign
+        scaleInstance.width = 50;
+      },
+    }],
   },
   legend: {
     display: showLegend,
@@ -160,6 +158,7 @@ export default function MatchStats(props) {
         chartData.datasets.push({
           label: stat.playerName,
           data: [stat.teamName === homeTeamName ? -pValue : pValue],
+          stack: '1',
           backgroundColor: [colorOptions[i]],
           borderColor: [borderOptions[i]],
           borderWidth: 1,
@@ -169,7 +168,12 @@ export default function MatchStats(props) {
       const options = getOptions(showLegend, xLimit);
       statBars[idx].push(
         <Grid item xs={12}>
-          <HorizontalBar data={chartData} options={options} height={showLegend ? 100 : 80} width={300} />
+          <HorizontalBar
+            data={chartData}
+            options={options}
+            height={showLegend ? 100 : 80}
+            width={showLegend ? 302 : 300}
+          />
         </Grid>,
       );
       showLegend = false;
