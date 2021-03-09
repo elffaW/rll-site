@@ -40,17 +40,13 @@ export default function SeasonSelector(props) {
 
   const seasonValue = useSelector(selectCurrentSeason);
   const allSeasons = useSelector(selectAllSeasons);
-  console.log(seasonValue);
-  console.log(allSeasons);
 
   const changeSeason = (newVal) => {
     const temp = { target: { value: newVal } };
     handleSeasonChange(temp);
-    console.log(temp);
-    console.log('get new season');
-    const newSeason = useSelector((state) => state.seasons.seasons.find((s) => s.id === temp));
-    console.log(newSeason);
-    dispatch(updateSeason(newSeason));
+    // const newSeason = useSelector((state) => state.seasons.seasons.find((s) => s.id === newVal));
+    // console.log(newSeason);
+    dispatch(updateSeason(newVal));
   };
 
   return (

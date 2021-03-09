@@ -20,7 +20,8 @@ export const seasonSlice = createSlice({
   reducers: {
     // Use the PayloadAction type to declare the contents of `action.payload`
     updateSeason: (state, action) => {
-      state.value = action.payload;
+      // action.payload should be the int ID of the new season
+      state.currentSeason = state.seasons.find((s) => s.id === action.payload);
     },
   },
   extraReducers: {
@@ -30,6 +31,7 @@ export const seasonSlice = createSlice({
     [fetchSeasons.fulfilled]: (state, action) => {
       state.status = 'succeeded';
       state.seasons = state.seasons.concat(action.payload);
+      state.currentSeason = state.seasons[state.seasons.length - 1]; // go to most recent season by default
     },
     [fetchSeasons.rejected]: (state, action) => {
       state.status = 'failed';
@@ -56,7 +58,7 @@ export const updateSeasonAsync = (seasonNum) => (
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.season.value)`
-export const selectCurrentSeason = (state) => state.seasons.seasons[state.seasons.seasons.length - 1];
+export const selectCurrentSeason = (state) => state.seasons.currentSeason;
 export const selectSeasonById = (state, id) => state.seasons.seasons.find((s) => s.id === id);
 export const selectAllSeasons = (state) => state.seasons.seasons;
 

@@ -77,8 +77,6 @@ export default function BaseApp({ children }) {
     setTab(newTab);
   };
 
-  console.log('BaseApp seasons', seasons);
-
   return (
     <div>
       <AppBar position="fixed">

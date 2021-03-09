@@ -10,7 +10,7 @@ const initialState = {
 
 export const fetchPlayers = createAsyncThunk('players/fetchPlayers', async () => {
   const response = await api.getAllPlayers();
-  return response.map((s) => s.data);
+  return response.map((resp) => resp.data);
 });
 
 /* eslint-disable no-param-reassign */
