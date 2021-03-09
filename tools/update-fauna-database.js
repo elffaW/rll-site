@@ -286,6 +286,7 @@ function getStatsFromSheets(statsSheet) {
           opposingTeam,
           teamGoals,
           opponentGoals,
+          gameResult: playerWin ? 'W' : 'L',
           playerScore,
           playerGoals,
           playerAssists,
