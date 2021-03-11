@@ -44,9 +44,11 @@ const Schedule = (props) => {
   const season = useSelector(selectCurrentSeason);
   // const [seasonNum, setSeasonNum] = React.useState();
 
-
+  /**
+   * populate redux with games from API
+   */
   useEffect(() => {
-    if (gamesStatus === 'idle' && seasonsStatus === 'success') {
+    if (seasonsStatus === 'success' && gamesStatus === 'idle') {
       dispatch(fetchGames());
     }
   }, [gamesStatus, seasonsStatus, dispatch]);
