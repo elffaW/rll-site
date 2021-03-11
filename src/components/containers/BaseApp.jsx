@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
-  AppBar, Avatar, Box, Container, Tab, Tabs, Toolbar,
+  AppBar, Avatar, Box, CircularProgress, Container, Tab, Tabs, Toolbar, Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { NavLink, useLocation } from 'react-router-dom';
@@ -63,9 +63,11 @@ export default function BaseApp({ children }) {
   const [tabValue, setTab] = React.useState(pathNum);
   const classes = useStyles();
 
-  const seasons = useSelector(selectAllSeasons);
+  // const seasons = useSelector(selectAllSeasons);
   const seasonStatus = useSelector((state) => state.seasons.status);
   const seasonsError = useSelector((state) => state.seasons.error);
+
+  console.log('seasonsError', seasonsError);
 
   useEffect(() => {
     if (seasonStatus === 'idle') {
@@ -127,13 +129,16 @@ export default function BaseApp({ children }) {
           </Tabs>
         </Toolbar>
       </AppBar>
-      {seasonsError && (
-        <p>{seasonsError}</p>
-      )}
       <Box id="main-content" bgcolor="primary.main" className={classes.mainContent}>
         <Container className={classes.contentContainer} maxWidth={false}>
+          {seasonsError && (
+            <Typography>{seasonsError}</Typography>
+          )}
           {seasonStatus === 'loading' ? (
-            <p>Loading...</p>
+            <>
+              <CircularProgress color="secondary" />
+              <Typography>Loading...</Typography>
+            </>
           ) : (
             <>{children}</>
           )}

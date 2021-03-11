@@ -4,7 +4,7 @@ import api from '../utils/api';
 const initialState = {
   seasons: [],
   currentSeason: null,
-  status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+  status: 'idle', // 'idle' | 'loading' | 'success' | 'failed'
   error: null, // string | null
 };
 
@@ -29,7 +29,7 @@ export const seasonSlice = createSlice({
       state.status = 'loading';
     },
     [fetchSeasons.fulfilled]: (state, action) => {
-      state.status = 'succeeded';
+      state.status = 'success';
       state.seasons = state.seasons.concat(action.payload);
       state.currentSeason = state.seasons[state.seasons.length - 1]; // go to most recent season by default
     },

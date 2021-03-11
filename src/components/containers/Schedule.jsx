@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Grid,
@@ -6,13 +6,12 @@ import {
   Typography,
   Paper,
   Button,
-  MenuItem,
-  Select,
   Accordion,
   AccordionSummary,
   AccordionDetails,
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { useDispatch, useSelector } from 'react-redux';
 
 import BaseApp, { SEASONS } from './BaseApp';
 import GameCard from '../GameCard';
@@ -22,59 +21,73 @@ import SeasonSelector from '../SeasonSelector';
 import MatchStats from '../MatchStats';
 import api from '../utils/api';
 import { convertGamesToMatches } from '../utils/dataUtils';
-import { styles as paperStyles } from '../../styles/themeStyles';
+import { stylesHook as paperStyles } from '../../styles/themeStyles';
+import { selectCurrentSeason, updateSeason } from '../slices/seasonSlice';
+import { fetchGames, selectAllGames, selectGamesBySeason } from '../slices/gameSlice';
 
-const defaultProps = {
-  classes: '',
-};
+const Schedule = (props) => {
+  const classes = paperStyles();
+  const dispatch = useDispatch();
 
-class Schedule extends Component {
-  constructor(props) {
-    super(props);
+  const { match } = props;
+  const { params } = match;
+  const { gameNum } = params;
 
-    // get all data for this page
-    // this.setState({ games: gamesData });
+  const [games, setGames] = React.useState([]);
+  const [expanded, setExpanded] = React.useState(false);
 
-    this.state = {
-      games: [],
-      loading: true,
-      season: SEASONS[SEASONS.length - 1], // default to the last season in the list
-      expanded: false,
-    };
-  }
+  // TODO: replace these state vars with ones from redux
+  // const [loading, setLoading] = React.useState(true);
+  const seasonsStatus = useSelector((state) => state.seasons.status);
+  const gamesStatus = useSelector((state) => state.games.status);
+  const gamesError = useSelector((state) => state.games.error);
+  const season = useSelector(selectCurrentSeason);
+  // const [seasonNum, setSeasonNum] = React.useState();
 
-  componentDidMount() {
-    // get page data
-    this.getData();
-  }
 
-  getData = (newSeason) => {
-    const { season } = this.state;
-    const seasonQuery = newSeason || season;
+  useEffect(() => {
+    if (gamesStatus === 'idle' && seasonsStatus === 'success') {
+      dispatch(fetchGames());
+    }
+  }, [gamesStatus, seasonsStatus, dispatch]);
+
+  const seasonNum = season ? season.id : null;
+
+  const allGames = seasonNum
+    ? useSelector((state) => selectGamesBySeason(state, seasonNum))
+    : useSelector(selectAllGames);
+
+  // useEffect(() => {
+  //   // const seasonGames = allGames.filter((g) => g.season === seasonNum);
+  //   console.log('games in season:', seasonGames.length);
+  // }, [seasonNum, allGames]);
+
+  const getData = (newSeason) => {
+    const seasonQuery = newSeason || seasonNum;
 
     Promise.all([
-      api.getGamesBySeason(seasonQuery),
+      // api.getGamesBySeason(seasonQuery),
       api.getTeamsBySeason(seasonQuery),
       api.getStatsBySeason(seasonQuery),
     ]).then((results) => {
-      const allGames = results[0];
-      const teamsData = results[1];
-      const statsData = results[2];
+      // const gamesResp = results[0];
+      const teamsData = results[0];
+      const statsData = results[1];
       const stats = statsData.map((stat) => stat.data);
-      const gamesData = allGames.map((game) => game.data);
+      // const gamesData = gamesResp.map((game) => game.data);
       // associate game stats records with the games
-      const gamesTemp = gamesData.map((game) => {
+      const gamesTemp = allGames.map((game) => {
         const { ...tempGame } = game;
         tempGame.playerStats = stats.filter((stat) => parseInt(stat.gameId, 10) === parseInt(game.gameNum, 10));
         return tempGame;
       });
       // convert games to matches if needed
-      const games = convertGamesToMatches(gamesTemp);
-      games.sort((a, b) => new Date(a.gameTime) - new Date(b.gameTime)); // earlier game times first
-      games.sort((a, b) => (a.id - b.id)); // sort by game ID
+      const matches = convertGamesToMatches(gamesTemp);
+      matches.sort((a, b) => new Date(a.gameTime) - new Date(b.gameTime)); // earlier game times first
+      matches.sort((a, b) => (a.id - b.id)); // sort by game ID
 
       const allTeams = teamsData.map((team) => team.data);
-      const gamesWithTeams = games.map((game) => {
+      const matchesWithTeams = matches.map((game) => {
         const { ...tempGame } = game;
         tempGame.homeTeam = allTeams.find((team) => (
           parseInt(team.id, 10) === parseInt(tempGame.homeTeamId, 10) && team.season === tempGame.season));
@@ -90,187 +103,185 @@ class Schedule extends Component {
         return tempGame;
       });
 
-      // console.log(gamesWithTeams);
+      // console.log(matchesWithTeams);
 
-      this.setState({ games: gamesWithTeams, loading: false });
+      setGames(matchesWithTeams);
+      // setLoading(false);
     }).catch((err) => {
       console.error('Could not get data for page', err);
-      this.setState({ loading: false });
+      // setLoading(false);
     });
-  }
+  };
 
-  handleSeasonChange = (event) => {
-    const { season } = this.state;
-    const newSeason = parseInt(event.target.value, 10);
-    if (season !== newSeason) {
-      this.setState({ season: newSeason, loading: true });
-      this.getData(newSeason);
+  const handleSeasonChange = (event) => {
+    if (event) {
+      const newSeason = parseInt(event.target.value, 10);
+      if (seasonNum !== newSeason) {
+        dispatch(updateSeason(newSeason));
+        // setLoading(true);
+        // getData(newSeason);
+      }
     }
-  }
+  };
 
-  refreshData = () => {
-    this.getData();
-  }
+  useEffect(() => {
+    if (season) {
+      // setSeasonNum(season.id);
+      getData(season.id);
+    }
+  }, [season]);
 
-  noGamesRet = () => {
-    const { loading, season } = this.state;
+  const noGamesRet = () => (
+    <BaseApp>
+      <PageHeader headerText="RLL Schedule" />
+      {gamesStatus === 'loading' ? (
+        <>
+          <CircularProgress color="secondary" />
+          <Typography>Loading Schedule...</Typography>
+          <Button onClick={getData}>Taking forever?</Button>
+        </>
+      ) : (
+        <>
+          <Typography
+            variant="h5"
+            style={{
+              fontVariant: 'small-caps', fontWeight: 700, paddingTop: 16, paddingBottom: 16,
+            }}
+          >
+            {gamesStatus === 'failed' && gamesError ? (
+              <>{`ERROR: ${gamesError}`}</>
+            ) : (
+              <>No games found...</>
+            )}
+          </Typography>
+          <Button onClick={getData}>Try Again?</Button>
+          <Typography variant="h5" style={{ fontVariant: 'small-caps' }}>
+              Try different season?
+          </Typography>
+          <SeasonSelector
+            season={seasonNum}
+            handleSeasonChange={handleSeasonChange}
+            forceRefresh={getData}
+          />
+        </>
+      )}
+    </BaseApp>
+  );
+
+  const handleAccordionExpansion = (accordionIndex) => (event, isExpanded) => {
+    setExpanded(isExpanded ? accordionIndex : false);
+  };
+
+  if (!season) {
     return (
       <BaseApp>
         <PageHeader headerText="RLL Schedule" />
-        { loading ? (
-          <>
-            <CircularProgress color="secondary" />
-            <Typography>Loading Schedule...</Typography>
-            <Button onClick={this.getData}>Taking forever?</Button>
-          </>
-        ) : (
-          <>
-            <Typography
-              variant="h5"
-              style={{
-                fontVariant: 'small-caps', fontWeight: 700, paddingTop: 16, paddingBottom: 16,
-              }}
-            >
-              No games found...
-            </Typography>
-            <Button onClick={this.getData}>Try Again?</Button>
-            <Typography variant="h5" style={{ fontVariant: 'small-caps' }}>
-              Try different season?
-            </Typography>
-            <Select
-              labelId="season-select-outlined-label"
-              id="season-select-outlined"
-              value={season}
-              onChange={this.handleSeasonChange}
-              style={{
-                fontSize: '2rem', marginLeft: 12, marginTop: -6.5,
-              }}
-            >
-              {SEASONS.map((s) => (
-                <MenuItem value={s}>{s}</MenuItem>
-              ))}
-            </Select>
-          </>
-        )}
+        <CircularProgress color="secondary" />
+        <Typography>Loading...</Typography>
       </BaseApp>
     );
   }
 
-  handleAccordionExpansion = (accordionIndex) => (event, isExpanded) => {
-    this.setState({ expanded: isExpanded ? accordionIndex : false });
+  if (games.length < 1) {
+    return noGamesRet();
   }
 
-  render() {
-    const { classes, match } = this.props;
-    const {
-      games, loading, season, expanded,
-    } = this.state;
-    const { params } = match;
-    const { gameNum } = params;
+  const seasonIdx = SEASONS.findIndex((i) => i === seasonNum);
+  // unless we're at the current season, there should be a playoff bracket (also S1 was retro-fitted for the site so it's annoying)
+  const showPlayoffs = seasonNum !== 1 && seasonIdx < (SEASONS.length - 1) && seasonIdx > -1;
 
-    if (games.length < 1) {
-      return this.noGamesRet();
+  const gameCards = [];
+
+  if (gameNum) {
+    const curGame = games.find((game) => game.id === parseInt(gameNum, 10));
+    if (curGame) {
+      gameCards.push(
+        <Grid item xs={12}>
+          <Paper className={classes.darkestPaper}>
+            <Grid container alignItems="center" justify="space-around">
+              <GameCard game={curGame} showDetails />
+              <MatchStats match={curGame} />
+            </Grid>
+          </Paper>
+        </Grid>,
+      );
+    } else {
+      return noGamesRet();
     }
-
-    const seasonIdx = SEASONS.findIndex((i) => i === season);
-    // unless we're at the current season, there should be a playoff bracket (also S1 was retro-fitted for the site so it's annoying)
-    const showPlayoffs = season !== 1 && seasonIdx < (SEASONS.length - 1) && seasonIdx > -1;
-
-    const gameCards = [];
-
-    if (gameNum) {
-      const curGame = games.find((game) => game.id === parseInt(gameNum, 10));
-      if (curGame) {
+  } else {
+    const maxWeeks = 6;
+    let i = 1;
+    let noMoreGames = false;
+    while (i <= maxWeeks && !noMoreGames) {
+      const curWeekGames = games.filter((game) => parseInt(game.gameWeek, 10) === i); // eslint-disable-line
+      if (curWeekGames.length < 1) {
+        noMoreGames = true;
+      } else {
         gameCards.push(
           <Grid item xs={12}>
-            <Paper className={classes.darkestPaper}>
-              <Grid container alignItems="center" justify="space-around">
-                <GameCard game={curGame} showDetails />
-                <MatchStats match={curGame} />
-              </Grid>
-            </Paper>
+            <Accordion
+              className={classes.paper}
+              expanded={expanded === i}
+              onChange={handleAccordionExpansion(i)}
+            >
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls={`gameweek-${i}-content`}
+                id={`gameweek-${i}-header`}
+              >
+                <Typography
+                  variant="h4"
+                  style={{
+                    fontVariant: 'small-caps', fontWeight: 700, paddingTop: 16, paddingBottom: 16,
+                  }}
+                >
+                  {`GameWeek ${i}`}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Grid container alignItems="center" justify="space-around">
+                  {curWeekGames.map((game) => (
+                    <GameCard game={game} />
+                  ))}
+                </Grid>
+              </AccordionDetails>
+            </Accordion>
           </Grid>,
         );
-      } else {
-        return this.noGamesRet();
       }
-    } else {
-      const maxWeeks = 6;
-      let i = 1;
-      let noMoreGames = false;
-      while (i <= maxWeeks && !noMoreGames) {
-        const curWeekGames = games.filter((game) => parseInt(game.gameWeek, 10) === i); // eslint-disable-line
-        if (curWeekGames.length < 1) {
-          noMoreGames = true;
-        } else {
-          gameCards.push(
-            <Grid item xs={12}>
-              <Accordion
-                className={classes.paper}
-                expanded={expanded === i}
-                onChange={this.handleAccordionExpansion(i)}
-              >
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls={`gameweek-${i}-content`}
-                  id={`gameweek-${i}-header`}
-                >
-                  <Typography
-                    variant="h4"
-                    style={{
-                      fontVariant: 'small-caps', fontWeight: 700, paddingTop: 16, paddingBottom: 16,
-                    }}
-                  >
-                    {`GameWeek ${i}`}
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Grid container alignItems="center" justify="space-around">
-                    {curWeekGames.map((game) => (
-                      <GameCard game={game} />
-                    ))}
-                  </Grid>
-                </AccordionDetails>
-              </Accordion>
-            </Grid>,
-          );
-        }
-        i++; // eslint-disable-line
-      }
+      i++; // eslint-disable-line
     }
-
-    return (
-      <BaseApp>
-        <PageHeader headerText="RLL Schedule" />
-        { loading ? (
-          <>
-            <CircularProgress color="secondary" />
-            <Typography>Loading Schedule...</Typography>
-            <Button onClick={this.getData}>Taking forever?</Button>
-          </>
-        ) : (
-          <>
-            <SeasonSelector
-              season={season}
-              handleSeasonChange={this.handleSeasonChange}
-              forceRefresh={this.refreshData}
-            />
-            {showPlayoffs && <PlayoffSchedule season={season} />}
-            <Grid container spacing={5} alignItems="flex-start" justify="flex-start">
-              {gameCards}
-            </Grid>
-          </>
-        )}
-      </BaseApp>
-    );
   }
-}
+
+  return (
+    <BaseApp>
+      <PageHeader headerText="RLL Schedule" />
+      { gamesStatus === 'loading' ? (
+        <>
+          <CircularProgress color="secondary" />
+          <Typography>Loading Schedule...</Typography>
+          <Button onClick={getData}>Taking forever?</Button>
+        </>
+      ) : (
+        <>
+          <SeasonSelector
+            season={seasonNum}
+            handleSeasonChange={handleSeasonChange}
+            forceRefresh={getData}
+          />
+          {showPlayoffs && <PlayoffSchedule season={seasonNum} />}
+          <Grid container spacing={5} alignItems="flex-start" justify="flex-start">
+            {gameCards}
+          </Grid>
+        </>
+      )}
+    </BaseApp>
+  );
+};
 
 Schedule.propTypes = {
-  classes: PropTypes.string,
   // eslint-disable-next-line react/forbid-prop-types
   match: PropTypes.object.isRequired,
 };
-Schedule.defaultProps = defaultProps;
 
-export default paperStyles(Schedule);
+export default Schedule;

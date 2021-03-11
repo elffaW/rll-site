@@ -4,7 +4,7 @@ import api from '../utils/api';
 const initialState = {
   players: [],
   currentPlayer: null,
-  status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+  status: 'idle', // 'idle' | 'loading' | 'success' | 'failed'
   error: null, // string | null
 };
 
@@ -28,7 +28,7 @@ export const playerSlice = createSlice({
       state.status = 'loading';
     },
     [fetchPlayers.fulfilled]: (state, action) => {
-      state.status = 'succeeded';
+      state.status = 'success';
       state.players = state.players.concat(action.payload);
     },
     [fetchPlayers.rejected]: (state, action) => {

@@ -1,16 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Typography, Select, MenuItem, IconButton, Grid, Button,
+  Typography, IconButton, Grid, Button,
 } from '@material-ui/core';
-import { useDispatch, useSelector } from 'react-redux';
 import Pagination from '@material-ui/lab/Pagination';
 import SyncIcon from '@material-ui/icons/Sync';
 import { makeStyles } from '@material-ui/core/styles';
-import { SEASONS } from './containers/BaseApp';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   selectCurrentSeason,
-  selectSeasonById,
   selectAllSeasons,
   updateSeason,
 } from './slices/seasonSlice';
@@ -76,21 +74,6 @@ export default function SeasonSelector(props) {
         disabled={disabled}
         className={classes.seasonPager}
       />
-      {/* <Select
-        labelId="season-select-outlined-label"
-        id="season-select-outlined"
-        value={season}
-        onChange={handleSeasonChange}
-        className={classes.seasonSelector}
-        disabled={disabled}
-      >
-        {showAllOption ? (
-          <MenuItem value="All">All</MenuItem>
-        ) : null}
-        {SEASONS.map((s) => (
-          <MenuItem value={s}>{s}</MenuItem>
-        ))}
-      </Select> */}
     </Grid>
   );
 }
