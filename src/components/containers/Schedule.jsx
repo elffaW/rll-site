@@ -53,9 +53,13 @@ const Schedule = (props) => {
   /**
    * populate redux with games from API
    */
+  const getData = () => {
+    dispatch(fetchGames());
+  };
+
   useEffect(() => {
     if (seasonsStatus === 'success' && gamesStatus === 'idle') {
-      dispatch(fetchGames());
+      getData();
     }
   }, [gamesStatus, seasonsStatus, dispatch]);
 
@@ -64,9 +68,6 @@ const Schedule = (props) => {
   //   console.log('games in season:', seasonGames.length);
   // }, [seasonNum, allGames]);
 
-  const getData = () => {
-    dispatch(fetchGames());
-  };
 
   const handleSeasonChange = (event) => {
     if (event) {
