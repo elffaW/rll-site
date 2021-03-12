@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../utils/api';
+import { convertGamesToMatches } from '../utils/dataUtils';
 
 const initialState = {
   games: [],
@@ -9,8 +10,41 @@ const initialState = {
 };
 
 export const fetchGames = createAsyncThunk('games/fetchGames', async () => {
-  const response = await api.getAllGames();
-  return response.map((s) => s.data);
+  const response = await Promise.all([api.getAllGames(), api.getAllTeams(), api.getAllStats()]);
+  const gamesResp = response[0];
+  const teamsResp = response[1];
+  const statsResp = response[2];
+
+  const allGames = gamesResp.map((game) => game.data);
+  const allTeams = teamsResp.map((team) => team.data);
+  const allStats = statsResp.map((stat) => stat.data);
+  // associate game stats records with the games
+  const gamesTemp = allGames.map((game) => {
+    const { ...tempGame } = game;
+    tempGame.playerStats = allStats.filter((stat) => parseInt(stat.gameId, 10) === parseInt(game.gameNum, 10));
+    return tempGame;
+  });
+  // convert games to matches if needed
+  const matches = convertGamesToMatches(gamesTemp);
+  matches.sort((a, b) => new Date(a.gameTime) - new Date(b.gameTime)); // earlier game times first
+  matches.sort((a, b) => (a.id - b.id)); // sort by game ID
+
+  const matchesWithTeams = matches.map((game) => {
+    const { ...tempGame } = game;
+    tempGame.homeTeam = allTeams.find((team) => (
+      parseInt(team.id, 10) === parseInt(tempGame.homeTeamId, 10) && team.season === tempGame.season));
+    tempGame.awayTeam = allTeams.find((team) => (
+      parseInt(team.id, 10) === parseInt(tempGame.awayTeamId, 10) && team.season === tempGame.season));
+
+    if (!tempGame.homeTeam) {
+      tempGame.homeTeam = { rank: game.homeTeamRank };
+    }
+    if (!tempGame.awayTeam) {
+      tempGame.awayTeam = { rank: game.awayTeamRank };
+    }
+    return tempGame;
+  });
+  return matchesWithTeams;
 });
 
 /* eslint-disable no-param-reassign */

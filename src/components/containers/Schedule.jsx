@@ -33,7 +33,7 @@ const Schedule = (props) => {
   const { params } = match;
   const { gameNum } = params;
 
-  const [games, setGames] = React.useState([]);
+  // const [games, setGames] = React.useState([]);
   const [expanded, setExpanded] = React.useState(false);
 
   // TODO: replace these state vars with ones from redux
@@ -44,6 +44,11 @@ const Schedule = (props) => {
   const season = useSelector(selectCurrentSeason);
   // const [seasonNum, setSeasonNum] = React.useState();
 
+  const seasonNum = season ? season.id : null;
+
+  const games = seasonNum
+    ? useSelector((state) => selectGamesBySeason(state, seasonNum))
+    : useSelector(selectAllGames);
 
   useEffect(() => {
     if (gamesStatus === 'idle' && seasonsStatus === 'success') {
@@ -51,66 +56,13 @@ const Schedule = (props) => {
     }
   }, [gamesStatus, seasonsStatus, dispatch]);
 
-  const seasonNum = season ? season.id : null;
-
-  const allGames = seasonNum
-    ? useSelector((state) => selectGamesBySeason(state, seasonNum))
-    : useSelector(selectAllGames);
-
   // useEffect(() => {
   //   // const seasonGames = allGames.filter((g) => g.season === seasonNum);
   //   console.log('games in season:', seasonGames.length);
   // }, [seasonNum, allGames]);
 
-  const getData = (newSeason) => {
-    const seasonQuery = newSeason || seasonNum;
-
-    Promise.all([
-      // api.getGamesBySeason(seasonQuery),
-      api.getTeamsBySeason(seasonQuery),
-      api.getStatsBySeason(seasonQuery),
-    ]).then((results) => {
-      // const gamesResp = results[0];
-      const teamsData = results[0];
-      const statsData = results[1];
-      const stats = statsData.map((stat) => stat.data);
-      // const gamesData = gamesResp.map((game) => game.data);
-      // associate game stats records with the games
-      const gamesTemp = allGames.map((game) => {
-        const { ...tempGame } = game;
-        tempGame.playerStats = stats.filter((stat) => parseInt(stat.gameId, 10) === parseInt(game.gameNum, 10));
-        return tempGame;
-      });
-      // convert games to matches if needed
-      const matches = convertGamesToMatches(gamesTemp);
-      matches.sort((a, b) => new Date(a.gameTime) - new Date(b.gameTime)); // earlier game times first
-      matches.sort((a, b) => (a.id - b.id)); // sort by game ID
-
-      const allTeams = teamsData.map((team) => team.data);
-      const matchesWithTeams = matches.map((game) => {
-        const { ...tempGame } = game;
-        tempGame.homeTeam = allTeams.find((team) => (
-          parseInt(team.id, 10) === parseInt(tempGame.homeTeamId, 10) && team.season === tempGame.season));
-        tempGame.awayTeam = allTeams.find((team) => (
-          parseInt(team.id, 10) === parseInt(tempGame.awayTeamId, 10) && team.season === tempGame.season));
-
-        if (!tempGame.homeTeam) {
-          tempGame.homeTeam = { rank: game.homeTeamRank };
-        }
-        if (!tempGame.awayTeam) {
-          tempGame.awayTeam = { rank: game.awayTeamRank };
-        }
-        return tempGame;
-      });
-
-      // console.log(matchesWithTeams);
-
-      setGames(matchesWithTeams);
-      // setLoading(false);
-    }).catch((err) => {
-      console.error('Could not get data for page', err);
-      // setLoading(false);
-    });
+  const getData = () => {
+    dispatch(fetchGames());
   };
 
   const handleSeasonChange = (event) => {
@@ -123,13 +75,6 @@ const Schedule = (props) => {
       }
     }
   };
-
-  useEffect(() => {
-    if (season) {
-      // setSeasonNum(season.id);
-      getData(season.id);
-    }
-  }, [season]);
 
   const noGamesRet = () => (
     <BaseApp>
