@@ -19,8 +19,6 @@ import PageHeader from '../PageHeader';
 import PlayoffSchedule from '../PlayoffSchedule';
 import SeasonSelector from '../SeasonSelector';
 import MatchStats from '../MatchStats';
-import api from '../utils/api';
-import { convertGamesToMatches } from '../utils/dataUtils';
 import { stylesHook as paperStyles } from '../../styles/themeStyles';
 import { selectCurrentSeason, updateSeason } from '../slices/seasonSlice';
 import { fetchGames, selectAllGames, selectGamesBySeason } from '../slices/gameSlice';
