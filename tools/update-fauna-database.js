@@ -275,10 +275,12 @@ function getStatsFromSheets(statsSheet) {
           'TIME DEF THIRD': playerTimeInDefendingThird,
           'TIME NEUTRAL THIRD': playerTimeInNeutralThird,
           'TIME ATTACK THIRD': playerTimeInAttackingThird,
+          'GAME ID': gameName,
         } = stats;
         statsRows.push({
           id: `${gameId}-${playerName}-${SEASON_NUMBER}`,
           gameId,
+          gameName,
           playerName,
           season: parseInt(SEASON_NUMBER, 10),
           gameWeek: parseInt(gameWeek, 10),
@@ -464,6 +466,7 @@ function getStatsFromSheets(statsSheet) {
             if (!statsByGame[gameId]) {
               statsByGame[gameId] = {
                 id: gameId,
+                gameName,
                 team0: teamName,
                 team1: opposingTeam,
                 team0Goals: parseInt(teamGoals, 10),
