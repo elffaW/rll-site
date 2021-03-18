@@ -30,7 +30,7 @@ export default function AppRouter() {
             <Route path="/rules" component={Rules} />
             {/* SCHEDULE ROUTES */}
             {/* <Route path="/schedule/:weekNum" component={ScheduleDetails} /> */}
-            <Route path="/schedule/:gameNum" component={Schedule} />
+            <Route path="/schedule/:gameSeason/:gameNum" component={Schedule} />
             <Route path="/schedule" component={Schedule} />
             {/* PLAYER ROUTES */}
             <Route path="/teams/:teamName" component={Teams} />

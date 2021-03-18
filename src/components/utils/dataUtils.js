@@ -2,7 +2,7 @@
 
 /**
  * convertGamesToMatches takes array of Game objects and converts to Matches
- * @param {Game[]} games array of games
+ * @param {Game[]} games array of games (should be single season to avoid a mix of old and new game objects)
  * @returns {Match[]} array of matches with games sub-array
  *
  * @example GAME OBJECT S5

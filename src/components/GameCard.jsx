@@ -202,7 +202,7 @@ function GameCard(props) {
           ) : ''}
           <Grid item xs={2}>
             {gameComplete ? <Typography variant="h5" className={classes.completeStamp}>COMPLETE</Typography> : ''}
-            <Link to={!showDetails ? `/schedule/${game.id}` : '/schedule/'} exact>
+            <Link to={!showDetails ? `/schedule/${game.season}/${game.id}` : '/schedule/'} exact>
               <Typography variant="h4" className={classes.gameName} style={gameComplete ? { color: '#d0d0d0' } : null}>
                 {`Match ${game.id}`}
               </Typography>

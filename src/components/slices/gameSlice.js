@@ -10,22 +10,29 @@ const initialState = {
 };
 
 export const fetchGames = createAsyncThunk('games/fetchGames', async () => {
-  const response = await Promise.all([api.getAllGames(), api.getAllTeams(), api.getAllStats()]);
+  const response = await Promise.all([api.getAllGames(), api.getAllTeams(), api.getAllStats(), api.getAllSeasons()]);
   const gamesResp = response[0];
   const teamsResp = response[1];
   const statsResp = response[2];
+  const seasonsResp = response[3];
 
   const allGames = gamesResp.map((game) => game.data);
   const allTeams = teamsResp.map((team) => team.data);
   const allStats = statsResp.map((stat) => stat.data);
+  const allSeasons = seasonsResp.map((season) => season.data);
   // associate game stats records with the games
   const gamesTemp = allGames.map((game) => {
     const { ...tempGame } = game;
     tempGame.playerStats = allStats.filter((stat) => parseInt(stat.gameId, 10) === parseInt(game.gameNum, 10));
     return tempGame;
   });
-  // convert games to matches if needed
-  const matches = convertGamesToMatches(gamesTemp);
+  // convert games to matches (by season) if needed
+  let matches = [];
+  allSeasons.forEach((season) => {
+    const seasonGames = gamesTemp.filter((g) => g.season === season.id);
+    matches = matches.concat(convertGamesToMatches(seasonGames));
+  });
+
   matches.sort((a, b) => new Date(a.gameTime) - new Date(b.gameTime)); // earlier game times first
   matches.sort((a, b) => (a.id - b.id)); // sort by game ID
 
@@ -94,7 +101,12 @@ export const updateGameAsync = (gameNum) => (
 // in the slice file. For example: `useSelector((state: RootState) => state.game.value)`
 export const selectCurrentGame = (state) => state.games.currentGame;
 export const selectGameById = (state, id) => state.games.games.find((s) => s.id === id);
-export const selectGamesBySeason = (state, seasonNum) => state.games.games.filter((g) => g.season === seasonNum);
+export const selectGamesBySeason = (state, seasonNum) => {
+  if (seasonNum) {
+    return state.games.games.filter((g) => g.season === seasonNum);
+  }
+  return state.games.games;
+};
 export const selectAllGames = (state) => state.games.games;
 
 export default gameSlice.reducer;

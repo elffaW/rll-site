@@ -205,7 +205,7 @@ function TeamCard(props) {
             {showDetails && <Typography variant="h4" style={{ color: '#383838' }}>{curWeek}</Typography>}
             <Grid container direction="row" justify="space-around" alignItems="center">
               {curWeekOppObj.map((opp) => (
-                <Link to={`/schedule/${opp.gameId}`} exact>
+                <Link to={`/schedule/${team.season}/${opp.gameId}`} exact>
                   <Tooltip title={`${opp.result} (${opp.name})`}>
                     <Avatar src={opp.logo} variant="circle" style={opp.style} />
                   </Tooltip>

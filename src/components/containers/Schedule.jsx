@@ -29,7 +29,9 @@ const Schedule = (props) => {
 
   const { match } = props;
   const { params } = match;
-  const { gameNum } = params;
+  const { gameSeason, gameNum } = params;
+
+  console.log('gameSeason', gameSeason);
 
   // const [games, setGames] = React.useState([]);
   const [expanded, setExpanded] = React.useState(false);
@@ -40,13 +42,33 @@ const Schedule = (props) => {
   const gamesStatus = useSelector((state) => state.games.status);
   const gamesError = useSelector((state) => state.games.error);
   const season = useSelector(selectCurrentSeason);
-  // const [seasonNum, setSeasonNum] = React.useState();
+  const [seasonNum, setSeasonNum] = React.useState(gameSeason);
 
-  const seasonNum = season ? season.id : null;
 
-  const games = seasonNum
-    ? useSelector((state) => selectGamesBySeason(state, seasonNum))
-    : useSelector(selectAllGames);
+  // const seasonNum = season ? season.id : null;
+  useEffect(() => {
+    if (gameSeason) {
+      setSeasonNum(gameSeason);
+      dispatch(updateSeason(gameSeason));
+    } else if (season) {
+      setSeasonNum(season.id);
+    }
+  }, [season, gameSeason]);
+
+  console.log('Schedule season', seasonNum);
+  // useEffect(() => {
+  //   console.log('select games useEffect', seasonNum);
+  //   if (seasonNum) {
+  //     setGames(useSelector((state) => selectGamesBySeason(state, seasonNum)));
+  //   } else {
+  //     setGames(useSelector(selectAllGames));
+  //   }
+  // }, [seasonNum]);
+  const games = useSelector((state) => selectGamesBySeason(state, seasonNum));
+  console.log('Schedule games', games);
+  // const allGames = useSelector(selectAllGames);
+  // console.log('Schedule allGames', allGames);
+  // const games = useMemo(() => allGames.filter((g) => g.season === seasonNum), [allGames, seasonNum]);
 
   /**
    * populate redux with games from API
@@ -55,11 +77,11 @@ const Schedule = (props) => {
     dispatch(fetchGames());
   };
 
-  useEffect(() => {
-    if (seasonsStatus === 'success' && gamesStatus === 'idle') {
-      getData();
-    }
-  }, [gamesStatus, seasonsStatus, dispatch]);
+  // useEffect(() => {
+  //   if (seasonsStatus === 'success' && gamesStatus === 'idle') {
+  //     getData();
+  //   }
+  // }, [gamesStatus, seasonsStatus, dispatch]);
 
   // useEffect(() => {
   //   // const seasonGames = allGames.filter((g) => g.season === seasonNum);
@@ -85,7 +107,7 @@ const Schedule = (props) => {
         <>
           <CircularProgress color="secondary" />
           <Typography>Loading Schedule...</Typography>
-          <Button onClick={getData}>Taking forever?</Button>
+          {/* <Button onClick={getData}>Taking forever?</Button> */}
         </>
       ) : (
         <>
@@ -207,7 +229,7 @@ const Schedule = (props) => {
         <>
           <CircularProgress color="secondary" />
           <Typography>Loading Schedule...</Typography>
-          <Button onClick={getData}>Taking forever?</Button>
+          {/* <Button onClick={getData}>Taking forever?</Button> */}
         </>
       ) : (
         <>

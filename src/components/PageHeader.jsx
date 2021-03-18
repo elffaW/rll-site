@@ -13,8 +13,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function PageHeader(props) {
-  const { headerText } = props;
+export default function PageHeader({ headerText }) {
   const classes = useStyles();
   return (
     <Typography variant="h3" className={classes.headerText}>

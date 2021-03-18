@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Typography, Avatar, Grid, Tooltip,
+  Typography, Avatar, Grid,
 } from '@material-ui/core';
 import { defaults, HorizontalBar } from 'react-chartjs-2';
 
@@ -114,8 +114,7 @@ const barCharts = [{
   fieldName: 'playerShots',
 }];
 
-export default function MatchStats(props) {
-  const { match } = props;
+const MatchStats = ({ match }) => {
   const classes = useStyles();
 
   const {
@@ -129,55 +128,60 @@ export default function MatchStats(props) {
     return '';
   }
   games.forEach((game, idx) => {
-    statBars[idx] = [];
-    let showLegend = true; // TODO: use this in the options
-    barCharts.forEach((chartInfo) => {
-      const chartData = {
-        labels: [chartInfo.label],
-        datasets: [],
-      };
+    if (game && game.playerStats) {
+      statBars[idx] = [];
+      let showLegend = true; // TODO: use this in the options
+      barCharts.forEach((chartInfo) => {
+        const chartData = {
+          labels: [chartInfo.label],
+          datasets: [],
+        };
 
-      // order the playerStats by home team, then away team
-      if (homeTeamName.localeCompare(awayTeamName) < 0) { // home team alphabetically before away team
-        game.playerStats.sort((a, b) => a.teamName.localeCompare(b.teamName));
-      } else { // home team alphabetically after away team
-        game.playerStats.sort((a, b) => b.teamName.localeCompare(a.teamName));
-      }
+        // create mutable copy of game.playerStats array
+        const playerStats = game.playerStats.slice();
 
-      // console.log(game.playerStats[0]);
-
-      let sumPos = 0;
-      let sumNeg = 0;
-      game.playerStats.forEach((stat, i) => {
-        const pValue = parseInt(stat[chartInfo.fieldName], 10);
-        if (stat.teamName === homeTeamName) {
-          sumNeg -= pValue;
-        } else {
-          sumPos += pValue;
+        // order the playerStats by home team, then away team
+        if (homeTeamName.localeCompare(awayTeamName) < 0) { // home team alphabetically before away team
+          playerStats.sort((a, b) => a.teamName.localeCompare(b.teamName));
+        } else { // home team alphabetically after away team
+          playerStats.sort((a, b) => b.teamName.localeCompare(a.teamName));
         }
-        chartData.datasets.push({
-          label: stat.playerName,
-          data: [stat.teamName === homeTeamName ? -pValue : pValue],
-          stack: '1',
-          backgroundColor: [colorOptions[i]],
-          borderColor: [borderOptions[i]],
-          borderWidth: 1,
+
+        // console.log(game.playerStats[0]);
+
+        let sumPos = 0;
+        let sumNeg = 0;
+        playerStats.forEach((stat, i) => {
+          const pValue = parseInt(stat[chartInfo.fieldName], 10);
+          if (stat.teamName === homeTeamName) {
+            sumNeg -= pValue;
+          } else {
+            sumPos += pValue;
+          }
+          chartData.datasets.push({
+            label: stat.playerName,
+            data: [stat.teamName === homeTeamName ? -pValue : pValue],
+            stack: '1',
+            backgroundColor: [colorOptions[i]],
+            borderColor: [borderOptions[i]],
+            borderWidth: 1,
+          });
         });
+        const xLimit = Math.round(Math.max(-sumNeg, sumPos) * 1.2) + 1;
+        const options = getOptions(showLegend, xLimit);
+        statBars[idx].push(
+          <Grid item xs={12}>
+            <HorizontalBar
+              data={chartData}
+              options={options}
+              height={showLegend ? 100 : 80}
+              width={showLegend ? 302 : 300}
+            />
+          </Grid>,
+        );
+        showLegend = false;
       });
-      const xLimit = Math.round(Math.max(-sumNeg, sumPos) * 1.2) + 1;
-      const options = getOptions(showLegend, xLimit);
-      statBars[idx].push(
-        <Grid item xs={12}>
-          <HorizontalBar
-            data={chartData}
-            options={options}
-            height={showLegend ? 100 : 80}
-            width={showLegend ? 302 : 300}
-          />
-        </Grid>,
-      );
-      showLegend = false;
-    });
+    }
   });
 
   return (
@@ -210,9 +214,12 @@ export default function MatchStats(props) {
       </Grid>
     </Grid>
   );
-}
+};
 
 MatchStats.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   match: PropTypes.object.isRequired,
 };
+
+// export default React.memo(MatchStats);
+export default MatchStats;

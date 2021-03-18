@@ -8,6 +8,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { updateSeason, fetchSeasons, selectAllSeasons } from '../slices/seasonSlice';
+import { fetchGames } from '../slices/gameSlice';
 import NotFound from './NotFound';
 import { lookupTabNumByPath } from '../utils/tabHelper';
 
@@ -66,14 +67,21 @@ export default function BaseApp({ children }) {
   // const seasons = useSelector(selectAllSeasons);
   const seasonStatus = useSelector((state) => state.seasons.status);
   const seasonsError = useSelector((state) => state.seasons.error);
-
   console.log('seasonsError', seasonsError);
+
+  const gamesStatus = useSelector((state) => state.games.status);
 
   useEffect(() => {
     if (seasonStatus === 'idle') {
       dispatch(fetchSeasons());
     }
   }, [seasonStatus, dispatch]);
+
+  useEffect(() => {
+    if (seasonStatus === 'success' && gamesStatus === 'idle') {
+      dispatch(fetchGames());
+    }
+  }, [gamesStatus, seasonStatus, dispatch]);
 
   const handleTabChange = (event, newTab) => {
     setTab(newTab);

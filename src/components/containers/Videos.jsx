@@ -3,7 +3,6 @@ import {
   Grid, Paper, Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-// import ReactPlayer from 'react-player';
 
 import BaseApp from './BaseApp';
 import PageHeader from '../PageHeader';
@@ -35,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Videos() {
+export default function Videos() {
   const classes = useStyles();
   return (
     <BaseApp>
@@ -47,7 +46,6 @@ function Videos() {
           <Grid item>
             <Paper className={classes.paper} style={{ padding: 8 }}>
               <Typography variant="h5" style={{ fontVariant: 'small-caps' }}>{video.name}</Typography>
-              {/* <ReactPlayer url={`${video.googleUrl}`} light controls width="" height="" /> */}
               <iframe src={`${video.googleUrl}/preview`} title={video.name} width="720" height="405" />
             </Paper>
           </Grid>
@@ -56,5 +54,3 @@ function Videos() {
     </BaseApp>
   );
 }
-
-export default Videos;
