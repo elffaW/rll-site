@@ -3,35 +3,36 @@
  *
  * Needs corresponding netlify function in /api dir
  */
+import memoize from 'memoizee';
 
-const getAllPlayers = () => fetch('/.netlify/functions/players-getAll').then((response) => response.json());
+const getAllPlayers = memoize(() => fetch('/.netlify/functions/players-getAll').then((response) => response.json()), { promise: true });
 
-const getAllTeams = () => fetch('/.netlify/functions/teams-getAll').then((response) => response.json());
+const getAllTeams = memoize(() => fetch('/.netlify/functions/teams-getAll').then((response) => response.json()), { promise: true });
 
-const getAllGames = () => fetch('/.netlify/functions/games-getAll').then((response) => response.json());
+const getAllGames = memoize(() => fetch('/.netlify/functions/games-getAll').then((response) => response.json()), { promise: true });
 
-const getAllStats = () => fetch('/.netlify/functions/stats-getAll').then((response) => response.json());
+const getAllStats = memoize(() => fetch('/.netlify/functions/stats-getAll').then((response) => response.json()), { promise: true });
 
-const getPlayersBySeason = (season) => fetch(`/.netlify/functions/players-getBySeason?season=${season}`).then((response) => response.json());
+const getPlayersBySeason = memoize((season) => fetch(`/.netlify/functions/players-getBySeason?season=${season}`).then((response) => response.json()), { promise: true });
 
-const getPlayerByName = (player) => fetch(`/.netlify/functions/players-getByName?player=${player}`).then((response) => response.json());
+const getPlayerByName = memoize((player) => fetch(`/.netlify/functions/players-getByName?player=${player}`).then((response) => response.json()), { promise: true });
 
-const getTeamsBySeason = (season) => fetch(`/.netlify/functions/teams-getBySeason?season=${season}`).then((response) => response.json());
+const getTeamsBySeason = memoize((season) => fetch(`/.netlify/functions/teams-getBySeason?season=${season}`).then((response) => response.json()), { promise: true });
 
-const getGamesBySeason = (season) => fetch(`/.netlify/functions/games-getBySeason?season=${season}`).then((response) => response.json());
+const getGamesBySeason = memoize((season) => fetch(`/.netlify/functions/games-getBySeason?season=${season}`).then((response) => response.json()), { promise: true });
 
-const getStatsBySeason = (season) => fetch(`/.netlify/functions/stats-getBySeason?season=${season}`).then((response) => response.json());
+const getStatsBySeason = memoize((season) => fetch(`/.netlify/functions/stats-getBySeason?season=${season}`).then((response) => response.json()), { promise: true });
 
-const getStatsBySeasonAndPlayer = (season, player) => fetch(`/.netlify/functions/stats-getBySeasonAndPlayer?season=${season}&player=${player}`)
-  .then((response) => response.json());
+const getStatsBySeasonAndPlayer = memoize((season, player) => fetch(`/.netlify/functions/stats-getBySeasonAndPlayer?season=${season}&player=${player}`)
+  .then((response) => response.json()), { promise: true });
 
-const getStatsBySeasonAndGame = (season, game) => fetch(`/.netlify/functions/stats-getBySeasonAndGame?season=${season}&game=${game}`)
-  .then((response) => response.json());
+const getStatsBySeasonAndGame = memoize((season, game) => fetch(`/.netlify/functions/stats-getBySeasonAndGame?season=${season}&game=${game}`)
+  .then((response) => response.json()), { promise: true });
 
-const getStatsByPlayerName = (player) => fetch(`/.netlify/functions/stats-getByPlayerName?player=${player}`)
-  .then((response) => response.json());
+const getStatsByPlayerName = memoize((player) => fetch(`/.netlify/functions/stats-getByPlayerName?player=${player}`)
+  .then((response) => response.json()), { promise: true });
 
-const getAllSeasons = () => fetch('/.netlify/functions/seasons-getAll').then((response) => response.json());
+const getAllSeasons = memoize(() => fetch('/.netlify/functions/seasons-getAll').then((response) => response.json()), { promise: true });
 
 export default {
   getAllPlayers,

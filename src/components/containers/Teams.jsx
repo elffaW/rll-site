@@ -313,6 +313,7 @@ class Teams extends Component {
                         division={game.curDivision}
                         matchResult={game.matchResult}
                         matchComplete={game.matchComplete}
+                        streamRoom={game.streamRoom}
                         isPlayoffs={
                           game.homeTeamScoreA !== undefined ? !!(game.homeTeamScoreC && game.awayTeamScoreC) : game.type === 'PO'
                         }

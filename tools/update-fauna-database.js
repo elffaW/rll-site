@@ -698,25 +698,37 @@ function getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers) {
         } = team;
         if (teamName) {
           if (playerAName && playerBName && playerCName) {
-            console.log(teamName, ': ', playerAName, playerBName, playerCName);
+            console.log('\t', teamName, ':\t ', playerAName, playerBName, playerCName);
 
-            const playerA = parseInt(allPlayers.find(
+            // get player A ID and value
+            const playerAFull = allPlayers.find(
               (player) => player.name.toUpperCase() === playerAName.toUpperCase(),
-            ).id, 10);
-            const playerB = parseInt(allPlayers.find(
+            );
+            const playerA = parseInt(playerAFull.id, 10);
+            const playerAValue = parseFloat(playerAFull.value);
+
+            // get player B ID and value
+            const playerBFull = allPlayers.find(
               (player) => player.name.toUpperCase() === playerBName.toUpperCase(),
-            ).id, 10);
-            const playerC = parseInt(allPlayers.find(
+            );
+            const playerB = parseInt(playerBFull.id, 10);
+            const playerBValue = parseFloat(playerBFull.value);
+
+            // get player C ID and value
+            const playerCFull = allPlayers.find(
               (player) => player.name.toUpperCase() === playerCName.toUpperCase(),
-            ).id, 10);
+            );
+            const playerC = parseInt(playerCFull.id, 10);
+            const playerCValue = parseFloat(playerCFull.value);
+
             const teamMembers = [playerA, playerB, playerC];
             const roster = {
               id: parseInt(teamId, 10),
               name: teamName,
               members: teamMembers,
+              totalValue: (playerAValue + playerBValue + playerCValue).toFixed(1),
             };
             teamRosters.push(roster);
-            // console.log(roster);
           } else if (playerAName && playerBName) {
             console.log('\t', teamName, ':\t ', playerAName, playerBName);
 
@@ -844,6 +856,7 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
             const {
               DATE: gameDate,
               'TIME CST': gameTime,
+              'TIME CT': gameTimeAlt,
               TYPE: type,
               ARENA: arena,
               GAMEWEEK: gameWeek,
@@ -861,7 +874,7 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
               TM_B_SCR: teamScoreB,
             } = curGame;
 
-            const dateTime = `${gameDate} ${gameTime} -0500`;
+            const dateTime = `${gameDate} ${gameTime || gameTimeAlt} -0500`;
 
             // for S5 we switch from match-based records to game-based records with matchNum specified to link
             const gameObj = {

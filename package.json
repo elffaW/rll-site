@@ -54,6 +54,7 @@
     "faunadb": "2.14.1",
     "google-spreadsheet": "3.1.15",
     "lodash": "4.17.19",
+    "memoizee": "0.4.15",
     "object-assign": "4.1.1",
     "prop-types": "15.7.2",
     "proxy-middleware": "0.15.0",
