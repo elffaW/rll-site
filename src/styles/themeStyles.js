@@ -20,7 +20,7 @@ export const styles = withStyles((theme) => createStyles({
   darkGrayPaper: {
     textAlign: 'center',
     color: theme.otherColors.text.light,
-    backgroundColor: theme.palette.primary.darker,
+    backgroundColor: `${theme.palette.primary.darker}C0`, // add transparency
     margin: theme.spacing(1),
     marginTop: 0,
     paddingLeft: theme.spacing(1),

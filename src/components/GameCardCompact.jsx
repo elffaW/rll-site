@@ -16,7 +16,13 @@ const useStyles = makeStyles((theme) => ({
   },
   subtitle: {
     fontVariant: 'small-caps',
-    color: theme.palette.primary.light,
+    color: theme.otherColors.text.light,
+    fontStyle: 'italic',
+    textTransform: 'lowercase',
+  },
+  streamingRoom: {
+    fontVariant: 'small-caps',
+    color: theme.otherColors.text.lighter,
     fontStyle: 'italic',
     textTransform: 'lowercase',
   },
@@ -56,6 +62,8 @@ function GameCardCompact(props) {
     awayScoreE,
     upcomingOverview,
     streamRoom,
+    highlightTeam,
+    updateHighlight,
   } = props;
   const classes = useStyles();
 
@@ -161,11 +169,17 @@ function GameCardCompact(props) {
               <Typography variant="h6" className={classes.teamRank}>
                 {team1.rank}
               </Typography>
-              <Link to={`/teams/${team1.name}`} exact>
-                <Typography variant="h5" className={classes.teamName} style={homeStyle}>
-                  {team1.name}
-                </Typography>
-              </Link>
+              <span
+                onFocus={updateHighlight ? () => updateHighlight(team1.name) : null}
+                onMouseOver={updateHighlight ? () => updateHighlight(team1.name) : null}
+                onMouseLeave={updateHighlight ? () => updateHighlight('') : null}
+              >
+                <Link to={`/teams/${team1.name}`} exact>
+                  <Typography variant="h5" className={`${classes.teamName} ${highlightTeam === team1.name ? 'hover-team' : ''}`} style={homeStyle}>
+                    {team1.name}
+                  </Typography>
+                </Link>
+              </span>
               <Typography variant="body1" className={classes.teamRecord}>
                 {`${team1.wins}-${team1.losses}`}
               </Typography>
@@ -177,11 +191,17 @@ function GameCardCompact(props) {
               <Typography variant="h6" className={classes.teamRank}>
                 {team2.rank}
               </Typography>
-              <Link to={`/teams/${team2.name}`} exact>
-                <Typography variant="h5" className={classes.teamName} style={awayStyle}>
-                  {team2.name}
-                </Typography>
-              </Link>
+              <span
+                onFocus={updateHighlight ? () => updateHighlight(team2.name) : null}
+                onMouseOver={updateHighlight ? () => updateHighlight(team2.name) : null}
+                onMouseLeave={updateHighlight ? () => updateHighlight('') : null}
+              >
+                <Link to={`/teams/${team2.name}`} exact>
+                  <Typography variant="h5" className={`${classes.teamName} ${highlightTeam === team2.name ? 'hover-team' : ''}`} style={awayStyle}>
+                    {team2.name}
+                  </Typography>
+                </Link>
+              </span>
               <Typography variant="body1" className={classes.teamRecord}>
                 {`${team2.wins}-${team2.losses}`}
               </Typography>
@@ -270,7 +290,7 @@ function GameCardCompact(props) {
           ) : (streamRoom && (
             <Grid container spacing={0} alignItems="center" justify="flex-end">
               <Grid item xs={12}>
-                <Typography variant="h5" className={classes.subtitle}>
+                <Typography variant="h5" className={classes.streamingRoom}>
                   {streamRoom}
                 </Typography>
               </Grid>
@@ -314,6 +334,8 @@ GameCardCompact.propTypes = {
   awayScoreE: PropTypes.string,
   upcomingOverview: PropTypes.bool,
   streamRoom: PropTypes.string,
+  highlightTeam: PropTypes.string,
+  updateHighlight: PropTypes.func,
 };
 GameCardCompact.defaultProps = {
   matchId: '',
@@ -334,6 +356,8 @@ GameCardCompact.defaultProps = {
   awayScoreE: '0',
   upcomingOverview: false,
   streamRoom: '',
+  highlightTeam: '',
+  updateHighlight: null,
 };
 
 export default GameCardCompact;
