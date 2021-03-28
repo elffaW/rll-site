@@ -197,6 +197,12 @@ function GameCard(props) {
                     {`Gm B: ${isOldGameFormat ? homeTeamScoreB : games[1].homeTeamScore}`}
                   </Typography>
                 )}
+                <br />
+                {gamesPlayed > 2 && (
+                  <Typography variant="h5" className={classes.gameScoreHome} style={!homeWinnerC ? { color: '#8e8e8e' } : null}>
+                    {`Gm C: ${isOldGameFormat ? homeTeamScoreC : games[2].homeTeamScore}`}
+                  </Typography>
+                )}
               </span>
             </Grid>
           ) : ''}
@@ -229,6 +235,12 @@ function GameCard(props) {
                 {gamesPlayed > 1 && (
                   <Typography variant="h5" className={classes.gameScoreAway} style={homeWinnerB ? { color: '#8e8e8e' } : null}>
                     {`Gm B: ${isOldGameFormat ? awayTeamScoreB : games[1].awayTeamScore}`}
+                  </Typography>
+                )}
+                <br />
+                {gamesPlayed > 2 && (
+                  <Typography variant="h5" className={classes.gameScoreAway} style={homeWinnerC ? { color: '#8e8e8e' } : null}>
+                    {`Gm B: ${isOldGameFormat ? awayTeamScoreC : games[2].awayTeamScore}`}
                   </Typography>
                 )}
               </span>

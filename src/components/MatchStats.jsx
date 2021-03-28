@@ -144,7 +144,7 @@ export default function MatchStats(props) {
         game.playerStats.sort((a, b) => b.teamName.localeCompare(a.teamName));
       }
 
-      // console.log(game.playerStats[0]);
+      // console.log(game.playerStats);
 
       let sumPos = 0;
       let sumNeg = 0;

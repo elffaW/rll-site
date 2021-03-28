@@ -228,21 +228,21 @@ function GameCardCompact(props) {
                       </Typography>
                     </Grid>
                   )}
-                  {(isPlayoffs && (!!parseInt(homeScoreC, 10) || !!parseInt(awayScoreC, 10))) && (
+                  {((!!parseInt(homeScoreC, 10) || !!parseInt(awayScoreC, 10))) && (
                     <Grid item xs={gameCellSize}>
                       <Typography variant="h5" className={classes.teamName} style={{ color: homeWinnerC ? 'whitesmoke' : '#8e8e8e' }}>
                         {homeScoreC}
                       </Typography>
                     </Grid>
                   )}
-                  {(isPlayoffs && (!!parseInt(homeScoreD, 10) || !!parseInt(awayScoreD, 10))) && (
+                  {((!!parseInt(homeScoreD, 10) || !!parseInt(awayScoreD, 10))) && (
                     <Grid item xs={gameCellSize}>
                       <Typography variant="h5" className={classes.teamName} style={{ color: homeWinnerD ? 'whitesmoke' : '#8e8e8e' }}>
                         {homeScoreD}
                       </Typography>
                     </Grid>
                   )}
-                  {(isPlayoffs && (!!parseInt(homeScoreE, 10) || !!parseInt(awayScoreE, 10))) && (
+                  {((!!parseInt(homeScoreE, 10) || !!parseInt(awayScoreE, 10))) && (
                     <Grid item xs={gameCellSize}>
                       <Typography variant="h5" className={classes.teamName} style={{ color: homeWinnerE ? 'whitesmoke' : '#8e8e8e' }}>
                         {homeScoreE}
@@ -263,21 +263,21 @@ function GameCardCompact(props) {
                       </Typography>
                     </Grid>
                   )}
-                  {(isPlayoffs && (!!parseInt(homeScoreC, 10) || !!parseInt(awayScoreC, 10))) && (
+                  {((!!parseInt(homeScoreC, 10) || !!parseInt(awayScoreC, 10))) && (
                     <Grid item xs={gameCellSize}>
                       <Typography variant="h5" className={classes.teamName} style={{ color: !homeWinnerC ? 'whitesmoke' : '#8e8e8e' }}>
                         {awayScoreC}
                       </Typography>
                     </Grid>
                   )}
-                  {(isPlayoffs && (!!parseInt(homeScoreD, 10) || !!parseInt(awayScoreD, 10))) && (
+                  {((!!parseInt(homeScoreD, 10) || !!parseInt(awayScoreD, 10))) && (
                     <Grid item xs={gameCellSize}>
                       <Typography variant="h5" className={classes.teamName} style={{ color: !homeWinnerD ? 'whitesmoke' : '#8e8e8e' }}>
                         {awayScoreD}
                       </Typography>
                     </Grid>
                   )}
-                  {(isPlayoffs && (!!parseInt(homeScoreE, 10) || !!parseInt(awayScoreE, 10))) && (
+                  {((!!parseInt(homeScoreE, 10) || !!parseInt(awayScoreE, 10))) && (
                     <Grid item xs={gameCellSize}>
                       <Typography variant="h5" className={classes.teamName} style={{ color: !homeWinnerE ? 'whitesmoke' : '#8e8e8e' }}>
                         {awayScoreE}

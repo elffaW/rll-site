@@ -656,6 +656,9 @@ function getPlayersFromSheets(playersSheet, rolesSheet, allStats) {
               if (row.playerName.toUpperCase() === name.toUpperCase() && row.season === parseInt(SEASON_NUMBER, 10)) {
                 tempRow.player = parseInt(id, 10);
                 statsRet.push(tempRow);
+              } else { // unknown player -- probably a bot or non-RLL sub
+                tempRow.player = -1;
+                statsRet.push(tempRow);
               }
             });
           }
