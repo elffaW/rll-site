@@ -53,6 +53,7 @@ function PlayerGameStats(props) {
       }).catch((e) => {
         console.error('error with stats API request');
         console.error(e);
+        setLoading(false);
       });
     } else {
       api.getStatsByPlayerName(playerName).then((allStats) => {
@@ -69,6 +70,7 @@ function PlayerGameStats(props) {
       }).catch((e) => {
         console.error('error with stats by player API request');
         console.error(e);
+        setLoading(false);
       });
     }
   }, [player, season]);
@@ -79,7 +81,7 @@ function PlayerGameStats(props) {
     { value: 'season', title: 'Season' },
     { value: 'opposingTeam', title: 'Opponent' },
     { value: 'statsType', title: 'Match Type' },
-    // { value: 'gameWeek', title: 'Gameweek' },
+    { value: (row) => (row.gameWeek ? row.gameWeek : '?'), title: 'Gameweek' },
     { value: (row) => (row.playerWin === '1' ? 'W' : 'L'), title: 'Win or Loss' },
     { value: 'teamSize', title: 'Team Size' },
   ];
