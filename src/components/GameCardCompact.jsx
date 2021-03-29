@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.otherColors.text.lighter,
     fontStyle: 'italic',
     textTransform: 'lowercase',
+    textShadow: '1px 1px 3px black',
   },
   teamRecord: {
     marginTop: 6,

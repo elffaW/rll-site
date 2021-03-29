@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import {
-  Grid, Typography, Avatar,
+  Grid, Typography, Avatar, Paper,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { timezoneLookup } from './utils/dateUtils';
@@ -64,6 +64,78 @@ function GameCardSingleRow(props) {
     gameTime = timeAsDate.toLocaleString() + timezoneLookup(new Date().getTimezoneOffset());
   }
   const gameLocation = arena;
+
+  // for promotion/relegation style season where future games may not know specific teams yet
+  let tbdTeam1 = false;
+  if (!team1 || !team1.name) {
+    const upperLowerSplit = 5;
+    /* eslint-disable global-require */
+    let logoSrc = require('../images/RLL_logo.png');
+    if (team1.rank > upperLowerSplit) {
+      logoSrc = require('../images/RLL_logo_lower.png');
+    }
+    /* eslint-enable global-require */
+    tbdTeam1 = (
+      <Grid item xs={12}>
+        <Paper className={classes.mainPaper}>
+          <Grid container alignItems="center" justify="flex-start">
+            <Grid item xs={2}>
+              <Typography variant="h2" className={`${classes.teamDesc} ${classes.teamRank}`}>
+                {team1.rank}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Avatar src={logoSrc} variant="square" className={classes.teamIcon} />
+            </Grid>
+            <Grid item xs={8}>
+              <Grid container alignItems="flex-end" justify="flex-start" direction="row">
+                <Grid item>
+                  <Typography variant="h4" className={classes.teamName}>
+                    TBD
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Paper>
+      </Grid>
+    );
+  }
+  let tbdTeam2 = false;
+  if (!team2 || !team2.name) {
+    const upperLowerSplit = 5;
+    /* eslint-disable global-require */
+    let logoSrc = require('../images/RLL_logo.png');
+    if (team2.rank > upperLowerSplit) {
+      logoSrc = require('../images/RLL_logo_lower.png');
+    }
+    /* eslint-enable global-require */
+    tbdTeam2 = (
+      <Grid item xs={12}>
+        <Paper className={classes.mainPaper}>
+          <Grid container alignItems="center" justify="flex-start">
+            <Grid item xs={2}>
+              <Typography variant="h2" className={`${classes.teamDesc} ${classes.teamRank}`}>
+                {team2.rank}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Avatar src={logoSrc} variant="square" className={classes.teamIcon} />
+            </Grid>
+            <Grid item xs={8}>
+              <Grid container alignItems="flex-end" justify="flex-start" direction="row">
+                <Grid item>
+                  <Typography variant="h4" className={classes.teamName}>
+                    TBD
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Paper>
+      </Grid>
+    );
+  }
 
   let gamesPlayed = 2;
   if (parseInt(homeScoreE, 10) || parseInt(awayScoreE, 10)) {
@@ -129,11 +201,11 @@ function GameCardSingleRow(props) {
     if (isPlayoffs) homeStyle.textDecoration = 'line-through';
   }
 
-  if (team1.name.length > 14) {
-    homeStyle.letterSpacing = `calc(0.05vw - ${team1.name.length / 8}px)`;
+  if (team1.name?.length > 14) {
+    homeStyle.letterSpacing = `calc(0.05vw - ${team1.name?.length / 8}px)`;
   }
-  if (team2.name.length > 14) {
-    awayStyle.letterSpacing = `calc(0.05vw - ${team2.name.length / 8}px)`;
+  if (team2.name?.length > 14) {
+    awayStyle.letterSpacing = `calc(0.05vw - ${team2.name?.length / 8}px)`;
   }
 
   const rowStyle = {};
@@ -147,28 +219,30 @@ function GameCardSingleRow(props) {
   return (
     <Grid container alignItems="center" justify="flex-start" style={rowStyle}>
       <Grid item xs={5}>
-        <Grid container spacing={2} direction="row" alignItems="center" justify="flex-start">
-          <Grid item xs>
-            <Typography variant="h4" className={classes.teamRank}>
-              <Grid container spacing={0} direction="row" alignItems="flex-start" justify="space-around">
-                {team1.rank}
-                <Avatar src={team1.logo} variant="square" />
-              </Grid>
-            </Typography>
-          </Grid>
-          <Grid item xs>
-            <Grid container spacing={0} direction="row-reverse" alignItems="center" justify="flex-start">
-              <Link to={`/teams/${team1.name}`} exact>
-                <Typography variant="h5" className={classes.teamName} style={homeStyle}>
-                  {team1.name}
-                </Typography>
-              </Link>
-              <Typography variant="body1" className={classes.teamRecord}>
-                {`${team1.wins}-${team1.losses}`}
+        {tbdTeam1 || (
+          <Grid container spacing={2} direction="row" alignItems="center" justify="flex-start">
+            <Grid item xs>
+              <Typography variant="h4" className={classes.teamRank}>
+                <Grid container spacing={0} direction="row" alignItems="flex-start" justify="space-around">
+                  {team1.rank}
+                  <Avatar src={team1.logo} variant="square" />
+                </Grid>
               </Typography>
             </Grid>
+            <Grid item xs>
+              <Grid container spacing={0} direction="row-reverse" alignItems="center" justify="flex-start">
+                <Link to={`/teams/${team1.name}`} exact>
+                  <Typography variant="h5" className={classes.teamName} style={homeStyle}>
+                    {team1.name}
+                  </Typography>
+                </Link>
+                <Typography variant="body1" className={classes.teamRecord}>
+                  {`${team1.wins}-${team1.losses}`}
+                </Typography>
+              </Grid>
+            </Grid>
           </Grid>
-        </Grid>
+        )}
       </Grid>
       {(gameTime && gameLocation) && (
         <Grid item xs={2}>
@@ -178,28 +252,30 @@ function GameCardSingleRow(props) {
         </Grid>
       )}
       <Grid item xs={5}>
-        <Grid container spacing={2} direction="row-reverse" alignItems="center" justify="flex-start">
-          <Grid item xs>
-            <Typography variant="h4" className={classes.teamRank}>
-              <Grid container spacing={0} direction="row" alignItems="flex-start" justify="space-around">
-                <Avatar src={team2.logo} variant="square" />
-                {team2.rank}
-              </Grid>
-            </Typography>
-          </Grid>
-          <Grid item xs>
-            <Grid container spacing={0} direction="row" alignItems="center" justify="flex-start">
-              <Link to={`/teams/${team2.name}`} exact>
-                <Typography variant="h5" className={classes.teamName} style={homeStyle}>
-                  {team2.name}
-                </Typography>
-              </Link>
-              <Typography variant="body1" className={classes.teamRecord}>
-                {`${team2.wins}-${team2.losses}`}
+        {tbdTeam2 || (
+          <Grid container spacing={2} direction="row-reverse" alignItems="center" justify="flex-start">
+            <Grid item xs>
+              <Typography variant="h4" className={classes.teamRank}>
+                <Grid container spacing={0} direction="row" alignItems="flex-start" justify="space-around">
+                  <Avatar src={team2.logo} variant="square" />
+                  {team2.rank}
+                </Grid>
               </Typography>
             </Grid>
+            <Grid item xs>
+              <Grid container spacing={0} direction="row" alignItems="center" justify="flex-start">
+                <Link to={`/teams/${team2.name}`} exact>
+                  <Typography variant="h5" className={classes.teamName} style={homeStyle}>
+                    {team2.name}
+                  </Typography>
+                </Link>
+                <Typography variant="body1" className={classes.teamRecord}>
+                  {`${team2.wins}-${team2.losses}`}
+                </Typography>
+              </Grid>
+            </Grid>
           </Grid>
-        </Grid>
+        )}
       </Grid>
 
       {/* {hasScores && (
