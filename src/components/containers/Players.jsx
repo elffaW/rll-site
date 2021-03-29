@@ -114,6 +114,14 @@ const playerFields = {
     friendly: 'Season',
     type: 'number',
   },
+  numChampionships: {
+    friendly: 'Career Championships',
+    type: 'number',
+  },
+  numRunnerUps: {
+    friendly: 'Career Runner-Ups',
+    type: 'number',
+  },
 };
 
 class Players extends Component {
@@ -180,9 +188,25 @@ class Players extends Component {
         return tempPlayer;
       });
 
-      const seasonPlayers = (seasonQuery === 'All') ? playersWithTeams : playersWithTeams.filter((player) => player.season === seasonQuery);
+      const numChampsByPlayer = playersWithTeams.reduce((map, player) => ({
+        ...map,
+        [player.name]: (map[player.name] || 0) + +player.isChampion,
+      }), {});
+      const numRunnerUpsByPlayer = playersWithTeams.reduce((map, player) => ({
+        ...map,
+        [player.name]: (map[player.name] || 0) + +player.isRunnerUp,
+      }), {});
+
+      const finalPlayers = playersWithTeams.map((player) => {
+        const { ...tempPlayer } = player;
+        tempPlayer.numChampionships = numChampsByPlayer[player.name];
+        tempPlayer.numRunnerUps = numRunnerUpsByPlayer[player.name];
+        return tempPlayer;
+      });
+
+      const seasonPlayers = (seasonQuery === 'All') ? finalPlayers : finalPlayers.filter((player) => player.season === seasonQuery);
       this.setState({
-        players: playersWithTeams, loading: false, season: seasonQuery, seasonPlayers,
+        players: finalPlayers, loading: false, season: seasonQuery, seasonPlayers,
       });
     });
   }
@@ -1142,7 +1166,7 @@ class Players extends Component {
                               // }}
                               className={`player-season-${player.season}`}
                             >
-                              <span className={`player-season-${player.season}-inside`}>
+                              <span className={`player-season-inside-${player.season}`}>
                                 {player.season}
                               </span>
                             </Typography>
@@ -1167,7 +1191,7 @@ class Players extends Component {
                                 className={`player-season-${player.season}`}
                                 onClick={() => this.handleSeasonChange({ target: { value: player.season } })}
                               >
-                                <span className={`player-season-${player.season}-inside`}>
+                                <span className={`player-season-inside-${player.season}`}>
                                   {player.season}
                                 </span>
                               </Typography>

@@ -32,8 +32,8 @@ const useStyles = makeStyles((theme) => ({
     float: 'right',
     marginLeft: theme.spacing(1),
     marginTop: 2,
-    width: 24,
-    height: 24,
+    width: theme.spacing(3),
+    height: theme.spacing(3),
   },
   teamTrophy: {
     width: theme.spacing(3),
@@ -94,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     height: theme.spacing(11),
     // opacity: '20%',
-    marginTop: -theme.spacing(13),
+    marginTop: -theme.spacing(13.5),
     padding: theme.spacing(1),
     margin: -theme.spacing(1),
     borderRadius: 4,
@@ -186,6 +186,20 @@ function PlayerCard(props) {
   const runnerUpLogo = require('../images/RUNNERUP.png'); // eslint-disable-line
   const sysLogoSrc = require(`../images/${sysLogo}`); // eslint-disable-line
   const robotIcon = require('../images/Robot_icon.svg'); // eslint-disable-line
+
+  const champTrophies = [];
+  for (let i = 0; i < player.numChampionships; i++) {
+    champTrophies.push(
+      <Avatar src={champLogo} variant="square" className={`${classes.teamTrophy} ${classes.champTrophy}`} />,
+    );
+  }
+  const runnerUpTrophies = [];
+  for (let i = 0; i < player.numRunnerUps; i++) {
+    runnerUpTrophies.push(
+      <Avatar src={runnerUpLogo} variant="square" className={`${classes.teamTrophy} ${classes.runnerUpTrophy}`} />,
+    );
+  }
+
   return (
     <Grid item xs={12} className={classes.playerCard}>
       <Paper className={classes.darkPaper} style={inTeam ? { maxHeight: 83.25 } : {}}>
@@ -210,9 +224,26 @@ function PlayerCard(props) {
                   </Tooltip>
                 )}
               >
-                <Tooltip title={playerCar}>
-                  <Avatar src={logoSrc} alt={`car ${playerCar}`} className={classes.playerIcon} />
-                </Tooltip>
+                <Badge
+                  overlap="circle"
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                  }}
+                  badgeContent={player.isChampion ? (
+                    <Tooltip title={`SEASON ${player.season} CHAMPION`}>
+                      <Avatar src={champLogo} variant="square" className={`${classes.teamTrophy} ${classes.champTrophy}`} />
+                    </Tooltip>
+                  ) : (player.isRunnerUp && (
+                    <Tooltip title={`SEASON ${player.season} RUNNER-UP`}>
+                      <Avatar src={runnerUpLogo} variant="square" className={`${classes.teamTrophy} ${classes.runnerUpTrophy}`} />
+                    </Tooltip>
+                  ))}
+                >
+                  <Tooltip title={playerCar}>
+                    <Avatar src={logoSrc} alt={`car ${playerCar}`} className={classes.playerIcon} />
+                  </Tooltip>
+                </Badge>
               </Badge>
             </Grid>
           )}
@@ -264,23 +295,24 @@ function PlayerCard(props) {
               </span>
               <br />
               <span>
-                <Typography variant="h6" className={`${classes.playerTitle} ${player.isChampion ? classes.playerChamp : ''} ${player.isRunnerUp ? classes.playerRunnerUp : ''}`}>
-                  {/* eslint-disable-next-line no-nested-ternary */}
-                  {player.isChampion ? 'CHAMPION' : (player.isRunnerUp ? 'RUNNER-UP' : '')}
-                </Typography>
-                {player.isChampion && (
-                  <Avatar src={champLogo} variant="square" className={`${classes.teamTrophy} ${classes.champTrophy}`} />
-                )}
-                {player.isRunnerUp && (
-                  <Avatar src={runnerUpLogo} variant="square" className={`${classes.teamTrophy} ${classes.runnerUpTrophy}`} />
-                )}
+                <Grid container direction="row" justify="flex-start" alignItems="flex-start">
+                  <Typography variant="h6" className={`${classes.playerTitle} ${classes.playerChamp}`}>
+                    {/* eslint-disable-next-line no-nested-ternary */}
+                    {player.numChampionships > 0 ? 'Total Championships: ' : ''}
+                  </Typography>
+                  {champTrophies}
+                </Grid>
               </span>
               <br />
-              {player.primaryRole && player.secondaryRole && (
-                <Typography variant="h6" className={`${classes.playerTitle} ${classes.playerSecondaryTitle}`}>
-                  {`${player.primaryRole} | ${player.secondaryRole}`}
-                </Typography>
-              )}
+              <span>
+                <Grid container direction="row" justify="flex-start" alignItems="flex-start">
+                  <Typography variant="h6" className={`${classes.playerTitle} ${classes.playerSecondaryTitle} ${classes.playerRunnerUp}`}>
+                    {/* eslint-disable-next-line no-nested-ternary */}
+                    {player.numRunnerUps > 0 ? 'Total Runner-Ups: ' : ''}
+                  </Typography>
+                  {runnerUpTrophies}
+                </Grid>
+              </span>
             </Grid>
           </Grid>
           <Grid item xs={inTeam ? 3 : 2}>

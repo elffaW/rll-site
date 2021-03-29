@@ -14,6 +14,8 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     backgroundColor: theme.palette.primary.light,
     width: '100%',
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
   paper: {
     padding: theme.spacing(1),
@@ -304,22 +306,22 @@ function TeamCard(props) {
           </Grid>
           <Grid item xs={inGame ? 12 : 6}>
             <Grid container alignItems="flex-start" justify="center" direction="row">
-              <Grid item xs={inGame ? 2 : 4}>
+              <Grid item xs={inGame ? true : 4}>
                 <Typography className={classes.teamDetails}>{`GF: ${team.goalsFor}`}</Typography>
               </Grid>
-              <Grid item xs={inGame ? 2 : 4}>
+              <Grid item xs={inGame ? true : 4}>
                 <Typography className={classes.teamDetails}>{`GA: ${team.goalsAgainst}`}</Typography>
               </Grid>
-              <Grid item xs={inGame ? 2 : 4}>
+              <Grid item xs={inGame ? true : 4}>
                 <Typography className={classes.teamDetails}>{`+/-: ${team.plusMinus}`}</Typography>
               </Grid>
-              <Grid item xs={inGame ? 3 : 6}>
+              <Grid item xs={inGame ? true : 6}>
                 <Typography className={classes.teamDesc}>
                   {`${team.points} pts`}
                 </Typography>
               </Grid>
               {!inGame && (
-                <Grid item xs={inGame ? 3 : 6}>
+                <Grid item xs={inGame ? true : 6}>
                   <Typography className={classes.teamDesc}>
                     {teamValue}
                   </Typography>
