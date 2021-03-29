@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     fontVariant: 'small-caps',
     float: 'left',
     color: 'whitesmoke',
-    textShadow: '0 0 3px black',
+    textShadow: '1px 1px 3px black',
   },
   subtitle: {
     fontVariant: 'small-caps',

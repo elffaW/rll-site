@@ -49,9 +49,12 @@ class Teams extends Component {
         Promise.all([
           api.getPlayersBySeason(curTeam.season),
           api.getGamesBySeason(curTeam.season),
+          api.getAllSeasons(),
         ]).then((results) => {
           const allPlayers = results[0];
           const allGames = results[1];
+          const allSeasons = results[2];
+          const seasons = allSeasons.map((s) => s.data);
           const seasonTeams = teams.filter((team) => team.season === curTeam.season);
           seasonTeams.sort((a, b) => a.rank - b.rank); // sort with lower rank at top
 
@@ -69,6 +72,16 @@ class Teams extends Component {
               playerC.team = team;
               tempTeam.members = [playerA, playerB, playerC];
             }
+
+            tempTeam.isChampion = false;
+            tempTeam.isRunnerUp = false;
+            const teamSeason = seasons.find((s) => s.id === parseInt(seasonQuery, 10));
+            if (teamSeason.champion === tempTeam.id) {
+              tempTeam.isChampion = true;
+            } else if (teamSeason.runnerUp === tempTeam.id) {
+              tempTeam.isRunnerUp = true;
+            }
+
             return tempTeam;
           });
 
@@ -82,10 +95,18 @@ class Teams extends Component {
             games.forEach((game) => {
               if (parseInt(game.homeTeamId, 10) === parseInt(team.id, 10) && team.season === game.season) {
                 const homeTeam = team;
-                const awayTeam = seasonTeams.find((tempTeam) => parseInt(tempTeam.id, 10) === parseInt(game.awayTeamId, 10) && team.season === game.season);
+                const awayTeam = seasonTeams.find(
+                  (tempTeam) => (
+                    parseInt(tempTeam.id, 10) === parseInt(game.awayTeamId, 10) && team.season === game.season
+                  ),
+                );
                 gamesByTeam[team.id].push({ homeTeam, awayTeam, ...game });
               } else if (parseInt(game.awayTeamId, 10) === parseInt(team.id, 10) && team.season === game.season) {
-                const homeTeam = seasonTeams.find((tempTeam) => parseInt(tempTeam.id, 10) === parseInt(game.homeTeamId, 10) && team.season === game.season);
+                const homeTeam = seasonTeams.find(
+                  (tempTeam) => (
+                    parseInt(tempTeam.id, 10) === parseInt(game.homeTeamId, 10) && team.season === game.season
+                  ),
+                );
                 const awayTeam = team;
                 gamesByTeam[team.id].push({ homeTeam, awayTeam, ...game });
               }
@@ -101,10 +122,13 @@ class Teams extends Component {
         api.getPlayersBySeason(seasonQuery),
         api.getTeamsBySeason(seasonQuery),
         api.getGamesBySeason(seasonQuery),
+        api.getAllSeasons(),
       ]).then((results) => {
         const allPlayers = results[0];
         const allTeams = results[1];
         const allGames = results[2];
+        const allSeasons = results[3];
+        const seasons = allSeasons.map((s) => s.data);
         const teams = allTeams.map((team) => team.data);
         teams.sort((a, b) => a.rank - b.rank); // sort with lower rank at top
 
@@ -122,6 +146,16 @@ class Teams extends Component {
             playerC.team = team;
             tempTeam.members = [playerA, playerB, playerC];
           }
+
+          tempTeam.isChampion = false;
+          tempTeam.isRunnerUp = false;
+          const teamSeason = seasons.find((s) => s.id === parseInt(seasonQuery, 10));
+          if (teamSeason.champion === tempTeam.id) {
+            tempTeam.isChampion = true;
+          } else if (teamSeason.runnerUp === tempTeam.id) {
+            tempTeam.isRunnerUp = true;
+          }
+
           return tempTeam;
         });
 

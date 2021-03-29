@@ -30,10 +30,21 @@ const useStyles = makeStyles((theme) => ({
   },
   systemLogo: {
     float: 'right',
-    marginLeft: 8,
+    marginLeft: theme.spacing(1),
     marginTop: 2,
     width: 24,
     height: 24,
+  },
+  teamTrophy: {
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+    paddingLeft: theme.spacing(1),
+  },
+  champTrophy: {
+    filter: 'invert(70%) sepia(41%) saturate(1219%) hue-rotate(359deg) brightness(114%) contrast(110%)',
+  },
+  runnerUpTrophy: {
+    filter: 'invert(90%) sepia(0%) saturate(1063%) hue-rotate(140deg) brightness(87%) contrast(88%)',
   },
   playerName: {
     fontVariant: 'small-caps',
@@ -51,6 +62,14 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.light,
     float: 'left',
     textAlign: 'end',
+  },
+  playerChamp: {
+    color: 'gold',
+    textShadow: '0px 0px 1px black',
+  },
+  playerRunnerUp: {
+    color: 'silver',
+    textShadow: '0px 0px 1px black',
   },
   playerSecondaryTitle: {
     fontSize: '0.9em',
@@ -162,6 +181,9 @@ function PlayerCard(props) {
     }
   }
 
+
+  const champLogo = require('../images/CHAMPION.png'); // eslint-disable-line
+  const runnerUpLogo = require('../images/RUNNERUP.png'); // eslint-disable-line
   const sysLogoSrc = require(`../images/${sysLogo}`); // eslint-disable-line
   const robotIcon = require('../images/Robot_icon.svg'); // eslint-disable-line
   return (
@@ -241,13 +263,24 @@ function PlayerCard(props) {
                 )}
               </span>
               <br />
-              <Typography variant="h6" className={classes.playerTitle}>
-                {player.primaryRole}
-              </Typography>
+              <span>
+                <Typography variant="h6" className={`${classes.playerTitle} ${player.isChampion ? classes.playerChamp : ''} ${player.isRunnerUp ? classes.playerRunnerUp : ''}`}>
+                  {/* eslint-disable-next-line no-nested-ternary */}
+                  {player.isChampion ? 'CHAMPION' : (player.isRunnerUp ? 'RUNNER-UP' : '')}
+                </Typography>
+                {player.isChampion && (
+                  <Avatar src={champLogo} variant="square" className={`${classes.teamTrophy} ${classes.champTrophy}`} />
+                )}
+                {player.isRunnerUp && (
+                  <Avatar src={runnerUpLogo} variant="square" className={`${classes.teamTrophy} ${classes.runnerUpTrophy}`} />
+                )}
+              </span>
               <br />
-              <Typography variant="h6" className={`${classes.playerTitle} ${classes.playerSecondaryTitle}`}>
-                {player.secondaryRole}
-              </Typography>
+              {player.primaryRole && player.secondaryRole && (
+                <Typography variant="h6" className={`${classes.playerTitle} ${classes.playerSecondaryTitle}`}>
+                  {`${player.primaryRole} | ${player.secondaryRole}`}
+                </Typography>
+              )}
             </Grid>
           </Grid>
           <Grid item xs={inTeam ? 3 : 2}>

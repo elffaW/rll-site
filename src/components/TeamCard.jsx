@@ -26,6 +26,18 @@ const useStyles = makeStyles((theme) => ({
     width: `min(100%, ${theme.spacing(10)}px)`,
     height: `min(100%, ${theme.spacing(10)}px)`,
   },
+  teamTrophy: {
+    width: theme.spacing(4),
+    height: theme.spacing(4),
+    float: 'right',
+    paddingLeft: theme.spacing(1),
+  },
+  champTrophy: {
+    filter: 'invert(70%) sepia(41%) saturate(1219%) hue-rotate(359deg) brightness(114%) contrast(110%)',
+  },
+  runnerUpTrophy: {
+    filter: 'invert(90%) sepia(0%) saturate(1063%) hue-rotate(140deg) brightness(87%) contrast(88%)',
+  },
   teamName: {
     fontVariant: 'small-caps',
     float: 'left',
@@ -88,13 +100,17 @@ function TeamCard(props) {
   } = props;
   const classes = useStyles();
 
+  /* eslint-disable global-require */
+  const champLogo = require('../images/CHAMPION.png');
+  const runnerUpLogo = require('../images/RUNNERUP.png');
   // for promotion/relegation style season where future games may not know specific teams yet
   if (!team || !team.name) {
     const upperLowerSplit = 5;
-    let logoSrc = require(`../images/RLL_logo.png`); // eslint-disable-line
+    let logoSrc = require('../images/RLL_logo.png');
     if (team.rank > upperLowerSplit) {
-      logoSrc = require(`../images/RLL_logo_lower.png`); // eslint-disable-line
+      logoSrc = require('../images/RLL_logo_lower.png');
     }
+    /* eslint-enable global-require */
     return (
       <Grid item xs={12}>
         <Paper className={showDetails ? classes.paper : classes.mainPaper}>
@@ -110,14 +126,12 @@ function TeamCard(props) {
             <Grid item xs={inGame ? 8 : 4}>
               <Grid container alignItems="flex-end" justify="flex-start" direction="row">
                 <Grid item>
-                  <Link to={showDetails ? '/teams' : `/teams/${team.name}`} exact>
-                    <Typography
-                      variant={showDetails ? 'h2' : 'h4'}
-                      className={`${classes.teamName} ${showDetails ? classes.bigName : ''}`}
-                    >
-                      TBD
-                    </Typography>
-                  </Link>
+                  <Typography
+                    variant={showDetails ? 'h2' : 'h4'}
+                    className={`${classes.teamName} ${showDetails ? classes.bigName : ''}`}
+                  >
+                    TBD
+                  </Typography>
                 </Grid>
               </Grid>
             </Grid>
@@ -254,11 +268,6 @@ function TeamCard(props) {
     <Grid item xs={12}>
       <Paper className={showDetails ? classes.paper : classes.mainPaper} style={winner ? { boxShadow: 'inset 0 0 0.75rem gold' } : null}>
         <Grid container alignItems="center" justify="flex-start">
-          {/* <Grid item xs={inGame ? 2 : 1}>
-            <Typography variant="h2" className={`${classes.teamDesc} ${classes.teamRank} ${rankClass}`}>
-              {team.rank}
-            </Typography>
-          </Grid> */}
           <Grid item xs={inGame ? 2 : 1}>
             <Avatar src={logoSrc} variant="square" className={classes.teamIcon} />
           </Grid>
@@ -282,6 +291,14 @@ function TeamCard(props) {
                 <Typography variant={showDetails ? 'h5' : 'body1'} className={classes.teamRecord}>
                   {`${team.wins}-${team.losses}`}
                 </Typography>
+              </Grid>
+              <Grid item>
+                {team.isChampion && (
+                  <Avatar src={champLogo} variant="square" className={`${classes.teamTrophy} ${classes.champTrophy}`} />
+                )}
+                {team.isRunnerUp && (
+                  <Avatar src={runnerUpLogo} variant="square" className={`${classes.teamTrophy} ${classes.runnerUpTrophy}`} />
+                )}
               </Grid>
             </Grid>
           </Grid>

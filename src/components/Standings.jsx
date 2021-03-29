@@ -13,6 +13,9 @@ import { styles as paperStyles } from '../styles/themeStyles';
 import { SEASONS } from './containers/BaseApp';
 import { convertGamesToMatches } from './utils/dataUtils';
 
+const champLogo = require('../images/CHAMPION.png');
+const runnerUpLogo = require('../images/RUNNERUP.png');
+
 const teamFields = {
   rank: { friendly: 'Rank', type: 'number' },
   name: { friendly: 'Name', type: 'string' },
@@ -60,11 +63,14 @@ class Standings extends Component {
     Promise.all([
       api.getTeamsBySeason(season),
       api.getGamesBySeason(season),
+      api.getAllSeasons(),
     ]).then((results) => {
       const allTeams = results[0];
       const allGames = results[1];
+      const allSeasons = results[2];
       const teams = allTeams.map((team) => team.data);
       const games = allGames.map((game) => game.data);
+      const seasons = allSeasons.map((s) => s.data);
 
       teams.sort((a, b) => a.rank - b.rank); // sort with lower (better) rank at top
 
@@ -139,13 +145,21 @@ class Standings extends Component {
                 gamesByTeam[team.id].push({
                   homeTeam, awayTeam, ...match, matchResult, // : awayResult,
                 });
-                // if (team.id === 3) {
-                //   console.log('matchResult', matchResult, 'awayResult', awayResult);
-                // }
               }
             }
           });
         }
+
+        /* eslint-disable no-param-reassign */
+        team.isChampion = false;
+        team.isRunnerUp = false;
+        const teamSeason = seasons.find((s) => s.id === team.season);
+        if (teamSeason.champion === team.id) {
+          team.isChampion = true;
+        } else if (teamSeason.runnerUp === team.id) {
+          team.isRunnerUp = true;
+        }
+        /* eslint-enable no-param-reassign */
 
         gamesByTeam[team.id] = gamesByTeam[team.id].slice(-4);
         // if (team.id === 3) {
@@ -213,6 +227,12 @@ class Standings extends Component {
             </Grid>
             <Grid item xs>
               <Avatar src={team.logo} variant="square" style={{ float: 'right', paddingRight: 8 }} />
+              {team.isChampion && (
+                <Avatar src={champLogo} variant="square" className={`${classes.teamTrophy} ${classes.champTrophy}`} />
+              )}
+              {team.isRunnerUp && (
+                <Avatar src={runnerUpLogo} variant="square" className={`${classes.teamTrophy} ${classes.runnerUpTrophy}`} />
+              )}
             </Grid>
             <Grid item xs={2}>
               <Link to={`/teams/${team.name}`} exact>

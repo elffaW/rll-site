@@ -143,10 +143,12 @@ class Players extends Component {
     const { season } = this.state;
     const seasonQuery = newSeason || season;
 
-    Promise.all([api.getAllPlayers(), api.getAllTeams()]).then((results) => {
+    Promise.all([api.getAllPlayers(), api.getAllTeams(), api.getAllSeasons()]).then((results) => {
     // Promise.all([api.getPlayersBySeason(seasonQuery), api.getTeamsBySeason(seasonQuery)]).then((results) => {
       const allPlayers = results[0];
       const allTeams = results[1];
+      const allSeasons = results[2];
+      const seasons = allSeasons.map((s) => s.data);
       const players = allPlayers.map((player) => player.data);
       players.sort((a, b) => b.value - a.value); // sort with higher value at top
 
@@ -155,9 +157,20 @@ class Players extends Component {
         const { ...tempPlayer } = player;
         const playerTeam = teams.find((team) => (
           parseInt(team.id, 10) === parseInt(tempPlayer.team, 10) && team.season === tempPlayer.season));
+
+        tempPlayer.isChampion = false;
+        tempPlayer.isRunnerUp = false;
+
         if (playerTeam) {
           tempPlayer.team = playerTeam;
           tempPlayer.teamName = playerTeam.name;
+
+          const playerSeason = seasons.find((s) => s.id === player.season);
+          if (playerSeason.champion === playerTeam.id) {
+            tempPlayer.isChampion = true;
+          } else if (playerSeason.runnerUp === playerTeam.id) {
+            tempPlayer.isRunnerUp = true;
+          }
         }
 
         tempPlayer.wins = parseInt(playerTeam.wins || 0, 10);

@@ -79,4 +79,13 @@ export const styles = withStyles((theme) => createStyles({
     color: theme.otherColors.text.dark,
     fontStyle: 'italic',
   },
+  teamTrophy: {
+    float: 'right',
+  },
+  champTrophy: {
+    filter: 'invert(70%) sepia(41%) saturate(1219%) hue-rotate(359deg) brightness(114%) contrast(110%)',
+  },
+  runnerUpTrophy: {
+    filter: 'invert(90%) sepia(0%) saturate(1063%) hue-rotate(140deg) brightness(87%) contrast(88%)',
+  },
 }));
