@@ -16,6 +16,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import BaseApp, { SEASONS } from './BaseApp';
 import GameCard from '../GameCard';
+import GameCardSingleRow from '../GameCardSingleRow';
 import PageHeader from '../PageHeader';
 import PlayoffSchedule from '../PlayoffSchedule';
 import SeasonSelector from '../SeasonSelector';
@@ -203,6 +204,8 @@ class Schedule extends Component {
         if (curWeekGames.length < 1) {
           noMoreGames = true;
         } else {
+          const curStadium = curWeekGames[0].arena;
+          const curDate = curWeekGames[0].gameTime.split(' ')[0];
           gameCards.push(
             <Grid item xs={12}>
               <Accordion
@@ -222,6 +225,22 @@ class Schedule extends Component {
                     }}
                   >
                     {`GameWeek ${i}`}
+                  </Typography>
+                  <Typography
+                    variant="h4"
+                    style={{
+                      fontVariant: 'small-caps', paddingTop: 16, paddingBottom: 16, fontWeight: 300, position: 'absolute', right: 80,
+                    }}
+                  >
+                    {curStadium}
+                  </Typography>
+                  <Typography
+                    variant="h4"
+                    style={{
+                      fontVariant: 'small-caps', paddingTop: 16, paddingBottom: 16, fontWeight: 300, paddingLeft: 24,
+                    }}
+                  >
+                    {curDate}
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails>

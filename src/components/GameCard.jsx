@@ -214,13 +214,10 @@ function GameCard(props) {
               </Typography>
             </Link>
             <Typography variant="h6" className={classes.gameDesc} style={gameComplete ? { color: '#a0a0a0' } : null}>
-              {gameTime}
+              {gameTime.split(' ').slice(1).join(' ')}
             </Typography>
             <Typography variant="subtitle1" className={classes.gameStreamRoom} style={gameComplete ? { color: '#d0d0d0' } : null}>
               {game.streamRoom}
-            </Typography>
-            <Typography variant="subtitle1" className={classes.gameArena} style={gameComplete ? { color: '#a0a0a0' } : null}>
-              {game.arena}
             </Typography>
           </Grid>
           {gameComplete ? (
