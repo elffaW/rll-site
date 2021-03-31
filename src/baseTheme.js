@@ -12,9 +12,9 @@ const baseTheme = createMuiTheme({
     },
     // red
     secondary: {
-      main: '#c62828',
+      main: '#8e0000',
       light: '#e5737366', // includes transparency
-      dark: '#8e0000',
+      dark: '#5b0000',
     },
     // // blue
     // primary: {
