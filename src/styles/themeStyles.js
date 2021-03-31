@@ -78,6 +78,16 @@ export const styles = withStyles((theme) => createStyles({
     fontVariant: 'small-caps',
     color: theme.otherColors.text.dark,
     fontStyle: 'italic',
+    textTransform: 'lowercase',
+  },
+  gameTimeMod: {
+    color: theme.palette.secondary.main,
+  },
+  upcomingColumns: {
+    fontVariant: 'small-caps',
+    fontWeight: 700,
+    marginLeft: theme.spacing(4),
+    marginTop: theme.spacing(2),
   },
   teamTrophy: {
     float: 'right',

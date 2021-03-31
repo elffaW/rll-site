@@ -12,11 +12,11 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from '@material-ui/core';
+import { withTheme } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import BaseApp, { SEASONS } from './BaseApp';
 import GameCard from '../GameCard';
-import GameCardSingleRow from '../GameCardSingleRow';
 import PageHeader from '../PageHeader';
 import PlayoffSchedule from '../PlayoffSchedule';
 import SeasonSelector from '../SeasonSelector';
@@ -66,7 +66,34 @@ class Schedule extends Component {
       // associate game stats records with the games
       const gamesTemp = gamesData.map((game) => {
         const { ...tempGame } = game;
-        tempGame.playerStats = stats.filter((stat) => parseInt(stat.gameId, 10) === parseInt(game.gameNum, 10));
+        const isOldGameFormat = !game.gameNum;
+        let numGames = 0;
+        if (isOldGameFormat) {
+          if (game.homeTeamScoreA && game.awayTeamScoreA) {
+            numGames += 1;
+          }
+          if (game.homeTeamScoreB && game.awayTeamScoreB) {
+            numGames += 1;
+          }
+          if (game.homeTeamScoreC && game.awayTeamScoreC) {
+            numGames += 1;
+          }
+          if (game.homeTeamScoreD && game.awayTeamScoreD) {
+            numGames += 1;
+          }
+          if (game.homeTeamScoreE && game.awayTeamScoreE) {
+            numGames += 1;
+          }
+        }
+        if (numGames > 0) {
+          tempGame.numGames = numGames;
+        }
+        const gameId = game.gameNum ? parseInt(game.gameNum, 10) : ((game.id - 1) * numGames) + 1;
+        tempGame.playerStats = stats.filter((stat) => (
+          !isOldGameFormat
+            ? parseInt(stat.gameId, 10) === gameId
+            : parseInt(stat.gameId, 10) >= gameId && parseInt(stat.gameId, 10) < (gameId + numGames)
+        ));
         return tempGame;
       });
       // convert games to matches if needed
@@ -162,7 +189,7 @@ class Schedule extends Component {
   }
 
   render() {
-    const { classes, match } = this.props;
+    const { classes, match, theme } = this.props;
     const {
       games, loading, season, expanded,
     } = this.state;
@@ -221,7 +248,10 @@ class Schedule extends Component {
                   <Typography
                     variant="h4"
                     style={{
-                      fontVariant: 'small-caps', fontWeight: 700, paddingTop: 16, paddingBottom: 16,
+                      fontVariant: 'small-caps',
+                      fontWeight: 700,
+                      paddingTop: theme.spacing(2),
+                      paddingBottom: theme.spacing(2),
                     }}
                   >
                     {`GameWeek ${i}`}
@@ -229,7 +259,12 @@ class Schedule extends Component {
                   <Typography
                     variant="h4"
                     style={{
-                      fontVariant: 'small-caps', paddingTop: 16, paddingBottom: 16, fontWeight: 300, position: 'absolute', right: 80,
+                      fontVariant: 'small-caps',
+                      paddingTop: theme.spacing(2),
+                      paddingBottom: theme.spacing(2),
+                      fontWeight: 300,
+                      position: 'absolute',
+                      right: theme.spacing(10),
                     }}
                   >
                     {curStadium}
@@ -289,7 +324,9 @@ Schedule.propTypes = {
   classes: PropTypes.string,
   // eslint-disable-next-line react/forbid-prop-types
   match: PropTypes.object.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  theme: PropTypes.object.isRequired,
 };
 Schedule.defaultProps = defaultProps;
 
-export default paperStyles(Schedule);
+export default withTheme(paperStyles(Schedule));

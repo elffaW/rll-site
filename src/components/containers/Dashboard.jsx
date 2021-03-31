@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Grid, Paper, Typography, Tooltip, CircularProgress, Button,
 } from '@material-ui/core';
+import { withTheme } from '@material-ui/core/styles';
 import ReactPlayer from 'react-player';
 
 import BaseApp, { SEASONS } from './BaseApp';
@@ -105,7 +106,7 @@ class Dashboard extends Component {
     const {
       games, teams, loading, season, curTeam,
     } = this.state;
-    const { classes } = this.props;
+    const { classes, theme } = this.props;
     // show twitch stream on fridays, I guess
     // TODO: integrate with twitch API to get stream status
     //       and show the twitch stream if live
@@ -154,12 +155,7 @@ class Dashboard extends Component {
             games.length < 1 ? (
               <Grid container spacing={2} alignItems="flex-start" justify="flex-start">
                 <Paper className={classes.paddedPaper}>
-                  <Typography
-                    variant="h4"
-                    style={{
-                      fontVariant: 'small-caps', fontWeight: 700, marginLeft: 32, marginTop: 16,
-                    }}
-                  >
+                  <Typography variant="h4" className={classes.upcomingColumns}>
                     No upcoming games this season
                   </Typography>
                 </Paper>
@@ -177,47 +173,32 @@ class Dashboard extends Component {
                   </Typography>
                   <Grid container direction="row" alignItems="center" justify="center">
                     <Grid item xs={2}>
-                      <Typography variant="h5" className={classes.gameSubtitle} style={{ fontSize: '1.5rem', color: 'initial' }}>
+                      <Typography
+                        variant="h5"
+                        color="initial"
+                        className={classes.gameSubtitle}
+                        style={{ marginTop: theme.spacing(2) }}
+                      >
                         {games[0].arena}
                       </Typography>
                     </Grid>
                     <Grid item xs={3}>
-                      <Typography
-                        variant="h5"
-                        style={{
-                          fontVariant: 'small-caps', fontWeight: 700, marginLeft: 32, marginTop: 16,
-                        }}
-                      >
-                          GONGSHOW 1
+                      <Typography variant="h5" color="secondary" className={classes.upcomingColumns}>
+                          gongshow 1
                       </Typography>
                     </Grid>
                     <Grid item xs={3}>
-                      <Typography
-                        variant="h5"
-                        style={{
-                          fontVariant: 'small-caps', fontWeight: 700, marginLeft: 32, marginTop: 16,
-                        }}
-                      >
-                          GONGSHOW 2
+                      <Typography variant="h5" color="secondary" className={classes.upcomingColumns}>
+                          gongshow 2
                       </Typography>
                     </Grid>
                     <Grid item xs={3}>
-                      <Typography
-                        variant="h5"
-                        style={{
-                          fontVariant: 'small-caps', fontWeight: 700, marginLeft: 32, marginTop: 16,
-                        }}
-                      >
-                          GONGSHOW 3
+                      <Typography variant="h5" color="secondary" className={classes.upcomingColumns}>
+                          gongshow 3
                       </Typography>
                     </Grid>
                     <Grid item xs={1}>
-                      <Typography
-                        variant="h5"
-                        style={{
-                          fontVariant: 'small-caps', fontWeight: 700, marginLeft: 32, marginTop: 16,
-                        }}
-                      >
+                      <Typography variant="h5" className={classes.upcomingColumns}>
                           BYE
                       </Typography>
                     </Grid>
@@ -275,7 +256,10 @@ class Dashboard extends Component {
                         // />
                         <>
                           <Grid item xs={2}>
-                            <Typography variant="h6" className={classes.gameSubtitle} style={{ fontSize: '1.4rem' }}>
+                            <Typography
+                              variant="h4"
+                              className={`${classes.gameSubtitle} ${classes.gameTimeMod}`}
+                            >
                               {`${gameTime.split(' ')[1]} ${gameTime.split(' ')[2]}`}
                             </Typography>
                           </Grid>
@@ -381,7 +365,9 @@ class Dashboard extends Component {
 
 Dashboard.propTypes = {
   classes: PropTypes.string,
+  // eslint-disable-next-line react/forbid-prop-types
+  theme: PropTypes.object.isRequired,
 };
 Dashboard.defaultProps = defaultProps;
 
-export default paperStyles(Dashboard);
+export default withTheme(paperStyles(Dashboard));

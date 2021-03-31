@@ -62,21 +62,6 @@ export default function SeasonSelector(props) {
         disabled={disabled}
         className={classes.seasonPager}
       />
-      {/* <Select
-        labelId="season-select-outlined-label"
-        id="season-select-outlined"
-        value={season}
-        onChange={handleSeasonChange}
-        className={classes.seasonSelector}
-        disabled={disabled}
-      >
-        {showAllOption ? (
-          <MenuItem value="All">All</MenuItem>
-        ) : null}
-        {SEASONS.map((s) => (
-          <MenuItem value={s}>{s}</MenuItem>
-        ))}
-      </Select> */}
     </Grid>
   );
 }

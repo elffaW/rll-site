@@ -30,6 +30,8 @@ const useStyles = makeStyles((theme) => ({
   teamRecord: {
     marginTop: 6,
     marginLeft: theme.spacing(1),
+    color: theme.otherColors.text.light,
+    textShadow: '0 0 8px black',
   },
   teamRank: {
     marginLeft: theme.spacing(1),

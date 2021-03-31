@@ -114,76 +114,152 @@ const barCharts = [{
   fieldName: 'playerShots',
 }];
 
+const gameToLetterMap = {
+  0: 'A',
+  1: 'B',
+  2: 'C',
+  3: 'D',
+  4: 'E',
+};
+
 export default function MatchStats(props) {
   const { match } = props;
   const classes = useStyles();
 
   const {
-    homeTeamName, awayTeamName, curDivision, games,
+    homeTeamName, awayTeamName, curDivision, games, id,
   } = match;
 
   const logoSrc = parseInt(curDivision, 10) === 2 ? div2 : div1;
 
   const statBars = [];
-  if (!match.games || match.games.length < 1) {
-    return '';
-  }
-  games.forEach((game, idx) => {
-    statBars[idx] = [];
-    let showLegend = true; // TODO: use this in the options
-    barCharts.forEach((chartInfo) => {
-      const chartData = {
-        labels: [chartInfo.label],
-        datasets: [],
-      };
+  let oldFormat = false;
+  if (!match.games) {
+    oldFormat = true;
+    const {
+      playerStats, homeTeam, awayTeam, numGames,
+    } = match;
 
-      // order the playerStats by home team, then away team
-      if (homeTeamName.localeCompare(awayTeamName) < 0) { // home team alphabetically before away team
-        game.playerStats.sort((a, b) => a.teamName.localeCompare(b.teamName));
-      } else { // home team alphabetically after away team
-        game.playerStats.sort((a, b) => b.teamName.localeCompare(a.teamName));
-      }
+    const homeName = homeTeam.name;
+    const awayName = awayTeam.name;
 
-      // console.log(game.playerStats);
+    const baseId = (id * numGames) - 1;
 
-      let sumPos = 0;
-      let sumNeg = 0;
-      game.playerStats.forEach((stat, i) => {
-        const pValue = parseInt(stat[chartInfo.fieldName], 10);
-        if (stat.teamName === homeTeamName) {
-          sumNeg -= pValue;
-        } else {
-          sumPos += pValue;
-        }
-        chartData.datasets.push({
-          label: stat.playerName,
-          data: [stat.teamName === homeTeamName ? -pValue : pValue],
-          stack: '1',
-          backgroundColor: [colorOptions[i]],
-          borderColor: [borderOptions[i]],
-          borderWidth: 1,
+    Object.keys(gameToLetterMap).forEach((gameOffset) => {
+      if (match[`homeTeamScore${gameToLetterMap[gameOffset]}`] && match[`awayTeamScore${gameToLetterMap[gameOffset]}`]) {
+        statBars[gameOffset] = [];
+        let showLegend = true;
+        barCharts.forEach((chartInfo) => {
+          const chartData = {
+            labels: [chartInfo.label],
+            datasets: [],
+          };
+
+          const curStats = playerStats.filter(
+            (p) => parseInt(p.gameId, 10) === (parseInt(baseId, 10) + parseInt(gameOffset, 10)),
+          );
+
+          // order the playerStats by home team, then away team
+          if (homeName.localeCompare(awayName) < 0) { // home team alphabetically before away team
+            curStats.sort((a, b) => a.teamName.localeCompare(b.teamName));
+          } else { // home team alphabetically after away team
+            curStats.sort((a, b) => b.teamName.localeCompare(a.teamName));
+          }
+
+          let sumPos = 0;
+          let sumNeg = 0;
+          curStats.forEach((stat, i) => {
+            const pValue = parseInt(stat[chartInfo.fieldName], 10);
+            if (stat.teamName.toLowerCase() === homeName.toLowerCase()) {
+              sumNeg -= pValue;
+            } else {
+              sumPos += pValue;
+            }
+            chartData.datasets.push({
+              label: stat.playerName,
+              data: [stat.teamName.toLowerCase() === homeName.toLowerCase() ? -pValue : pValue],
+              stack: '1',
+              backgroundColor: [colorOptions[i]],
+              borderColor: [borderOptions[i]],
+              borderWidth: 1,
+            });
+          });
+          const xLimit = Math.round(Math.max(-sumNeg, sumPos) * 1.2) + 1;
+          const options = getOptions(showLegend, xLimit);
+          statBars[gameOffset].push(
+            <Grid item xs={12}>
+              <HorizontalBar
+                data={chartData}
+                options={options}
+                height={showLegend ? 100 : 80}
+                width={showLegend ? 302 : 300}
+              />
+            </Grid>,
+          );
+          showLegend = false;
         });
-      });
-      const xLimit = Math.round(Math.max(-sumNeg, sumPos) * 1.2) + 1;
-      const options = getOptions(showLegend, xLimit);
-      statBars[idx].push(
-        <Grid item xs={12}>
-          <HorizontalBar
-            data={chartData}
-            options={options}
-            height={showLegend ? 100 : 80}
-            width={showLegend ? 302 : 300}
-          />
-        </Grid>,
-      );
-      showLegend = false;
+      }
     });
-  });
+  } else if (match.games.length < 1) {
+    return '';
+  } else {
+    games.forEach((game, idx) => {
+      statBars[idx] = [];
+      let showLegend = true;
+      barCharts.forEach((chartInfo) => {
+        const chartData = {
+          labels: [chartInfo.label],
+          datasets: [],
+        };
+
+        // order the playerStats by home team, then away team
+        if (homeTeamName.localeCompare(awayTeamName) < 0) { // home team alphabetically before away team
+          game.playerStats.sort((a, b) => a.teamName.localeCompare(b.teamName));
+        } else { // home team alphabetically after away team
+          game.playerStats.sort((a, b) => b.teamName.localeCompare(a.teamName));
+        }
+
+        // console.log(game.playerStats);
+
+        let sumPos = 0;
+        let sumNeg = 0;
+        game.playerStats.forEach((stat, i) => {
+          const pValue = parseInt(stat[chartInfo.fieldName], 10);
+          if (stat.teamName.toLowerCase() === homeTeamName.toLowerCase()) {
+            sumNeg -= pValue;
+          } else {
+            sumPos += pValue;
+          }
+          chartData.datasets.push({
+            label: stat.playerName,
+            data: [stat.teamName.toLowerCase() === homeTeamName.toLowerCase() ? -pValue : pValue],
+            stack: '1',
+            backgroundColor: [colorOptions[i]],
+            borderColor: [borderOptions[i]],
+            borderWidth: 1,
+          });
+        });
+        const xLimit = Math.round(Math.max(-sumNeg, sumPos) * 1.2) + 1;
+        const options = getOptions(showLegend, xLimit);
+        statBars[idx].push(
+          <Grid item xs={12}>
+            <HorizontalBar
+              data={chartData}
+              options={options}
+              height={showLegend ? 100 : 80}
+              width={showLegend ? 302 : 300}
+            />
+          </Grid>,
+        );
+        showLegend = false;
+      });
+    });
+  }
 
   return (
     <Grid item>
       <Grid container alignItems="center" justify="center" direction="row">
-        {games.map((game, i) => (
+        {!oldFormat ? (games.map((game, i) => (
           <>
             <Grid item xs={5}>
               <Typography
@@ -206,7 +282,30 @@ export default function MatchStats(props) {
             </Grid>
             {statBars[i]}
           </>
-        ))}
+        ))) : (statBars.map((bar, idx) => (
+          <>
+            <Grid item xs={5}>
+              <Typography
+                variant="h3"
+                className={classes.matchInfo}
+              >
+                {match[`homeTeamScore${gameToLetterMap[idx]}`]}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Avatar className={classes.divisionIcon} src={logoSrc} variant="square" />
+            </Grid>
+            <Grid item xs={5}>
+              <Typography
+                variant="h3"
+                className={classes.matchInfo}
+              >
+                {match[`awayTeamScore${gameToLetterMap[idx]}`]}
+              </Typography>
+            </Grid>
+            {statBars[idx]}
+          </>
+        )))}
       </Grid>
     </Grid>
   );
