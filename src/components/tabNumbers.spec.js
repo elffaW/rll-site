@@ -26,9 +26,9 @@ describe('Tab Helper', () => {
       expect(lookupTabNumByPath(path)).toEqual(expectedReturn);
     });
 
-    it('returns 7 for videos path', () => {
+    it('returns 5 for videos path', () => {
       const path = '/videos';
-      const expectedReturn = 7;
+      const expectedReturn = 5;
 
       // assert
       expect(lookupTabNumByPath(path)).toEqual(expectedReturn);

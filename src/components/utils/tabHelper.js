@@ -16,12 +16,10 @@ const lookupTabNumByPath = (path) => {
       return 3;
     case '/stats':
       return 4;
-    case '/fantasy':
-      return 5;
+    case '/fantasy': // combine into same tab for dropdown nav
     case '/rules':
-      return 6;
     case '/videos':
-      return 7;
+      return 5;
     default:
       return 0;
   }

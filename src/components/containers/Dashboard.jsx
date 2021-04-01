@@ -165,9 +165,7 @@ class Dashboard extends Component {
                 <Paper className={classes.paddedPaper}>
                   <Typography
                     variant="h4"
-                    style={{
-                      fontVariant: 'small-caps', marginLeft: 32, marginTop: 16,
-                    }}
+                    className={classes.upcomingHeader}
                   >
                     {`Upcoming games ${games[0].gameTime.split(' ')[0]}`}
                   </Typography>

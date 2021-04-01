@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Typography, Avatar, Grid, Tooltip,
+  Typography, Avatar, Grid,
 } from '@material-ui/core';
 import { defaults, HorizontalBar } from 'react-chartjs-2';
 

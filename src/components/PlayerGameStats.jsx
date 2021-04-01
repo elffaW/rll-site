@@ -46,8 +46,8 @@ function PlayerGameStats(props) {
           tempStat.teamSize = seasonToTeamSizeMap[stat.season] || 3;
           return tempStat;
         });
-        console.log(stats);
-        console.log(stats.length, 'STATS GAMES RETRIEVED');
+        // console.log(stats);
+        // console.log(stats.length, 'STATS GAMES RETRIEVED');
         setPlayerStats(stats);
         setLoading(false);
       }).catch((e) => {

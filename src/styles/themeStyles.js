@@ -83,6 +83,12 @@ export const styles = withStyles((theme) => createStyles({
   gameTimeMod: {
     color: theme.palette.secondary.main,
   },
+  upcomingHeader: {
+    fontVariant: 'small-caps',
+    marginLeft: theme.spacing(4),
+    marginTop: theme.spacing(2),
+    textShadow: `2px 2px 4px ${theme.palette.primary.main}`,
+  },
   upcomingColumns: {
     fontVariant: 'small-caps',
     fontWeight: 700,

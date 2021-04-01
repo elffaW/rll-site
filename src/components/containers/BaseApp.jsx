@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  AppBar, Avatar, Box, Container, Tab, Tabs, Toolbar,
+  AppBar, Avatar, Box, Container, Tab, Tabs, Toolbar, Button, Menu, MenuItem,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { NavLink, useLocation } from 'react-router-dom';
@@ -20,6 +20,9 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(1),
     },
   },
+  headerButton: {
+    fontFamily: 'Oswald, Roboto, sans-serif',
+  },
   mainContent: {
     // hide scrollbars but still allow scrolling
     overflow: 'scroll',
@@ -32,13 +35,13 @@ const useStyles = makeStyles((theme) => ({
   },
   contentContainer: {
     position: 'absolute',
-    top: 48,
+    top: theme.spacing(6),
     width: `calc(100% - ${theme.spacing(4)}px) !important`,
     margin: theme.spacing(1),
     backgroundColor: theme.palette.primary.main,
   },
   menuIcon: {
-    marginLeft: -8,
+    marginLeft: -theme.spacing(1),
     marginRight: theme.spacing(2),
   },
   menuDrawer: {
@@ -60,10 +63,34 @@ export default function BaseApp(props) {
 
   const [tabValue, setTab] = React.useState(pathNum);
   const classes = useStyles();
+  const [rostersAnchor, setRostersAnchor] = React.useState(null);
+  const rostersOpen = Boolean(rostersAnchor);
+
+  const handleRostersMenu = (event) => {
+    setRostersAnchor(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setRostersAnchor(null);
+  };
 
   const handleTabChange = (event, newTab) => {
     setTab(newTab);
   };
+
+  const otherButton = (props) => (
+    <Button
+      aria-label="teams and players"
+      aria-controls="menu-appbar-rosters"
+      aria-haspopup="true"
+      onClick={handleRostersMenu}
+      color="inherit"
+      className={classes.headerButton}
+      style={pathNum > 4 ? { color: 'inherit' } : {}}
+    >
+      Other
+    </Button>
+  );
 
   return (
     <div>
@@ -72,7 +99,7 @@ export default function BaseApp(props) {
           <Avatar src={logo} className={classes.mainLogo} />
           <Tabs id="main-header" value={tabValue} onChange={handleTabChange}>
             <Tab
-              label="dashboard"
+              label="home"
               component={NavLink}
               exact
               to="/"
@@ -98,21 +125,52 @@ export default function BaseApp(props) {
               to="/stats"
             />
             <Tab
-              label="fantasy"
-              component={NavLink}
-              to="/fantasy"
-            />
-            <Tab
-              label="rules"
-              component={NavLink}
-              to="/rules"
-            />
-            <Tab
-              label="videos"
-              component={NavLink}
-              to="/videos"
+              label="other"
+              aria-label="teams and players"
+              aria-controls="menu-appbar-rosters"
+              aria-haspopup="true"
+              onClick={handleRostersMenu}
+              color="inherit"
+              className={classes.headerButton}
             />
           </Tabs>
+          <Menu
+            id="menu-appbar-rosters"
+            anchorEl={rostersAnchor}
+            keepMounted
+            open={rostersOpen}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+          >
+            <MenuItem
+              component={NavLink}
+              to="/fantasy"
+              onClick={handleClose}
+            >
+              Fantasy
+            </MenuItem>
+            <MenuItem
+              component={NavLink}
+              to="/rules"
+              onClick={handleClose}
+            >
+              Rules
+            </MenuItem>
+            <MenuItem
+              component={NavLink}
+              to="/videos"
+              onClick={handleClose}
+            >
+              Videos
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
       <Box id="main-content" bgcolor="primary.main" className={classes.mainContent}>
