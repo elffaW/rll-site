@@ -34,6 +34,9 @@ const getStatsByPlayerName = memoize((player) => fetch(`/.netlify/functions/stat
 
 const getAllSeasons = memoize(() => fetch('/.netlify/functions/seasons-getAll').then((response) => response.json()), { promise: true });
 
+const getBallSpeedsBySeason = memoize((season) => fetch(`/.netlify/functions/ballspeeds-getBySeason?season=${season}`).then((response) => response.json()), { promise: true });
+
+
 export default {
   getAllPlayers,
   getAllTeams,
@@ -48,4 +51,5 @@ export default {
   getStatsBySeasonAndGame,
   getStatsByPlayerName,
   getAllSeasons,
+  getBallSpeedsBySeason,
 };

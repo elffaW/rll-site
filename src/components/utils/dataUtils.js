@@ -91,13 +91,30 @@ const convertGamesToMatches = (games) => {
     const match = matches[matchId];
     const firstGame = match[0];
     const {
-      id, gameNum, matchNum, homeTeamScore: tempHome, awayTeamScore: tempAway, ...otherGameInfo
+      id,
+      gameNum,
+      matchNum,
+      homeTeamScore: tempHome,
+      awayTeamScore: tempAway,
+      winningTeamName,
+      losingTeamName,
+      ...otherGameInfo
     } = firstGame;
     let numHomeWins = 0;
     let numCompleteGames = 0;
     match.sort((a, b) => a.gameNum - b.gameNum);
     const matchGames = match.map((game) => {
-      const { homeTeamScore, awayTeamScore, playerStats } = game;
+      const {
+        homeTeamScore,
+        awayTeamScore,
+        playerStats,
+        avgBallSpeed,
+        neutralPossessionTime,
+        totalAerials,
+        startTime,
+        gameLength,
+        probablyOT,
+      } = game;
       const gameComplete = !!homeTeamScore && !!awayTeamScore;
       numCompleteGames += +gameComplete; // convert bool to int and add to number of games
       const homeWin = parseInt(homeTeamScore, 10) > parseInt(awayTeamScore, 10);
@@ -108,6 +125,12 @@ const convertGamesToMatches = (games) => {
         awayTeamScore,
         homeWin,
         gameComplete,
+        avgBallSpeed,
+        neutralPossessionTime,
+        totalAerials,
+        startTime,
+        gameLength,
+        probablyOT,
         playerStats,
       };
     });

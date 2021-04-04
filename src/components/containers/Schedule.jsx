@@ -57,10 +57,15 @@ class Schedule extends Component {
       api.getGamesBySeason(seasonQuery),
       api.getTeamsBySeason(seasonQuery),
       api.getStatsBySeason(seasonQuery),
+      api.getBallSpeedsBySeason(seasonQuery),
     ]).then((results) => {
       const allGames = results[0];
       const teamsData = results[1];
       const statsData = results[2];
+      const ballSpeedData = results[3];
+      const seasonAvgBallSpeed = ballSpeedData && ballSpeedData.length > 0
+        ? ballSpeedData.reduce((accum, cur) => accum + cur) / ballSpeedData.length
+        : -1;
       const stats = statsData.map((stat) => stat.data);
       const gamesData = allGames.map((game) => game.data);
       // associate game stats records with the games
@@ -115,10 +120,12 @@ class Schedule extends Component {
         if (!tempGame.awayTeam) {
           tempGame.awayTeam = { rank: game.awayTeamRank };
         }
+
+        tempGame.seasonStats = {
+          avgBallSpeed: seasonAvgBallSpeed,
+        };
         return tempGame;
       });
-
-      // console.log(gamesWithTeams);
 
       this.setState({ games: gamesWithTeams, loading: false });
     }).catch((err) => {
@@ -208,6 +215,7 @@ class Schedule extends Component {
 
     if (gameNum) {
       const curGame = games.find((game) => game.id === parseInt(gameNum, 10));
+      console.log(curGame);
       if (curGame) {
         gameCards.push(
           <Grid item xs={12}>
