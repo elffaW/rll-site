@@ -176,12 +176,14 @@ function getDataFromSheets() {
           const standingsSheet = doc.sheetsByTitle.Standings;
           const scheduleSheet = doc.sheetsByTitle.ScheduleRows;
           const statsSheet = doc.sheetsByTitle.Stats;
+          const gameStatsSheet = doc.sheetsByTitle.GameStats;
+          // const goalStatsSheet = doc.sheetsByTitle.GoalStats;
 
-          getStatsFromSheets(statsSheet).then((allStats) => {
+          getStatsFromSheets(statsSheet, gameStatsSheet).then((allStats) => {
             getPlayersFromSheets(playersSheet, rolesSheet, allStats).then((players) => {
               const { playersRet: allPlayers, statsRet: statsWithPlayers } = players;
               getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers).then((allTeams) => {
-                getGamesFromSheets(scheduleSheet, allTeams).then((allGames) => {
+                getGamesFromSheets(scheduleSheet, allTeams, allStats).then((allGames) => {
                   resolve({
                     players: allPlayers,
                     teams: allTeams,
@@ -200,9 +202,9 @@ function getDataFromSheets() {
   });
 }
 
-function getStatsFromSheets(statsSheet) {
+function getStatsFromSheets(statsSheet, gameStatsSheet) {
   return new Promise((resolve, reject) => {
-    statsSheet.getRows().then((allStats) => {
+    statsSheet.getRows().then((allStats) => gameStatsSheet.getRows().then((gameStats) => {
       const statsRet = {};
       const statsByGame = {};
       const statsByPlayer = {};
@@ -464,6 +466,19 @@ function getStatsFromSheets(statsSheet) {
               statsByPlayer[playerName].timeInAttackingThird += (parseFloat(playerTimeInAttackingThird) || 0);
             }
             if (!statsByGame[gameId]) {
+              const curGameStats = gameStats.find((g) => g.gameId === gameName);
+              const {
+                avgBallSpeed,
+                neutralPossessionTime,
+                totalAerials,
+                winningTeam: winningTeamName,
+                losingTeam: losingTeamName,
+                startTime,
+                gameLength,
+                map,
+                probablyOT,
+                serverRegion,
+              } = curGameStats || {};
               statsByGame[gameId] = {
                 id: gameId,
                 gameName,
@@ -475,6 +490,16 @@ function getStatsFromSheets(statsSheet) {
                 team0AvgScore: parseFloat(teamAvgScore),
                 team1Score: parseInt(oppTotScore, 10),
                 team0to1ScoreRatio: parseFloat(teamsScoreRatio),
+                avgBallSpeed: parseFloat(avgBallSpeed),
+                neutralPossessionTime: parseFloat(neutralPossessionTime),
+                totalAerials: parseInt(totalAerials, 10),
+                winningTeamName,
+                losingTeamName,
+                startTime: parseFloat(startTime),
+                gameLength: parseFloat(gameLength),
+                map,
+                probablyOT: probablyOT && probablyOT === 'TRUE',
+                serverRegion,
               };
             }
             if (!statsByTeam[teamName]) {
@@ -509,7 +534,7 @@ function getStatsFromSheets(statsSheet) {
       console.log(`Got ${Object.keys(statsRet.statsByTeam).length} TEAM   stats records from Stats`);
       console.log(`Got ${statsRet.statsRows.length} INDIV   stats records from Stats`);
       resolve(statsRet);
-    }).catch((err) => {
+    })).catch((err) => {
       reject(err);
     });
   });
@@ -840,10 +865,11 @@ function getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers) {
   *    id: 1, homeTeam: 1, awayTeam: 2, gameWeek: 1, gameTime: '05/29/2020 19:30 -0500', arena: 'Salty Shores',
   *  }, ...],
   */
-function getGamesFromSheets(scheduleSheet, allTeams) {
+function getGamesFromSheets(scheduleSheet, allTeams, allStats) {
   return new Promise((resolve, reject) => {
     scheduleSheet.getRows()
       .then((allGames) => {
+        const { statsByGame } = allStats;
         const gamesRet = [];
         let curArena = 'Salty Shores';
         let curGameweek = 1;
@@ -874,6 +900,20 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
               TM_B_SCR: teamScoreB,
             } = curGame;
 
+            const curGameStats = statsByGame[gameNum] || {};
+            const {
+              id,
+              team0,
+              team1,
+              team0Goals,
+              team1Goals,
+              team0Score,
+              team0AvgScore,
+              team1Score,
+              team0to1ScoreRatio,
+              ...otherGameStats
+            } = curGameStats;
+
             const dateTime = `${gameDate} ${gameTime || gameTimeAlt} -0500`;
 
             // for S5 we switch from match-based records to game-based records with matchNum specified to link
@@ -895,6 +935,7 @@ function getGamesFromSheets(scheduleSheet, allTeams) {
               awayTeamRank: teamRankB,
               awayTeamName: teamNameB,
               awayTeamScore: teamScoreB,
+              ...otherGameStats,
               season: curSeason,
             };
             gamesRet.push(gameObj);

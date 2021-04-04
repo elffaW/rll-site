@@ -192,6 +192,11 @@ function createFaunaIndexes(key, collections) {
       }
     });
 
+    client.query(q.Create(q.Ref('indexes'), {
+      name: 'all_seasons',
+      source: q.Collection('seasons'),
+    }));
+
     resolve();
 
 
