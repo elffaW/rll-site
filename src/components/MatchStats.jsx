@@ -6,6 +6,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 
 import GameStatsPlayersOverview from './GameStatsPlayersOverview';
+import { convertSpeedToMPH } from './utils/dataUtils';
 
 import div1 from '../images/RLL_logo.png';
 import div2 from '../images/RLL_logo_lower.png';
@@ -138,7 +139,7 @@ export default function MatchStats(props) {
         <Grid item>
           <Grid container alignItems="center" justify="center" direction="row">
             <Grid item xs>
-              <p>{`BALL SPEED vs Season Avg: ${game.avgBallSpeed} / ${seasonStats.avgBallSpeed}`}</p>
+              <p>{`BALL SPEED vs Season Avg: ${convertSpeedToMPH(game.avgBallSpeed)} MPH / ${convertSpeedToMPH(seasonStats.avgBallSpeed)} MPH`}</p>
             </Grid>
           </Grid>
         </Grid>
