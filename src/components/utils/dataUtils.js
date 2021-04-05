@@ -155,13 +155,13 @@ const convertGamesToMatches = (games) => {
  * converts a RL speed to MPH
  * - assumes RL speed is in mm/s
  * @param {number} speed
- * @returns speed in MPH, 2 decimal places - if speed param is invalid, returns 0
+ * @returns speed in MPH, 1 decimal place - if speed param is invalid, returns 0
  */
 const convertSpeedToMPH = (speed) => {
   if (!speed || parseFloat(speed) < 0) {
     return 0;
   }
-  return (parseFloat(speed) * 0.00223694).toFixed(2);
+  return (parseFloat(speed) * 0.00223694).toFixed(1);
 };
 
 export { convertGamesToMatches, convertSpeedToMPH };

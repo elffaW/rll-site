@@ -58,13 +58,41 @@ class Schedule extends Component {
       api.getTeamsBySeason(seasonQuery),
       api.getStatsBySeason(seasonQuery),
       api.getBallSpeedsBySeason(seasonQuery),
+      api.getNeutPossBySeason(seasonQuery),
+      api.getAerialsBySeason(seasonQuery),
     ]).then((results) => {
       const allGames = results[0];
       const teamsData = results[1];
       const statsData = results[2];
       const ballSpeedData = results[3];
+      const neutPossData = results[4];
+      const aerialData = results[5];
       const seasonAvgBallSpeed = ballSpeedData && ballSpeedData.length > 0
         ? ballSpeedData.reduce((accum, cur) => accum + cur) / ballSpeedData.length
+        : -1;
+      const seasonMaxBallSpeed = ballSpeedData && ballSpeedData.length > 0
+        ? Math.max(...ballSpeedData)
+        : -1;
+      const seasonMinBallSpeed = ballSpeedData && ballSpeedData.length > 0
+        ? Math.min(...ballSpeedData)
+        : -1;
+      const seasonAvgNeutPoss = neutPossData && neutPossData.length > 0
+        ? neutPossData.reduce((accum, cur) => accum + cur) / neutPossData.length
+        : -1;
+      const seasonMaxNeutPoss = neutPossData && neutPossData.length > 0
+        ? Math.max(...neutPossData)
+        : -1;
+      const seasonMinNeutPoss = neutPossData && neutPossData.length > 0
+        ? Math.min(...neutPossData)
+        : -1;
+      const seasonAvgAerials = aerialData && aerialData.length > 0
+        ? aerialData.reduce((accum, cur) => accum + cur) / aerialData.length
+        : -1;
+      const seasonMaxAerials = aerialData && aerialData.length > 0
+        ? Math.max(...aerialData)
+        : -1;
+      const seasonMinAerials = aerialData && aerialData.length > 0
+        ? Math.min(...aerialData)
         : -1;
       const stats = statsData.map((stat) => stat.data);
       const gamesData = allGames.map((game) => game.data);
@@ -121,8 +149,18 @@ class Schedule extends Component {
           tempGame.awayTeam = { rank: game.awayTeamRank };
         }
 
-        tempGame.seasonStats = {
-          avgBallSpeed: seasonAvgBallSpeed,
+        tempGame.seasonAverages = {
+          ballSpeed: seasonAvgBallSpeed,
+          neutralPossessionTime: seasonAvgNeutPoss,
+          totalAerials: seasonAvgAerials,
+        };
+        tempGame.seasonExtremes = {
+          maxBallSpeed: seasonMaxBallSpeed,
+          minBallSpeed: seasonMinBallSpeed,
+          maxNeutPoss: seasonMaxNeutPoss,
+          minNeutPoss: seasonMinNeutPoss,
+          maxAerials: seasonMaxAerials,
+          minAerials: seasonMinAerials,
         };
         return tempGame;
       });
@@ -215,7 +253,6 @@ class Schedule extends Component {
 
     if (gameNum) {
       const curGame = games.find((game) => game.id === parseInt(gameNum, 10));
-      console.log(curGame);
       if (curGame) {
         gameCards.push(
           <Grid item xs={12}>

@@ -36,6 +36,9 @@ const getAllSeasons = memoize(() => fetch('/.netlify/functions/seasons-getAll').
 
 const getBallSpeedsBySeason = memoize((season) => fetch(`/.netlify/functions/ballspeeds-getBySeason?season=${season}`).then((response) => response.json()), { promise: true });
 
+const getNeutPossBySeason = memoize((season) => fetch(`/.netlify/functions/neutralPoss-getBySeason?season=${season}`).then((response) => response.json()), { promise: true });
+
+const getAerialsBySeason = memoize((season) => fetch(`/.netlify/functions/totalAerials-getBySeason?season=${season}`).then((response) => response.json()), { promise: true });
 
 export default {
   getAllPlayers,
@@ -52,4 +55,6 @@ export default {
   getStatsByPlayerName,
   getAllSeasons,
   getBallSpeedsBySeason,
+  getNeutPossBySeason,
+  getAerialsBySeason,
 };

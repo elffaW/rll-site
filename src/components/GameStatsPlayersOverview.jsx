@@ -114,14 +114,6 @@ const barCharts = [{
   fieldName: 'playerShots',
 }];
 
-const gameToLetterMap = {
-  0: 'A',
-  1: 'B',
-  2: 'C',
-  3: 'D',
-  4: 'E',
-};
-
 /**
  * @param {object} props: game, homeTeamName, awayTeamName, curDivision
  * game should contain:
