@@ -28,24 +28,6 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: theme.spacing(1),
     paddingLeft: theme.spacing(1),
   },
-  statIcon: {
-    filter: 'invert(100%)',
-    paddingRight: theme.spacing(1),
-    paddingLeft: theme.spacing(1),
-  },
-  statText: {
-    fontVariant: 'small-caps',
-  },
-  statBar: {
-    minHeight: theme.spacing(1),
-    width: '100%',
-  },
-  statBarValue: {
-    marginTop: -theme.spacing(0.5),
-  },
-  statBarText: {
-    marginTop: -theme.spacing(2),
-  },
 }));
 
 /**
@@ -168,10 +150,6 @@ export default function MatchStats(props) {
           matchId={id}
         />,
       );
-      // game stats vs season averages
-      let ballSpeedRelative = 100;
-      let neutPossRelative = 100;
-      let aerialsRelative = 100;
       const {
         minBallSpeed,
         maxBallSpeed,
@@ -180,15 +158,6 @@ export default function MatchStats(props) {
         maxAerials,
         minAerials,
       } = seasonExtremes;
-      if (minBallSpeed !== undefined && maxBallSpeed !== undefined && game.avgBallSpeed !== undefined) {
-        ballSpeedRelative = ((game.avgBallSpeed - minBallSpeed) / (maxBallSpeed - minBallSpeed)) * 100;
-      }
-      if (minNeutPoss !== undefined && maxNeutPoss !== undefined && game.neutralPossessionTime !== undefined) {
-        neutPossRelative = ((game.neutralPossessionTime - minNeutPoss) / (maxNeutPoss - minNeutPoss)) * 100;
-      }
-      if (minAerials !== undefined && maxAerials !== undefined && game.totalAerials !== undefined) {
-        aerialsRelative = ((game.totalAerials - minAerials) / (maxAerials - minAerials)) * 100;
-      }
       gameStats.push(
         <Grid item xs={12}>
           <Grid container spacing={2} alignItems="center" justify="space-evenly" direction="row">
