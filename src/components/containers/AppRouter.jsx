@@ -16,6 +16,7 @@ import Fantasy from './Fantasy';
 import Players from './Players';
 import Teams from './Teams';
 import Videos from './Videos';
+import RecordBook from './RecordBook';
 import Standings from '../Standings';
 
 export default function AppRouter() {
@@ -44,6 +45,8 @@ export default function AppRouter() {
             {/* VIDEOS */}
             <Route path="/videos" component={Videos} />
             <Route path="/standings" component={Standings} />
+            {/* OTHER */}
+            <Route path="/records" component={RecordBook} />
             {/* DASHBOARD AND NOT-FOUND ROUTES */}
             <Route exact path="/" component={Dashboard} />
             <Route component={BaseApp} />

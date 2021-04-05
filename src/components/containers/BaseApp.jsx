@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  AppBar, Avatar, Box, Container, Tab, Tabs, Toolbar, Button, Menu, MenuItem,
+  AppBar, Avatar, Box, Container, Tab, Tabs, Toolbar, Menu, MenuItem,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { NavLink, useLocation } from 'react-router-dom';
@@ -78,20 +78,6 @@ export default function BaseApp(props) {
     setTab(newTab);
   };
 
-  const otherButton = (props) => (
-    <Button
-      aria-label="teams and players"
-      aria-controls="menu-appbar-rosters"
-      aria-haspopup="true"
-      onClick={handleRostersMenu}
-      color="inherit"
-      className={classes.headerButton}
-      style={pathNum > 4 ? { color: 'inherit' } : {}}
-    >
-      Other
-    </Button>
-  );
-
   return (
     <div>
       <AppBar position="fixed">
@@ -155,6 +141,13 @@ export default function BaseApp(props) {
               onClick={handleClose}
             >
               Fantasy
+            </MenuItem>
+            <MenuItem
+              component={NavLink}
+              to="/records"
+              onClick={handleClose}
+            >
+              Record Book
             </MenuItem>
             <MenuItem
               component={NavLink}
