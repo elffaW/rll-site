@@ -111,10 +111,10 @@ class Dashboard extends Component {
     // TODO: integrate with twitch API to get stream status
     //       and show the twitch stream if live
     const showTwitch = new Date().getDay() === 5;
-    const vidUrl = showTwitch ? 'https://www.twitch.tv/elffawm' : networkPromo;
+    const vidUrl = showTwitch ? 'https://www.twitch.tv' : networkPromo;
     const lightPlayer = !showTwitch;
     const tooltipText = showTwitch ? '' : 'Click to get hyped';
-    const streamHeight = showTwitch ? 800 : '';
+    const streamHeight = showTwitch ? 400 : '';
 
     // console.log(games);
     const gamesByTime = games.reduce((rv, x) => {
@@ -137,13 +137,34 @@ class Dashboard extends Component {
             />
             <Standings season={season} />
           </Grid>
-          <Grid item xs={12} style={{ width: '100%' }}>
-            <Paper className={classes.paper}>
-              <Tooltip title={tooltipText}>
-                <ReactPlayer url={vidUrl} light={lightPlayer} controls width="" height={streamHeight} />
-              </Tooltip>
-            </Paper>
-          </Grid>
+          {showTwitch ? (
+            <>
+              <Grid item xs={6}>
+                <Paper className={classes.videoPaper}>
+                  <Typography variant="h4">Gongshow 1</Typography>
+                  <Tooltip title={tooltipText}>
+                    <ReactPlayer url={`${vidUrl}/elffawm`} light={lightPlayer} controls width="" height={streamHeight} />
+                  </Tooltip>
+                </Paper>
+              </Grid>
+              <Grid item xs={6}>
+                <Paper className={classes.videoPaper}>
+                  <Typography variant="h4">Gongshow 2</Typography>
+                  <Tooltip title={tooltipText}>
+                    <ReactPlayer url={`${vidUrl}/kawa2287`} light={lightPlayer} controls width="" height={streamHeight} />
+                  </Tooltip>
+                </Paper>
+              </Grid>
+            </>
+          ) : (
+            <Grid item xs={12} style={{ width: '100%' }}>
+              <Paper className={classes.paper}>
+                <Tooltip title={tooltipText}>
+                  <ReactPlayer url={vidUrl} light={lightPlayer} controls width="" height={streamHeight} />
+                </Tooltip>
+              </Paper>
+            </Grid>
+          )}
           {/* eslint-disable no-nested-ternary */}
           {loading ? (
             <span style={{ textAlign: 'center' }}>
