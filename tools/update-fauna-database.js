@@ -177,9 +177,10 @@ function getDataFromSheets() {
           const scheduleSheet = doc.sheetsByTitle.ScheduleRows;
           const statsSheet = doc.sheetsByTitle.Stats;
           const gameStatsSheet = doc.sheetsByTitle.GameStats;
-          // const goalStatsSheet = doc.sheetsByTitle.GoalStats;
+          const goalStatsSheet = doc.sheetsByTitle.GoalStats;
 
-          getStatsFromSheets(statsSheet, gameStatsSheet).then((allStats) => {
+          getStatsFromSheets(statsSheet, gameStatsSheet, goalStatsSheet).then((allStats) => {
+            const { goals } = allStats;
             getPlayersFromSheets(playersSheet, rolesSheet, allStats).then((players) => {
               const { playersRet: allPlayers, statsRet: statsWithPlayers } = players;
               getTeamsFromSheets(rostersSheet, standingsSheet, allPlayers).then((allTeams) => {
@@ -188,6 +189,7 @@ function getDataFromSheets() {
                     players: allPlayers,
                     teams: allTeams,
                     games: allGames,
+                    goals,
                     stats: statsWithPlayers,
                   });
                 });
@@ -202,9 +204,14 @@ function getDataFromSheets() {
   });
 }
 
-function getStatsFromSheets(statsSheet, gameStatsSheet) {
+function getStatsFromSheets(statsSheet, gameStatsSheet, goalStatsSheet) {
   return new Promise((resolve, reject) => {
-    statsSheet.getRows().then((allStats) => gameStatsSheet.getRows().then((gameStats) => {
+    Promise.all([statsSheet.getRows(), gameStatsSheet.getRows(), goalStatsSheet.getRows()]).then((results) => {
+    // statsSheet.getRows().then((allStats) => gameStatsSheet.getRows().then((gameStats) => {
+      const allStats = results[0];
+      const gameStats = results[1];
+      const goalStats = results[2];
+
       const statsRet = {};
       const statsByGame = {};
       const statsByPlayer = {};
@@ -525,16 +532,81 @@ function getStatsFromSheets(statsSheet, gameStatsSheet) {
           }
         }
       });
+      const goalsRet = goalStats.map((origGoal) => {
+        const {
+          playerName,
+          playerId,
+          teamName,
+          oppTeamName,
+          frameNumber,
+          timeOfGoal,
+          timeOfGame,
+          teamScoreBeforeGoal,
+          oppScoreBeforeGoal,
+          distanceToGoal,
+          assisted,
+          aerial,
+          isProbablyOTGoal,
+          season,
+          gameWeek,
+          gameNum,
+          gameId,
+          id,
+        } = origGoal;
+        const goal = {
+          playerName,
+          playerId,
+          teamName,
+          oppTeamName,
+          frameNumber,
+          timeOfGoal,
+          timeOfGame,
+          teamScoreBeforeGoal,
+          oppScoreBeforeGoal,
+          distanceToGoal,
+          assisted,
+          aerial,
+          isProbablyOTGoal,
+          season,
+          gameWeek,
+          gameNum,
+          gameId,
+          id,
+        };
+        if (!goal.gameNum) {
+          const curGame = statsRows.find((row) => row.gameName === goal.gameId);
+          goal.gameNum = curGame ? curGame.gameId : -1;
+        }
+        if (!goal.season) {
+          goal.season = parseInt(SEASON_NUMBER, 10);
+        }
+        goal.season = parseInt(goal.season, 10);
+        goal.frameNumber = parseInt(goal.frameNumber, 10);
+        goal.timeOfGoal = parseInt(goal.timeOfGoal, 10);
+        goal.teamScoreBeforeGoal = parseInt(goal.teamScoreBeforeGoal, 10);
+        goal.oppScoreBeforeGoal = parseInt(goal.oppScoreBeforeGoal, 10);
+        goal.gameWeek = parseInt(goal.gameWeek, 10);
+        goal.gameNum = parseInt(goal.gameNum, 10);
+        goal.distanceToGoal = parseFloat(goal.distanceToGoal);
+
+        goal.assisted = goal.assisted === 'TRUE';
+        goal.aerial = goal.aerial === 'TRUE';
+        goal.isProbablyOTGoal = goal.isProbablyOTGoal === 'TRUE';
+        goal.id = `${goal.season}-${goal.gameNum}-${goal.frameNumber}`;
+        return goal;
+      });
       statsRet.statsByPlayer = statsByPlayer;
       statsRet.statsByGame = statsByGame;
       statsRet.statsByTeam = statsByTeam;
+      statsRet.goals = goalsRet;
       statsRet.statsRows = statsRows;
-      console.log(`Got ${Object.keys(statsRet.statsByPlayer).length} PLAYER stats records from Stats`);
-      console.log(`Got ${Object.keys(statsRet.statsByGame).length} GAME   stats records from Stats`);
-      console.log(`Got ${Object.keys(statsRet.statsByTeam).length} TEAM   stats records from Stats`);
-      console.log(`Got ${statsRet.statsRows.length} INDIV   stats records from Stats`);
+      console.log('Got', chalk.magenta(Object.keys(statsRet.statsByPlayer).length), 'PLAYER stats records from Stats');
+      console.log('Got', chalk.magenta(Object.keys(statsRet.statsByGame).length), 'GAME   stats records from Stats');
+      console.log('Got', chalk.magenta(Object.keys(statsRet.statsByTeam).length), 'TEAM   stats records from Stats');
+      console.log('Got', chalk.magenta(statsRet.goals.length), 'GOAL   stats records from Stats');
+      console.log('Got', chalk.magenta(statsRet.statsRows.length), 'INDIV   stats records from Stats');
       resolve(statsRet);
-    })).catch((err) => {
+    }).catch((err) => {
       reject(err);
     });
   });
