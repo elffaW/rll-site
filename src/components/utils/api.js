@@ -13,6 +13,8 @@ const getAllGames = memoize(() => fetch('/.netlify/functions/games-getAll').then
 
 const getAllStats = memoize(() => fetch('/.netlify/functions/stats-getAll').then((response) => response.json()), { promise: true });
 
+const getAllGoals = memoize(() => fetch('/.netlify/functions/goals-getAll').then((response) => response.json()), { promise: true });
+
 const getPlayersBySeason = memoize((season) => fetch(`/.netlify/functions/players-getBySeason?season=${season}`).then((response) => response.json()), { promise: true });
 
 const getPlayerByName = memoize((player) => fetch(`/.netlify/functions/players-getByName?player=${player}`).then((response) => response.json()), { promise: true });
@@ -20,6 +22,8 @@ const getPlayerByName = memoize((player) => fetch(`/.netlify/functions/players-g
 const getTeamsBySeason = memoize((season) => fetch(`/.netlify/functions/teams-getBySeason?season=${season}`).then((response) => response.json()), { promise: true });
 
 const getGamesBySeason = memoize((season) => fetch(`/.netlify/functions/games-getBySeason?season=${season}`).then((response) => response.json()), { promise: true });
+
+const getGoalsBySeason = memoize((season) => fetch(`/.netlify/functions/goals-getBySeason?season=${season}`).then((response) => response.json()), { promise: true });
 
 const getStatsBySeason = memoize((season) => fetch(`/.netlify/functions/stats-getBySeason?season=${season}`).then((response) => response.json()), { promise: true });
 
@@ -57,4 +61,6 @@ export default {
   getBallSpeedsBySeason,
   getNeutPossBySeason,
   getAerialsBySeason,
+  getAllGoals,
+  getGoalsBySeason,
 };

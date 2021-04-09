@@ -330,7 +330,6 @@ class Teams extends Component {
               <>
                 <TeamCard
                   team={curTeam}
-                  totalTeams={teams.length}
                   showDetails
                   gameweeks={gameweeks}
                   winlossdraw={winlossdraw[curTeam.id]}

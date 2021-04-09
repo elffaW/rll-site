@@ -74,6 +74,30 @@ div.MuiDrawer-root > .MuiDrawer-paper {
   z-index: -1;
 }
 
+// player season colorings -- mini version
+h4[class*="player-mini-season-"] {
+  position: relative;
+  padding: 4px;
+  // cursor: pointer;
+}
+h4[class*="player-mini-season-"]::before {
+  background-position: center;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  // background-image is RLL_logo_plain.svg
+  background-image: url("/RLL_logo_plain.png");
+  background-size: contain;
+  // SEE https://codepen.io/sosuke/pen/Pjoqqp to create filter
+  filter: invert(99%) sepia(100%) saturate(0%) hue-rotate(144deg) brightness(102%) contrast(98%);
+  content: "";
+  margin-left: 1px;
+}
+[class*="player-season-mini-inside-"] {
+  position: relative;
+  color: black;
+}
 // player season colorings
 h4[class*="player-season-"] {
   position: relative;
@@ -104,28 +128,28 @@ h4[class*="player-season-"]::before {
   font-size: 3rem;
 }
 
-h4.player-season-1::before {
+h4.player-season-1::before, h4.player-mini-season-1::before {
   // SEE https://codepen.io/sosuke/pen/Pjoqqp to create filter
   filter: invert(91%) sepia(64%) saturate(7500%) hue-rotate(356deg) brightness(102%) contrast(102%);
 }
 
-h4.player-season-2::before {
+h4.player-season-2::before, h4.player-mini-season-2::before {
   filter: invert(88%) sepia(37%) saturate(3659%) hue-rotate(120deg) brightness(104%) contrast(102%);
 }
 
-h4.player-season-3::before {
+h4.player-season-3::before, h4.player-mini-season-3::before {
   filter: invert(25%) sepia(62%) saturate(7431%) hue-rotate(292deg) brightness(113%) contrast(128%);
 }
 
-h4.player-season-4::before {
+h4.player-season-4::before, h4.player-mini-season-4::before {
   filter: invert(83%) sepia(60%) saturate(407%) hue-rotate(56deg) brightness(101%) contrast(101%);
 }
 
-h4.player-season-5::before {
+h4.player-season-5::before, h4.player-mini-season-5::before {
   filter: invert(44%) sepia(90%) saturate(2784%) hue-rotate(341deg) brightness(103%) contrast(101%);
 }
 
-h4.player-season-6::before {
+h4.player-season-6::before, h4.player-mini-season-6::before {
   filter: invert(17%) sepia(99%) saturate(3870%) hue-rotate(285deg) brightness(78%) contrast(123%);
 }
 

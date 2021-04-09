@@ -28,7 +28,7 @@
     "remove-dist": "rimraf ./dist",
     "create-db": "node ./tools/create-fauna-db.js",
     "reset-db": "node ./tools/bootstrap-fauna-database.js",
-    "update-db": "node ./tools/update-fauna-database.js",
+    "update-db": "node --stack-size=5000 ./tools/update-fauna-database.js",
     "start": "concurrently -k -r -s first \"npm run test:watch\" \"npm run open:src\" \"npm run lint:watch\"",
     "start-message": "babel-node tools/startMessage.js",
     "start:all": "npm-run-all --parallel checkForFaunaKey open:src start:server",

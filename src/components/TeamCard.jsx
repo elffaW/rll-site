@@ -98,7 +98,7 @@ const useStyles = makeStyles((theme) => ({
 
 function TeamCard(props) {
   const {
-    team, inGame, showDetails, winner, totalTeams, gameweeks, winlossdraw,
+    team, inGame, showDetails, winner, gameweeks, winlossdraw,
   } = props;
   const classes = useStyles();
 
@@ -146,33 +146,6 @@ function TeamCard(props) {
   const logoSrc = require(`../images/LOGO_${team?.name?.toUpperCase?.() || defaultLogo}.png`); // eslint-disable-line
 
   const players = team.members;
-  // let rankSuffix = 'th';
-  const numTeams = totalTeams || 8;
-  let rankClass = (parseInt(team.rank, 10) === numTeams) ? 'last' : '';
-  switch (parseInt(team.rank, 10)) {
-    case 1:
-      // rankSuffix = 'st';
-      rankClass = 'first';
-      break;
-    case 2:
-      // rankSuffix = 'nd';
-      break;
-    case 3:
-      // rankSuffix = 'rd';
-      break;
-    case 8:
-    // eslint-disable-next-line no-fallthrough
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 9:
-    case 0:
-    default:
-      // rankSuffix = 'th';
-      break;
-  }
-  // const teamRank = parseInt(team.rank, 10) === numTeams ? 'Last' : `${team.rank}${rankSuffix}`;
 
   const playersInfo = !inGame && players.map((member) => (
     <PlayerCard player={member} inTeam={!showDetails} />
@@ -339,7 +312,7 @@ function TeamCard(props) {
           {playersInfo && showDetails ? playersInfo : !inGame && (
             <>
               <Grid container direction="row" justify="space-between">
-                {players.map((p, idx) => <PlayerCardMini player={p} />)}
+                {players.map((p) => <PlayerCardMini player={p} />)}
               </Grid>
               <LinearProgress className={classes.playerBar} color="secondary" variant="buffer" value={player1Pct} valueBuffer={player2Pct} />
               <LinearProgress style={{ width: '100%' }} color="secondary" variant="buffer" value={player1Pct} valueBuffer={player2Pct} />
@@ -357,7 +330,6 @@ TeamCard.propTypes = {
   inGame: PropTypes.bool,
   showDetails: PropTypes.bool,
   winner: PropTypes.bool,
-  totalTeams: PropTypes.number,
   gameweeks: PropTypes.array,
   winlossdraw: PropTypes.array,
 };
@@ -365,7 +337,6 @@ TeamCard.defaultProps = {
   inGame: false,
   showDetails: false,
   winner: false,
-  totalTeams: 8,
   gameweeks: [],
   winlossdraw: [],
 };

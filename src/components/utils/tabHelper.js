@@ -17,6 +17,7 @@ const lookupTabNumByPath = (path) => {
     case '/stats':
       return 4;
     case '/fantasy': // combine into same tab for dropdown nav
+    case '/records':
     case '/rules':
     case '/videos':
       return 5;

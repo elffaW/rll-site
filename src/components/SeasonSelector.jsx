@@ -54,7 +54,7 @@ export default function SeasonSelector(props) {
       <Pagination
         id="season-selector"
         count={SEASONS.length}
-        page={season}
+        page={season === 'All' ? (SEASONS.length + 5) : season}
         color="secondary"
         onChange={(e, val) => changeSeason(val)}
         hideNextButton
