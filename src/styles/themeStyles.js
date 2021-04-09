@@ -1,7 +1,6 @@
-import { createStyles, withStyles } from '@material-ui/core/styles';
+import { createStyles, withStyles, makeStyles } from '@material-ui/core/styles';
 
-// eslint-disable-next-line import/prefer-default-export
-export const styles = withStyles((theme) => createStyles({
+const getStyles = (theme) => ({
   paper: {
     // padding: theme.spacing(1),
     marginTop: theme.spacing(1),
@@ -40,9 +39,18 @@ export const styles = withStyles((theme) => createStyles({
     textAlign: 'center',
     color: theme.otherColors.text.light,
     backgroundColor: theme.palette.primary.dark,
-    marginTop: -8,
-    marginBottom: 60,
+    marginTop: -theme.spacing(1),
+    marginBottom: theme.spacing(7.5),
     height: '100%',
+  },
+  videoPaper: {
+    width: '100%',
+    marginTop: theme.spacing(1),
+    textAlign: 'center',
+    backgroundColor: theme.palette.secondary.main,
+    color: theme.otherColors.text.lighter,
+    fontVariant: 'small-caps',
+    textShadow: '1px 1px 2px black',
   },
   paddedPaper: {
     margin: theme.spacing(1),
@@ -104,4 +112,8 @@ export const styles = withStyles((theme) => createStyles({
   runnerUpTrophy: {
     filter: 'invert(90%) sepia(0%) saturate(1063%) hue-rotate(140deg) brightness(87%) contrast(88%)',
   },
-}));
+});
+/* eslint-disable import/prefer-default-export */
+export const styles = withStyles((theme) => createStyles(getStyles(theme)));
+
+export const stylesHook = makeStyles((theme) => getStyles(theme));

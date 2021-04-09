@@ -20,10 +20,10 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1),
   },
   teamLogo: {
-    float: 'right',
+    float: 'left',
     paddingRight: theme.spacing(1),
-    width: '75%',
-    height: '75%',
+    width: '65%',
+    height: '65%',
   },
   elemName: {
     float: 'left',
@@ -34,12 +34,15 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: 'none',
     border: `1px solid ${theme.palette.primary.darker}`,
   },
+  fieldValue: {
+    fontWeight: 700,
+  },
 }));
 
-const PlayerTopTenTable = (props) => {
+const GoalsTopTenTable = (props) => {
   const classes = useStyles();
   const {
-    list, field, title, unit, fieldFriendly, precision, average,
+    list, field, title, unit, fieldFriendly, precision,
   } = props;
 
   const [topTen, setTopTen] = useState([]);
@@ -56,32 +59,20 @@ const PlayerTopTenTable = (props) => {
     // eslint-disable-next-line no-prototype-builtins
     } else if (list[0].hasOwnProperty(field)) {
       let listToSort = list;
+      if (field === 'distanceToGoal') {
+        listToSort = list.filter((el) => el.distanceToGoal > 0);
+      }
       switch (typeof list[0][field]) {
         case 'string':
-          if (!Number.isNaN(parseFloat(list[0][field]))) {
-            listToSort = list.map((e) => {
-              const { ...temp } = e;
-              temp[field] = parseFloat(e[field]);
-              return temp;
-            });
+          if (sortByMost) {
+            newTopTen = listToSort.sort((a, b) => a[field].localeCompare(b[field])).slice(0, 10);
           } else {
-            newTopTen = list && list.length > 0 ? list.slice(0, 10) : [];
-            break;
+            newTopTen = listToSort.sort((a, b) => b[field].localeCompare(a[field])).slice(0, 10);
           }
-        // eslint-disable-next-line no-fallthrough
+          break;
         case 'number':
         default:
-          if (average) {
-            if (sortByMost) {
-              newTopTen = listToSort.sort((a, b) => (
-                (parseFloat(b[field] || 0) / (b.gamesPlayed || 1)) - (parseFloat(a[field] || 0) / (a.gamesPlayed || 1))
-              )).slice(0, 10);
-            } else {
-              newTopTen = listToSort.sort((a, b) => (
-                (parseFloat(a[field] || 0) / (a.gamesPlayed || 1)) - (parseFloat(b[field] || 0) / (b.gamesPlayed || 1))
-              )).slice(0, 10);
-            }
-          } else if (sortByMost) {
+          if (sortByMost) {
             newTopTen = listToSort.sort((a, b) => parseFloat(b[field]) - parseFloat(a[field])).slice(0, 10);
           } else {
             newTopTen = listToSort.sort((a, b) => parseFloat(a[field]) - parseFloat(b[field])).slice(0, 10);
@@ -93,16 +84,14 @@ const PlayerTopTenTable = (props) => {
     }
 
     setTopTen(newTopTen);
-  }, [sortByMost, average, field]);
+  }, [sortByMost, field]);
 
   if (list.length < 1 || topTen.length < 1) {
     return '';
   }
+  console.log(list);
 
-  let fieldLabel = fieldFriendly && fieldFriendly !== '' ? fieldFriendly : field;
-  if (average) {
-    fieldLabel += ' PG';
-  }
+  const fieldLabel = fieldFriendly && fieldFriendly !== '' ? fieldFriendly : field;
 
   return (
     <Grid container alignItems="flex-start" justify="flex-start">
@@ -125,18 +114,25 @@ const PlayerTopTenTable = (props) => {
       <Grid item xs={12}>
         <Grid container direction="row" spacing={1} alignItems="flex-start" justify="flex-start">
           <Grid item xs={1}>
-            <Typography className={`${classes.tableHeader} ${classes.leftPad}`}>Rank</Typography>
-          </Grid>
-          <Grid item xs={2}>
-            <Typography className={classes.tableHeader}>Season</Typography>
+            <Typography className={`${classes.tableHeader} ${classes.leftPad}`}>Rk</Typography>
           </Grid>
           <Grid item xs={1}>
-            <Typography className={`${classes.tableHeader} ${classes.elemName}`}>Tm</Typography>
+            <Typography className={classes.tableHeader}>Ssn</Typography>
           </Grid>
-          <Grid item xs={4}>
-            <Typography className={`${classes.tableHeader} ${classes.elemName}`}>Name</Typography>
+          <Grid item xs={6}>
+            <Grid container direction="row" alignItems="flex-start" justify="flex-start">
+              <Grid item xs={2}>
+                <Typography className={`${classes.tableHeader} ${classes.elemName}`}>Tm</Typography>
+              </Grid>
+              <Grid item xs={10}>
+                <Typography className={`${classes.tableHeader} ${classes.elemName}`}>Player</Typography>
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={1}>
+            <Typography className={`${classes.tableHeader} ${classes.elemName}`}>Opp</Typography>
+          </Grid>
+          <Grid item xs={3}>
             <Typography className={classes.tableHeader}>{unit && unit !== '' ? `${fieldLabel} (${unit})` : fieldLabel}</Typography>
           </Grid>
         </Grid>
@@ -150,30 +146,35 @@ const PlayerTopTenTable = (props) => {
             <Grid item xs={1}>
               <Typography>{idx + 1}</Typography>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={1}>
               <Typography variant="h4" className={`${classes.seasonNum} player-mini-season-${elem.season}`}>
                 <span className={`player-season-mini-inside-${elem.season}`}>
                   {elem.season}
                 </span>
               </Typography>
             </Grid>
-            <Grid item xs>
-              <Tooltip title={elem.teamName}>
-                <Link exact to={`/teams/${elem.teamName.toUpperCase()}`}>
-                  <Avatar src={elem.teamLogo} variant="square" className={classes.teamLogo} alt={elem.teamName} />
-                </Link>
-              </Tooltip>
+            <Grid item xs={6}>
+              <Grid container direction="row" alignItems="flex-end" justify="flex-start">
+                <Grid item xs={2}>
+                  <Link exact to={`/teams/${elem.team?.name}`}>
+                    <Avatar src={elem.team?.teamLogo} variant="square" className={classes.teamLogo} alt={elem.team?.name} />
+                  </Link>
+                </Grid>
+                <Grid item xs={10}>
+                  <Link exact to={`/players/${elem.playerName}`}>
+                    <Typography className={classes.elemName}>{elem.playerName}</Typography>
+                  </Link>
+                </Grid>
+              </Grid>
             </Grid>
-            <Grid item xs={4}>
-              <Link exact to={`/players/${elem.name}`}>
-                <Typography className={classes.elemName}>{elem.name}</Typography>
+            <Grid item xs={1}>
+              <Link exact to={`/teams/${elem.opponent?.name}`}>
+                <Avatar src={elem.opponent?.teamLogo} variant="square" className={classes.teamLogo} alt={elem.opponent?.name} />
               </Link>
             </Grid>
-            <Grid item xs={4}>
-              <Typography>
-                {average
-                  ? ((parseFloat(elem[field]) || 0) / (elem.gamesPlayed || 1))?.toFixed(precision + +average)
-                  : (parseFloat(elem[field]) || 0).toFixed(precision)}
+            <Grid item xs={3}>
+              <Typography className={classes.fieldValue}>
+                {parseFloat(elem[field])?.toFixed(precision)}
               </Typography>
             </Grid>
           </Grid>
@@ -183,7 +184,7 @@ const PlayerTopTenTable = (props) => {
   );
 };
 
-PlayerTopTenTable.propTypes = {
+GoalsTopTenTable.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   list: PropTypes.array.isRequired,
   field: PropTypes.string.isRequired,
@@ -191,14 +192,12 @@ PlayerTopTenTable.propTypes = {
   title: PropTypes.string,
   unit: PropTypes.string,
   precision: PropTypes.number,
-  average: PropTypes.bool,
 };
-PlayerTopTenTable.defaultProps = {
+GoalsTopTenTable.defaultProps = {
   fieldFriendly: '',
   title: '',
   unit: '',
   precision: 0,
-  average: false,
 };
 
-export default PlayerTopTenTable;
+export default GoalsTopTenTable;

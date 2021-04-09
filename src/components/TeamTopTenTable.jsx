@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PlayerTopTenTable = (props) => {
+const TeamTopTenTable = (props) => {
   const classes = useStyles();
   const {
     list, field, title, unit, fieldFriendly, precision, average,
@@ -125,15 +125,15 @@ const PlayerTopTenTable = (props) => {
       <Grid item xs={12}>
         <Grid container direction="row" spacing={1} alignItems="flex-start" justify="flex-start">
           <Grid item xs={1}>
-            <Typography className={`${classes.tableHeader} ${classes.leftPad}`}>Rank</Typography>
+            <Typography className={`${classes.tableHeader} ${classes.leftPad}`}>Rk</Typography>
           </Grid>
-          <Grid item xs={2}>
-            <Typography className={classes.tableHeader}>Season</Typography>
+          <Grid item xs={1}>
+            <Typography className={classes.tableHeader}>Ssn</Typography>
           </Grid>
           <Grid item xs={1}>
             <Typography className={`${classes.tableHeader} ${classes.elemName}`}>Tm</Typography>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={5}>
             <Typography className={`${classes.tableHeader} ${classes.elemName}`}>Name</Typography>
           </Grid>
           <Grid item xs={4}>
@@ -150,7 +150,7 @@ const PlayerTopTenTable = (props) => {
             <Grid item xs={1}>
               <Typography>{idx + 1}</Typography>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={1}>
               <Typography variant="h4" className={`${classes.seasonNum} player-mini-season-${elem.season}`}>
                 <span className={`player-season-mini-inside-${elem.season}`}>
                   {elem.season}
@@ -158,14 +158,14 @@ const PlayerTopTenTable = (props) => {
               </Typography>
             </Grid>
             <Grid item xs>
-              <Tooltip title={elem.teamName}>
-                <Link exact to={`/teams/${elem.teamName.toUpperCase()}`}>
-                  <Avatar src={elem.teamLogo} variant="square" className={classes.teamLogo} alt={elem.teamName} />
+              <Tooltip title={elem.name}>
+                <Link exact to={`/teams/${elem.name.toUpperCase()}`}>
+                  <Avatar src={elem.teamLogo} variant="square" className={classes.teamLogo} alt={elem.name} />
                 </Link>
               </Tooltip>
             </Grid>
-            <Grid item xs={4}>
-              <Link exact to={`/players/${elem.name}`}>
+            <Grid item xs={5}>
+              <Link exact to={`/teams/${elem.name.toUpperCase()}`}>
                 <Typography className={classes.elemName}>{elem.name}</Typography>
               </Link>
             </Grid>
@@ -183,7 +183,7 @@ const PlayerTopTenTable = (props) => {
   );
 };
 
-PlayerTopTenTable.propTypes = {
+TeamTopTenTable.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   list: PropTypes.array.isRequired,
   field: PropTypes.string.isRequired,
@@ -193,7 +193,7 @@ PlayerTopTenTable.propTypes = {
   precision: PropTypes.number,
   average: PropTypes.bool,
 };
-PlayerTopTenTable.defaultProps = {
+TeamTopTenTable.defaultProps = {
   fieldFriendly: '',
   title: '',
   unit: '',
@@ -201,4 +201,4 @@ PlayerTopTenTable.defaultProps = {
   average: false,
 };
 
-export default PlayerTopTenTable;
+export default TeamTopTenTable;
