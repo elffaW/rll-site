@@ -9,6 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import ReactPivot from 'react-pivot';
 
 import api from './utils/api';
+import { SEASONS } from './containers/BaseApp';
 
 const useStyles = makeStyles((theme) => ({
   darkPaper: {
@@ -39,7 +40,11 @@ function PlayerGameStats(props) {
 
   useEffect(() => {
     if (playerName === 'ALL_PLAYERS') {
-      api.getAllStats().then((allStats) => {
+      const allStatsBySeasons = [];
+      SEASONS.forEach((s) => allStatsBySeasons.push(api.getStatsBySeason(s)));
+      Promise.all(allStatsBySeasons).then((statsBySeason) => {
+      // api.getAllStats().then((allStats) => {
+        const allStats = statsBySeason.flat();
         const statsTemp = allStats.map((stat) => stat.data);
         const stats = statsTemp.map((stat) => {
           const { ...tempStat } = stat;
