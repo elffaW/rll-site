@@ -88,7 +88,7 @@
     "babel-jest": "^25.0.0",
     "babel-loader": "8.2.2",
     "babel-plugin-transform-react-remove-prop-types": "0.4.24",
-    "browser-sync": "2.26.7",
+    "browser-sync": "2.29.3",
     "concurrently": "5.2.0",
     "connect-history-api-fallback": "1.6.0",
     "coveralls": "3.0.7",
